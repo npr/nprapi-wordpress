@@ -79,15 +79,20 @@ class NPRAPIWordpress extends NPRAPI {
         	}
         }
 
+        $by_line = '';
+        if (isset($story->byline->name->value)){
+        	$by_line = $story->byline->name->value;
+        }
         $metas = array(
             NPR_STORY_ID_META_KEY      => $story->id,
             NPR_API_LINK_META_KEY      => $story->link['api']->value,
             NPR_HTML_LINK_META_KEY     => $story->link['html']->value,
             NPR_SHORT_LINK_META_KEY    => $story->link['short']->value,
             NPR_STORY_CONTENT_META_KEY => $story->body,
-            NPR_BYLINE_META_KEY        => $story->byline->name->value,
+            NPR_BYLINE_META_KEY        => $by_line,
         );
         
+        //this doesn't work just yet.  Parse isn't getting audio correctly.
         if ( isset($story->audio) ) {
         	foreach ($story->audio as $audio){
 						//var_dump($audio);
