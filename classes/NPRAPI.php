@@ -107,15 +107,34 @@ class NPRAPI {
           }
         }
         $body ='';
+       if (!empty($parsed->image)) {
+          foreach ($parsed->image as $image) {
+            $body .= $this->format_image($image);
+          }
+        }
+        if (!empty($parsed->audio->format->mp3)) {
+          $body .= '[audio ' . $parsed->audio->format->mp3->value . "]\n\n";
+        }
         if (!empty($parsed->textWithHtml->paragraphs)) {
           foreach ($parsed->textWithHtml->paragraphs as $paragraph) {
             $body = $body . $paragraph->value . "\n\n";
           }
-        }
-        $parsed->body = $body;
+        }        $parsed->body = $body;
         $this->stories[] = $parsed;
       }
     }
+  }
+
+  /**
+ * Create img tag to insert into body
+ * @param type $image
+ * @return type
+ */
+  function format_image($image) {
+    $image_path = $image->src;
+    $image_alt = $image->title->value;
+
+    return '<img src="' . $image_path . '" alt="' . $image_alt . '">'  . "\n\n";
   }
 
   /**
