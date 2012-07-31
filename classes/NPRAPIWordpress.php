@@ -103,7 +103,6 @@ class NPRAPIWordpress extends NPRAPI {
 						}
         	}
         }
-        var_dump($metas);
         
         if ( $existing ) {
             $created = false;
