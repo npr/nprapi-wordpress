@@ -95,23 +95,15 @@ class NPRAPIWordpress extends NPRAPI {
         //this doesn't work just yet.  Parse isn't getting audio correctly.
         if ( isset($story->audio) ) {
         	foreach ($story->audio as $audio){
-						//var_dump($audio);
-						if (isset($audio->mp3)){
-							if ($audio->mp3->type == 'mp3' && $audio->download->value == 'true' ){
-								//var_dump('Got some audio');
-			
-	 	       			$metas[ NPR_AUDIO_META_KEY ][] = serialize( $story->audio->mp3->value );
+        		//var_dump($audio->format->mp3['mp3']);
+						if (isset($audio->format->mp3['mp3'])){
+							if ($audio->format->mp3['mp3']->type == 'mp3' && $audio->permissions->download->allow == 'true' ){	
+	 	       			$metas[NPR_AUDIO_META_KEY][] =  $audio->format->mp3['mp3']->value;
 							}
 						}
         	}
         }
-         
-
-        if (isset($story->image[0])){
-        	foreach ($story->image as $image){
-        		$metas[NPR_IMAGE_GALLERY_META_KEY][] = serialize($image);
-        	}
-        }
+        var_dump($metas);
         
         if ( $existing ) {
             $created = false;
@@ -120,10 +112,48 @@ class NPRAPIWordpress extends NPRAPI {
         else {
             $created = true;
         }
-        $id = wp_insert_post( $args );
+        $post_id = wp_insert_post( $args );
 
+        //now that we have an id, we can add images
+        //this is the way WP seems to do it, but we couldn't call media_sideload_image or media_ because that returned only the URL
+        //for the attachment, and we want to be able to set the primary image, so we had to use this method to get the attachment ID.
+				if (isset($story->image[0])){
+        	foreach ($story->image as $image){
+        		//$image_url = media_sideload_image($image->src, $post_id, $image->title->value);
+        		//var_dump($image_url);
+        		
+        		// Download file to temp location
+            $tmp = download_url( $image->src );
+
+            // Set variables for storage
+            // fix file filename for query strings
+            preg_match('/[^\?]+\.(jpg|JPG|jpe|JPE|jpeg|JPEG|gif|GIF|png|PNG)/', $image->src, $matches);
+            $file_array['name'] = basename($matches[0]);
+            $file_array['tmp_name'] = $tmp;
+
+            // If error storing temporarily, unlink
+            if ( is_wp_error( $tmp ) ) {
+            	@unlink($file_array['tmp_name']);
+              $file_array['tmp_name'] = '';
+            }
+
+            // do the validation and storage stuff
+            $id = media_handle_sideload( $file_array, $post_id, $image->title->value );
+            // If error storing permanently, unlink
+            if ( is_wp_error($id) ) {
+            	@unlink($file_array['tmp_name']);
+                        
+            }
+
+            //set the primary image
+            if ($image->type == 'primary'){
+            	add_post_meta($post_id, '_thumbnail_id', $id, true);
+            }
+        		
+        	}
+        }
         foreach ( $metas as $k => $v ) {
-            update_post_meta( $id, $k, $v );
+            update_post_meta( $post_id, $k, $v );
         }
 		}
         return array( 'YES');

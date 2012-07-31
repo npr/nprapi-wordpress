@@ -29,8 +29,8 @@ define( 'NPR_HTML_LINK_META_KEY', 'npr_html_link' );
 define( 'NPR_SHORT_LINK_META_KEY', 'npr_short_link' );
 define( 'NPR_STORY_CONTENT_META_KEY', 'npr_story_content' );
 define( 'NPR_BYLINE_META_KEY', 'npr_byline' );
-define( 'NPR_IMAGE_GALLERY_META_KEY', '_npr_image_gallery');
-define( 'NPR_AUDIO_META_KEY', '_npr_audio');
+define( 'NPR_IMAGE_GALLERY_META_KEY', 'npr_image_gallery');
+define( 'NPR_AUDIO_META_KEY', 'npr_audio');
 
 require_once( 'settings.php' );
 require_once('classes/NPRAPIWordpress.php');

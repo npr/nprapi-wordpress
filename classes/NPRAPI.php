@@ -49,6 +49,14 @@ class NPRAPI {
 
   }
 
+  function parse_response() {
+    $xml = simplexml_load_string($this->response->data);
+    if (!empty($xml->list->story)) {
+      $id = $this->get_attribute($xml->list->story, 'id');
+    }
+    $this->response->id = $id ? $id : NULL;
+  }
+
   function flatten() {
 
   }
@@ -91,50 +99,38 @@ class NPRAPI {
           $current = $xml_iterator->current();
           $key = $xml_iterator->key();
 
-          if ($key == 'image' || $key == 'link') {
+          if ($key == 'image' || $key == 'audio' || $key == 'link') {
             // images
             if ($key == 'image') {
               $parsed->{$key}[] = $this->parse_simplexml_element($current);
             }
+
+            // audio
+            if ($key == 'audio') {
+              $parsed->{$key}[] = $this->parse_simplexml_element($current);
+            }
+
             // links
             if ($key == 'link') {
               $type = $this->get_attribute($current, 'type');
               $parsed->{$key}[$type] = $this->parse_simplexml_element($current);
             }
+
           }
           else {
             $parsed->{$key} = $this->parse_simplexml_element($current);
           }
         }
         $body ='';
-       if (!empty($parsed->image)) {
-          foreach ($parsed->image as $image) {
-            $body .= $this->format_image($image);
-          }
-        }
-        if (!empty($parsed->audio->format->mp3)) {
-          $body .= '[audio ' . $parsed->audio->format->mp3->value . "]\n\n";
-        }
         if (!empty($parsed->textWithHtml->paragraphs)) {
           foreach ($parsed->textWithHtml->paragraphs as $paragraph) {
             $body = $body . $paragraph->value . "\n\n";
           }
-        }        $parsed->body = $body;
+        }
+        $parsed->body = $body;
         $this->stories[] = $parsed;
       }
     }
-  }
-
-  /**
- * Create img tag to insert into body
- * @param type $image
- * @return type
- */
-  function format_image($image) {
-    $image_path = $image->src;
-    $image_alt = $image->title->value;
-
-    return '<img src="' . $image_path . '" alt="' . $image_alt . '">'  . "\n\n";
   }
 
   /**
@@ -151,9 +147,15 @@ class NPRAPI {
     $this->add_simplexml_attributes($element, $NPRMLElement);
     if (count($element->children())) { // works for PHP5.2
       foreach ($element->children() as $i => $child) {
-        if ($i == 'paragraph') {
-        $paragraph = $this->parse_simplexml_element($child);
-          $NPRMLElement->paragraphs[$paragraph->num] = $paragraph;
+        if ($i == 'paragraph' || $i == 'mp3') {
+          if ($i == 'paragraph') {
+            $paragraph = $this->parse_simplexml_element($child);
+            $NPRMLElement->paragraphs[$paragraph->num] = $paragraph;
+          }
+          if ($i == 'mp3') {
+            $mp3 = $this->parse_simplexml_element($child);
+            $NPRMLElement->mp3[$mp3->type] = $mp3;
+          }
         }
         else {
           $NPRMLElement->$i = $this->parse_simplexml_element($child);
