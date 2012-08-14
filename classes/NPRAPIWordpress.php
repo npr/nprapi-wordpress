@@ -7,6 +7,7 @@
  * Unlike NPRAPI class, NPRAPIDrupal is drupal-specific
  */
 require_once ('NPRAPI.php');
+require_once ('nprml.php');
 
 class NPRAPIWordpress extends NPRAPI {
 
@@ -103,6 +104,7 @@ class NPRAPIWordpress extends NPRAPI {
 						}
         	}
         }
+        var_dump($metas);
         
         if ( $existing ) {
             $created = false;
@@ -157,4 +159,47 @@ class NPRAPIWordpress extends NPRAPI {
 		}
         return array( 'YES');
     }
+
+
+
+  /**
+   * Create NPRML from wordpress post.
+   *
+   * @param object $post
+   *   A wordpress post.
+   *
+   * @return string
+   *   An NPRML string.
+   */
+  function create_NPRML($post) {
+	//using some old helper code
+	return as_nprml($post);
+  }
+
+
+
+  function send_request ($nprml, $post_ID) {
+    //probably not right!!!
+    //$url = get_option( 'ds_npr_api_push_url' );    
+    $url = add_query_arg( array( 
+        'orgId'  => get_option( 'ds_npr_api_org_id' ),
+        'apiKey' => get_option( 'ds_npr_api_key' )
+    ), get_option( 'ds_npr_api_push_url' ) . '/story' );
+    error_log('orgId = ' . get_option( 'ds_npr_api_org_id' ));
+    error_log('apiKey = ' . get_option( 'ds_npr_api_key' ));
+    error_log('url = ' . $url);
+    error_log('nprml = ' . $nprml);
+    $result = wp_remote_post( $url, array( 'body' => $nprml ) );
+    $body = wp_remote_retrieve_body( $result );
+    if ( $body ) {
+        $response_xml = simplexml_load_string( $body );
+        $npr_story_id = (string) $response_xml->list->story['id'];
+        update_post_meta( $post_ID, NPR_STORY_ID_META_KEY, $npr_story_id );
+    }
+    else {
+        error_log( 'INGEST ERROR: ' . print_r( $result, true ) );
+    }
+  }
+
+
 }

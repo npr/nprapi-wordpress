@@ -36,3 +36,4 @@ require_once( 'settings.php' );
 require_once('classes/NPRAPIWordpress.php');
 
 require_once('get_stories.php');
+require_once('push_story.php');
