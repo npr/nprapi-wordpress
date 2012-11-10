@@ -4,11 +4,10 @@ require_once( 'get_stories_ui.php' );
 require_once ('classes/NPRAPIWordpress.php');
 
 
-/**
 register_activation_hook(DS_NPR_PLUGIN_FILE, array ('DS_NPR_API','ds_npr_story_activation'));
 add_action('npr_ds_hourly_cron', array ('DS_NPR_API','ds_npr_story_cron_pull'));
 register_deactivation_hook(DS_NPR_PLUGIN_FILE, array ('DS_NPR_API','ds_npr_story_deactivation'));
-**/
+
 		
  class DS_NPR_API {
 

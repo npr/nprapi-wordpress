@@ -10,14 +10,16 @@ function ds_npr_add_options_page() {
 }
 function ds_npr_add_query_page() {
 	$num =  get_option('ds_npr_num');
-	$k = $num;
-  $opt = get_option('ds_npr_query_'.$k);
-  while ($k < NPR_MAX_QUERIES) {
-  	delete_option('ds_npr_query_'.$k);
-  	$k++;
-  	$opt = get_option('ds_npr_query_'.$k);
-  }
-  add_options_page('NPR API Get Multiple', 'NPR API Get Multi', 'manage_options',
+	//make sure we remove any queries we didn't want to use
+	if (!empty($num) && $num < NPR_MAX_QUERIES){
+		$k = $num;
+	  $opt = get_option('ds_npr_query_'.$k);
+	  while ($k < NPR_MAX_QUERIES) {
+	  	delete_option('ds_npr_query_'.$k);
+	  	$k++;
+	  }
+	}
+  add_options_page('Auto Fetch from the NPR API settings', 'NPR API Get Multi', 'manage_options',
 									 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_options_page');
 }
 add_action( 'admin_menu', 'ds_npr_add_options_page' );
@@ -43,6 +45,9 @@ function ds_npr_settings_init() {
     add_settings_field( 'ds_npr_num', 'Number of things to get', 'ds_npr_api_num_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
     register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_num' );
 		$num =  get_option('ds_npr_num');
+		if (empty($num)){
+			$num = 5;
+		}
     for($i = 0; $i < $num; $i++){
     	add_settings_field( 'ds_npr_query_'.$i, 'Query String '.$i, 'ds_npr_api_query_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
     	register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_'.$i );
