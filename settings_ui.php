@@ -12,18 +12,3 @@ function ds_npr_api_options_page() {
 <?php
 }
 ?>
-
-<?php
-function ds_npr_api_get_multi_options_page() {
-?>
-    <div>
-       
-        <form action="options.php" method="post">
-            <?php settings_fields( 'ds_npr_api_get_multi_settings' ); ?>
-            <?php do_settings_sections( 'ds_npr_api_get_multi_settings' ); ?>
-            <input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
-        </form>
-    </div>
-<?php
-}
-?>

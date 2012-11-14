@@ -79,11 +79,15 @@ class NPRAPIWordpress extends NPRAPI {
 			
         $exists = new WP_Query( array( 'meta_key' => NPR_STORY_ID_META_KEY, 
                                        'meta_value' => $story->id ) );
-        
+        $post_mod_date = 0;
         if ( $exists->post_count ) {
             // XXX: might be more than one here;
             $existing = $exists->post;
             $existing_status = $exists->posts[0]->post_status;
+            $post_mod_date_meta = get_post_meta($existing->ID, NPR_LAST_MODIFIED_DATE_KEY);
+            if (!empty($post_mod_date_meta[0])){
+	            $post_mod_date = strtotime($post_mod_date_meta[0]);
+            }
         }
         else {
             $existing = null;
@@ -96,100 +100,105 @@ class NPRAPIWordpress extends NPRAPI {
             'post_content' => $story->body,
         		'post_status'  => 'draft'
         );
-        
-
-        $by_line = '';
-        if (isset($story->byline->name->value)){
-        	$by_line = $story->byline->name->value;
-        }
-        
-        //set the meta RETRIEVED so when we publish the post, we dont' try ingesting it
-        $metas = array(
-            NPR_STORY_ID_META_KEY      => $story->id,
-            NPR_API_LINK_META_KEY      => $story->link['api']->value,
-            NPR_HTML_LINK_META_KEY     => $story->link['html']->value,
-            NPR_SHORT_LINK_META_KEY    => $story->link['short']->value,
-            NPR_STORY_CONTENT_META_KEY => $story->body,
-            NPR_BYLINE_META_KEY        => $by_line,
-            NPR_RETRIEVED_STORY_META_KEY => 1,
-        );
-        
-        //get audio
-        if ( isset($story->audio) ) {
-        	foreach ($story->audio as $audio){
-						if (isset($audio->format->mp3['mp3'])){
-							if ($audio->format->mp3['mp3']->type == 'mp3' && $audio->permissions->download->allow == 'true' ){	
-	 	       			$metas[NPR_AUDIO_META_KEY][] =  $audio->format->mp3['mp3']->value;
+				//check the last modified date, if the story hasn't changed, just go on
+				if ($post_mod_date != strtotime($story->lastModifiedDate->value)) {
+	        $by_line = '';
+	        if (isset($story->byline->name->value)){
+	        	$by_line = $story->byline->name->value;
+	        }
+	        
+	        //set the meta RETRIEVED so when we publish the post, we dont' try ingesting it
+	        $metas = array(
+	            NPR_STORY_ID_META_KEY      => $story->id,
+	            NPR_API_LINK_META_KEY      => $story->link['api']->value,
+	            NPR_HTML_LINK_META_KEY     => $story->link['html']->value,
+	            //NPR_SHORT_LINK_META_KEY    => $story->link['short']->value,
+	            NPR_STORY_CONTENT_META_KEY => $story->body,
+	            NPR_BYLINE_META_KEY        => $by_line,
+	            NPR_RETRIEVED_STORY_META_KEY => 1,
+	            NPR_PUB_DATE_META_KEY => $story->pubDate->value,
+	            NPR_STORY_DATE_MEATA_KEY => $story->storyDate->value,
+							NPR_LAST_MODIFIED_DATE_KEY=> $story->lastModifiedDate->value,
+	        );
+	        //get audio
+	        if ( isset($story->audio) ) {
+	        	foreach ($story->audio as $audio){
+							if (isset($audio->format->mp3['mp3'])){
+								if ($audio->format->mp3['mp3']->type == 'mp3' && $audio->permissions->download->allow == 'true' ){	
+		 	       			$metas[NPR_AUDIO_META_KEY][] =  $audio->format->mp3['mp3']->value;
+								}
 							}
-						}
-        	}
-        }
-        
-        if ( $existing ) {
-            $created = false;
-            $args[ 'ID' ] = $existing->ID;
-        }
-        else {
-            $created = true;
-        }
-        $post_id = wp_insert_post( $args );
-
-        //now that we have an id, we can add images
-        //this is the way WP seems to do it, but we couldn't call media_sideload_image or media_ because that returned only the URL
-        //for the attachment, and we want to be able to set the primary image, so we had to use this method to get the attachment ID.
-				if (isset($story->image[0])){
-        	foreach ($story->image as $image){
-        		
-        		// Download file to temp location
-            $tmp = download_url( $image->src );
-            // Set variables for storage
-            // fix file filename for query strings
-            preg_match('/[^\?]+\.(jpg|JPG|jpe|JPE|jpeg|JPEG|gif|GIF|png|PNG)/', $image->src, $matches);
-            $file_array['name'] = basename($matches[0]);
-            $file_array['tmp_name'] = $tmp;
-
-            // If error storing temporarily, unlink
-            if ( is_wp_error( $tmp ) ) {
-            	@unlink($file_array['tmp_name']);
-              $file_array['tmp_name'] = '';
-            }
-
-            // do the validation and storage stuff
-            $id = media_handle_sideload( $file_array, $post_id, $image->title->value );
-            // If error storing permanently, unlink
-            if ( is_wp_error($id) ) {
-            	@unlink($file_array['tmp_name']);
-            }
-
-            //set the primary image
-            if ($image->type == 'primary'){
-            	add_post_meta($post_id, '_thumbnail_id', $id, true);
-            }
-        		
-        	}
-        }
-        foreach ( $metas as $k => $v ) {
-            update_post_meta( $post_id, $k, $v );
-        }
-       
-        $args = array(
-        		'post_title'   => $story->title,
-            'ID'   => $post_id,
-        );
-			 //now set the status
-				if ( ! $existing ) {
-        	if ($publish){
-            $args['post_status'] = 'publish';
-        	}
-        	else {
-        		$args['post_status'] = 'draft';
-        	}
-        }
-        else {
-        	//if the post existed, save its status
-        	$args['post_status'] = $existing_status;
-        }
-        $ret = wp_insert_post( $args );
+	        	}
+	        }
+	        
+	        if ( $existing ) {
+	            $created = false;
+	            $args[ 'ID' ] = $existing->ID;
+	        }
+	        else {
+	            $created = true;
+	        }
+	        $post_id = wp_insert_post( $args );
+	
+	        //now that we have an id, we can add images
+	        //this is the way WP seems to do it, but we couldn't call media_sideload_image or media_ because that returned only the URL
+	        //for the attachment, and we want to be able to set the primary image, so we had to use this method to get the attachment ID.
+					if (isset($story->image[0])){
+	        	foreach ($story->image as $image){
+	        		
+	        		// Download file to temp location
+	            $tmp = download_url( $image->src );
+	            // Set variables for storage
+	            // fix file filename for query strings
+	            preg_match('/[^\?]+\.(jpg|JPG|jpe|JPE|jpeg|JPEG|gif|GIF|png|PNG)/', $image->src, $matches);
+	            $file_array['name'] = basename($matches[0]);
+	            $file_array['tmp_name'] = $tmp;
+	
+	            // If error storing temporarily, unlink
+	            if ( is_wp_error( $tmp ) ) {
+	            	@unlink($file_array['tmp_name']);
+	              $file_array['tmp_name'] = '';
+	            }
+	
+	            // do the validation and storage stuff
+	            $id = media_handle_sideload( $file_array, $post_id, $image->title->value );
+	            // If error storing permanently, unlink
+	            if ( is_wp_error($id) ) {
+	            	@unlink($file_array['tmp_name']);
+	            }
+	
+	            //set the primary image
+	            if ($image->type == 'primary'){
+	            	add_post_meta($post_id, '_thumbnail_id', $id, true);
+	            }
+	        		
+	        	}
+	        }
+	        foreach ( $metas as $k => $v ) {
+	            update_post_meta( $post_id, $k, $v );
+	        }
+	       
+	        $args = array(
+	        		'post_title'   => $story->title,
+	            'post_content' => $story->body,
+	        		'post_excerpt' => $story->teaser,    
+	            'ID'   => $post_id,
+	        );
+				 //now set the status
+					if ( ! $existing ) {
+	        	if ($publish){
+	            $args['post_status'] = 'publish';
+	        	}
+	        	else {
+	        		$args['post_status'] = 'draft';
+	        	}
+	        }
+	        else {
+	        	//if the post existed, save its status
+	        	$args['post_status'] = $existing_status;
+	        }
+	        $ret = wp_insert_post( $args );
+				}
 		}
         return array( 'YES');
     }
