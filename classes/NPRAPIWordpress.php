@@ -75,15 +75,20 @@ class NPRAPIWordpress extends NPRAPI {
   }
   
 	function update_posts_from_stories($publish = TRUE ) {
-		if (!emptry($this->stories)){
+		$single_story = TRUE;
+		if (sizeof($this->stories) > 1){
+			$single_story = FALSE;
+		}
+		if (!empty($this->stories)){
 			foreach ($this->stories as $story) { 
 				
 	        $exists = new WP_Query( array( 'meta_key' => NPR_STORY_ID_META_KEY, 
 	                                       'meta_value' => $story->id ) );
-	        $post_mod_date = 0;
+	        $post_mod_date = strtotime(date('Y-m-d H:i:s'));
 	        if ( $exists->post_count ) {
 	            // XXX: might be more than one here;
 	            $existing = $exists->post;
+	            $post_id = $existing->ID;	            
 	            $existing_status = $exists->posts[0]->post_status;
 	            $post_mod_date_meta = get_post_meta($existing->ID, NPR_LAST_MODIFIED_DATE_KEY);
 	            if (!empty($post_mod_date_meta[0])){
@@ -202,8 +207,11 @@ class NPRAPIWordpress extends NPRAPI {
 					}
 			}
 		}
-        return array( 'YES');
-    }
+		if ($single_story){
+			return $post_id;
+		}
+    return;
+	}
 
 
 
