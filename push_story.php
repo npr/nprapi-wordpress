@@ -48,4 +48,6 @@ function npr_delete ( $post_ID ) {
 
 //as far as I can tell, this is where the magic happens
 add_action( 'save_post', 'npr_push', 10, 2 );
-add_action( 'trash_post', 'npr_delete', 10, 2 );
+add_action( 'trash_post', 'npr_delete', 10, 2 );  
+//this may need to check version and use 'wp_trash_post'
+add_action( 'wp_trash_post', 'npr_delete', 10, 2 );

@@ -244,7 +244,7 @@ class NPRAPIWordpress extends NPRAPI {
         update_post_meta( $post_ID, NPR_STORY_ID_META_KEY, $npr_story_id );
     }
     else {
-        error_log( 'INGEST ERROR: ' . print_r( $result, true ) );
+        //error_log( 'INGEST ERROR: ' . print_r( $result, true ) );
     }
   }
 
