@@ -84,7 +84,10 @@ class NPRAPIWordpress extends NPRAPI {
 				
 	        $exists = new WP_Query( array( 'meta_key' => NPR_STORY_ID_META_KEY, 
 	                                       'meta_value' => $story->id ) );
+	        //set the mod_date and pub_date to now so that for a new story we will fail the test below and do the update
 	        $post_mod_date = strtotime(date('Y-m-d H:i:s'));
+	        $post_pub_date = $post_mod_date;
+	        
 	        if ( $exists->post_count ) {
 	            // XXX: might be more than one here;
 	            $existing = $exists->post;
@@ -94,11 +97,14 @@ class NPRAPIWordpress extends NPRAPI {
 	            if (!empty($post_mod_date_meta[0])){
 		            $post_mod_date = strtotime($post_mod_date_meta[0]);
 	            }
+	            $post_pub_date_meta = get_post_meta($existing->ID, NPR_PUB_DATE_META_KEY);
+	            if (!empty($post_pub_date_meta[0])){
+	            	$post_pub_date = strtotime($post_pub_date_meta[0]);
+	            }
 	        }
 	        else {
 	            $existing = null;
-	        }
-	        
+	        }	        
 	        //set the story as draft, so we don't try ingesting it
 	        $args = array(
 	            'post_title'   => $story->title,
@@ -106,8 +112,8 @@ class NPRAPIWordpress extends NPRAPI {
 	            'post_content' => $story->body,
 	        		'post_status'  => 'draft'
 	        );
-					//check the last modified date, if the story hasn't changed, just go on
-					if ($post_mod_date != strtotime($story->lastModifiedDate->value)) {
+					//check the last modified date and pub date (sometimes the API just updates the pub date), if the story hasn't changed, just go on
+					if (($post_mod_date != strtotime($story->lastModifiedDate->value))  || ($post_pub_date !=  strtotime($story->pubDate->value)) ){
 		        $by_line = '';
 		        if (isset($story->byline->name->value)){
 		        	$by_line = $story->byline->name->value;
