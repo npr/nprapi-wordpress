@@ -37,53 +37,91 @@ class NPRAPIWordpress extends NPRAPI {
     $request_url = $this->request->base . '/' . $this->request->path . '?' . implode('&', $queries);
     $this->request->request_url = $request_url;
 
+    $this->query_by_url($request_url);
+    /*
     $response = wp_remote_get( $request_url );
-    //drupal_http_request($request_url, array('method' => $this->request->method, 'data' => $this->request->data));
-    $this->response = $response;
-    	
-    if ($response['response']['code'] == self::NPRAPI_STATUS_OK) {
-    	
-      if ($response['body']) {
-        $this->xml = $response['body'];
-      }
-      else {
-        $this->notice[] = t('No data available.');
-      }
+    if( !is_wp_error( $response ) ) {
+	    $this->response = $response;
+	    	
+	    if ($response['response']['code'] == self::NPRAPI_STATUS_OK) {
+	    	
+	      if ($response['body']) {
+	        $this->xml = $response['body'];
+	      }
+	      else {
+	        $this->notice[] = t('No data available.');
+	      }
+	    }
+    }
+    else {
+    	echo ('Error retrieving story for url='.$request_url);
+    }
+    */
+  }
+  
+  /**
+   * 
+   * Query a straight url.  If there is not an API Key in the query string, append one, but otherwise just do a straight query
+   * 
+   * @param string $url -- the full url to query.
+   */
+  function query_by_url($url){
+  	//check to see if the API is included, if not, add the one from the options
+  	if (!stristr($url, 'apiKey=')){
+  		$url .= '&apiKey='. get_option( 'ds_npr_api_key' );
+  	}
+  	
+  	$this->request->request_url = $url;
+
+    $response = wp_remote_get( $url );
+    if( !is_wp_error( $response ) ) {
+	    $this->response = $response;
+	    	
+	    if ($response['response']['code'] == self::NPRAPI_STATUS_OK) {
+	    	
+	      if ($response['body']) {
+	        $this->xml = $response['body'];
+	      }
+	      else {
+	        $this->notice[] = t('No data available.');
+	      }
+	    }
+    }
+    else {
+    	echo ('Error retrieving story for url='.$url);
     }
   }
   
 	function update_posts_from_stories($publish = TRUE ) {
 		foreach ($this->stories as $story) { 
+			
         $exists = new WP_Query( array( 'meta_key' => NPR_STORY_ID_META_KEY, 
                                        'meta_value' => $story->id ) );
+        
         if ( $exists->post_count ) {
             // XXX: might be more than one here;
             $existing = $exists->post;
+            $existing_status = $exists->posts[0]->post_status;
         }
         else {
             $existing = null;
         }
         
-        //var_dump($story->title);
-
+        //set the story as draft, so we don't try ingesting it
         $args = array(
             'post_title'   => $story->title,
             'post_excerpt' => $story->teaser,
             'post_content' => $story->body,
+        		'post_status'  => 'draft'
         );
-        if ( ! $existing ) {
-        	if ($publish){
-            $args['post_status'] = 'publish';
-        	}
-        	else {
-        		$args['post_status'] = 'draft';
-        	}
-        }
+        
 
         $by_line = '';
         if (isset($story->byline->name->value)){
         	$by_line = $story->byline->name->value;
         }
+        
+        //set the meta RETRIEVED so when we publish the post, we dont' try ingesting it
         $metas = array(
             NPR_STORY_ID_META_KEY      => $story->id,
             NPR_API_LINK_META_KEY      => $story->link['api']->value,
@@ -91,12 +129,12 @@ class NPRAPIWordpress extends NPRAPI {
             NPR_SHORT_LINK_META_KEY    => $story->link['short']->value,
             NPR_STORY_CONTENT_META_KEY => $story->body,
             NPR_BYLINE_META_KEY        => $by_line,
+            NPR_RETRIEVED_STORY_META_KEY => 1,
         );
         
-        //this doesn't work just yet.  Parse isn't getting audio correctly.
+        //get audio
         if ( isset($story->audio) ) {
         	foreach ($story->audio as $audio){
-        		//var_dump($audio->format->mp3['mp3']);
 						if (isset($audio->format->mp3['mp3'])){
 							if ($audio->format->mp3['mp3']->type == 'mp3' && $audio->permissions->download->allow == 'true' ){	
 	 	       			$metas[NPR_AUDIO_META_KEY][] =  $audio->format->mp3['mp3']->value;
@@ -104,7 +142,6 @@ class NPRAPIWordpress extends NPRAPI {
 						}
         	}
         }
-        var_dump($metas);
         
         if ( $existing ) {
             $created = false;
@@ -120,12 +157,9 @@ class NPRAPIWordpress extends NPRAPI {
         //for the attachment, and we want to be able to set the primary image, so we had to use this method to get the attachment ID.
 				if (isset($story->image[0])){
         	foreach ($story->image as $image){
-        		//$image_url = media_sideload_image($image->src, $post_id, $image->title->value);
-        		//var_dump($image_url);
         		
         		// Download file to temp location
             $tmp = download_url( $image->src );
-
             // Set variables for storage
             // fix file filename for query strings
             preg_match('/[^\?]+\.(jpg|JPG|jpe|JPE|jpeg|JPEG|gif|GIF|png|PNG)/', $image->src, $matches);
@@ -143,7 +177,6 @@ class NPRAPIWordpress extends NPRAPI {
             // If error storing permanently, unlink
             if ( is_wp_error($id) ) {
             	@unlink($file_array['tmp_name']);
-                        
             }
 
             //set the primary image
@@ -156,6 +189,26 @@ class NPRAPIWordpress extends NPRAPI {
         foreach ( $metas as $k => $v ) {
             update_post_meta( $post_id, $k, $v );
         }
+        
+       
+        $args = array(
+        		'post_title'   => $story->title,
+            'ID'   => $post_id,
+        );
+			 //now set the status
+				if ( ! $existing ) {
+        	if ($publish){
+            $args['post_status'] = 'publish';
+        	}
+        	else {
+        		$args['post_status'] = 'draft';
+        	}
+        }
+        else {
+        	//if the post existed, save its status
+        	$args['post_status'] = $existing_status;
+        }
+        $ret = wp_insert_post( $args );
 		}
         return array( 'YES');
     }
@@ -172,11 +225,9 @@ class NPRAPIWordpress extends NPRAPI {
    *   An NPRML string.
    */
   function create_NPRML($post) {
-	//using some old helper code
-	return as_nprml($post);
+		//using some old helper code
+		return as_nprml($post);
   }
-
-
 
   function send_request ($nprml, $post_ID) {
     //probably not right!!!
@@ -185,10 +236,7 @@ class NPRAPIWordpress extends NPRAPI {
         'orgId'  => get_option( 'ds_npr_api_org_id' ),
         'apiKey' => get_option( 'ds_npr_api_key' )
     ), get_option( 'ds_npr_api_push_url' ) . '/story' );
-    error_log('orgId = ' . get_option( 'ds_npr_api_org_id' ));
-    error_log('apiKey = ' . get_option( 'ds_npr_api_key' ));
-    error_log('url = ' . $url);
-    error_log('nprml = ' . $nprml);
+
     $result = wp_remote_post( $url, array( 'body' => $nprml ) );
     $body = wp_remote_retrieve_body( $result );
     if ( $body ) {
