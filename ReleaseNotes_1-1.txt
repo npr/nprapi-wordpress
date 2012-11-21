@@ -23,6 +23,9 @@ V1.1 - Release Notes
 	  "Publish" on this screen will re-query the NPR API for the story and update the Post with any changes that may have taken place
 	  on the NPR API for that story.
 
+- Update and Delete of pushed stories.  
+	A story that was written in your Wordpress site and pushed to the NPR API will be automatically be updated in the API when your story is updated in Wordpress.  When your Post is moved to the Trash in Wordpress, your story will be deleted from the NPR API.  If a Trashed Post is resorted, your story will be made available from the NPR API again.
+
 V1.0 - 
 - As not a lot of users have installed the V1.0 of the NPR API Plugin, there are a couple of things to keep in mind.
 	- On the NPR API settings page (wp-admin/options-general.php?page=ds_npr_api) there are 4 fields.
