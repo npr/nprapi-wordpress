@@ -10,6 +10,9 @@ function ds_npr_add_options_page() {
 }
 function ds_npr_add_query_page() {
 	$num =  get_option('ds_npr_num');
+	if (empty($num)){
+		$num = 1;
+	}
 	$k = $num;
   $opt = get_option('ds_npr_query_'.$k);
   while ($k < NPR_MAX_QUERIES) {
