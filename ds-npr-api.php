@@ -31,6 +31,9 @@ define( 'NPR_STORY_CONTENT_META_KEY', 'npr_story_content' );
 define( 'NPR_BYLINE_META_KEY', 'npr_byline' );
 define( 'NPR_IMAGE_GALLERY_META_KEY', 'npr_image_gallery');
 define( 'NPR_AUDIO_META_KEY', 'npr_audio');
+define( 'NPR_PUB_DATE_META_KEY', 'npr_pub_date');
+define( 'NPR_STORY_DATE_MEATA_KEY', 'npr_story_date');
+define( 'NPR_LAST_MODIFIED_DATE_KEY', 'npr_last_modified_date');
 define( 'NPR_RETRIEVED_STORY_META_KEY', 'npr_retrieved_story');
 
 define('NPR_MAX_QUERIES', 10);
@@ -47,18 +50,14 @@ register_deactivation_hook(WP_PLUGIN_DIR.'/WP-DS-NPR-API/ds-npr-api.php', 'ds_np
 
 
 function ds_npr_story_activation() {		
-		error_log('Activating via '. __FUNCTION__);
-
-		if ( !wp_next_scheduled( 'npr_ds_hourly_cron' ) ) {
-			wp_schedule_event( time(), 'hourly', 'npr_ds_hourly_cron');
-		}
-		
-	}
+	if ( !wp_next_scheduled( 'npr_ds_hourly_cron' ) ) {
+		wp_schedule_event( time(), 'hourly', 'npr_ds_hourly_cron');
+	}	
+}
 	
 function ds_npr_story_deactivation() {
-		error_log('De with the Activating via '. __FUNCTION__);
-		wp_clear_scheduled_hook('npr_ds_hourly_cron');
-	}
+	wp_clear_scheduled_hook('npr_ds_hourly_cron');
+}
 
 require_once('push_story.php');
 

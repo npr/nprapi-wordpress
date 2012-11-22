@@ -4,11 +4,10 @@ require_once( 'get_stories_ui.php' );
 require_once ('classes/NPRAPIWordpress.php');
 
 
-/**
+
 register_activation_hook(DS_NPR_PLUGIN_FILE, array ('DS_NPR_API','ds_npr_story_activation'));
 add_action('npr_ds_hourly_cron', array ('DS_NPR_API','ds_npr_story_cron_pull'));
 register_deactivation_hook(DS_NPR_PLUGIN_FILE, array ('DS_NPR_API','ds_npr_story_deactivation'));
-**/
 		
  class DS_NPR_API {
 
@@ -97,6 +96,12 @@ register_deactivation_hook(DS_NPR_PLUGIN_FILE, array ('DS_NPR_API','ds_npr_story
             
             if (empty($api->message) || ($api->message->level != 'warning')){
             	$story = $api->update_posts_from_stories($publish);
+            	$post_id = $api->update_posts_from_stories($publish);
+            	if (!empty($post_id)){
+	            	//redirect to the edit page if we just updated one story
+	            	$post_link = admin_url('post.php?action=edit&post='.$post_id );
+	            	wp_redirect($post_link);
+            	}
             }
             else {
 	            if ( empty($story) ) {

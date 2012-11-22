@@ -11,12 +11,12 @@ function ds_npr_api_options_page() {
     </div>
 <?php
 }
-?>
-<?php
+
+
 function ds_npr_api_get_multi_options_page() {
 ?>
-    <div>
-        <h2>Get multiple items from NPR API settings</h2>
+	<div>
+       
         <form action="options.php" method="post">
             <?php settings_fields( 'ds_npr_api_get_multi_settings' ); ?>
             <?php do_settings_sections( 'ds_npr_api_get_multi_settings' ); ?>
