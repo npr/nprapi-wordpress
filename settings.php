@@ -20,8 +20,7 @@ function ds_npr_add_query_page() {
   	$k++;
   	$opt = get_option('ds_npr_query_'.$k);
   }
-  add_options_page('NPR API Get Multiple', 'NPR API Get Multi', 'manage_options',
-   									 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_options_page');
+
 	//make sure we remove any queries we didn't want to use
 	if (!empty($num) && $num < NPR_MAX_QUERIES){
 		$k = $num;
