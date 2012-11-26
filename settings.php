@@ -81,7 +81,7 @@ function ds_npr_api_query_callback($i){
 }
 function ds_npr_api_num_multi_callback(){
 	$option = get_option('ds_npr_num');
-	echo "<input type='text' value='$option' name='ds_npr_num' style='width: 30px;' />";
+	echo "<input type='text' value='$option' name='ds_npr_num' style='width: 30px;' /> <p> Increase the number of queries by changing the number in the field above.";
 }
 function ds_npr_api_key_callback() {
     $option = get_option( 'ds_npr_api_key' );
@@ -102,6 +102,5 @@ function ds_npr_api_org_id_callback() {
     $option = get_option( 'ds_npr_api_org_id' );
     echo "<input type='text' value='$option' name='ds_npr_api_org_id' style='width: 300px;' />"; 
 }
-
 
 ?>
