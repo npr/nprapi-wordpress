@@ -52,11 +52,32 @@ register_deactivation_hook(WP_PLUGIN_DIR.'/WP-DS-NPR-API/ds-npr-api.php', 'ds_np
 function ds_npr_story_activation() {		
 	if ( !wp_next_scheduled( 'npr_ds_hourly_cron' ) ) {
 		wp_schedule_event( time(), 'hourly', 'npr_ds_hourly_cron');
-	}	
+	}
+
+	$num =  get_option('ds_npr_num');
+	if (empty($num)){
+		update_option('ds_npr_num', 5);
+	}
+	
+	$def_url = 'http://api-s1.npr.org';
+	$push_url = get_option( 'ds_npr_api_push_url' );
+	if (empty($push_url)){
+		update_option('ds_npr_api_push_url', $def_url);
+	}
 }
 	
 function ds_npr_story_deactivation() {
 	wp_clear_scheduled_hook('npr_ds_hourly_cron');
+	
+	$num =  get_option('ds_npr_num');
+	if (!empty($num)){
+		delete_option('ds_npr_num');
+	}
+	
+	$push_url = get_option( 'ds_npr_api_push_url' );
+	if (!empty($push_url)){
+		delete_option('ds_npr_api_push_url');
+	}
 }
 
 require_once('push_story.php');
