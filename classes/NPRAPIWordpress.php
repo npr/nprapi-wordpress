@@ -36,17 +36,12 @@ class NPRAPIWordpress extends NPRAPI {
     }
     $request_url = $this->request->base . '/' . $this->request->path . '?' . implode('&', $queries);
     $this->request->request_url = $request_url;
-
     $this->query_by_url($request_url);
   }
   
   /**
    * 
-<<<<<<< HEAD
-   * Query a straight url.  If there is not an API Key in the query string, append one, but otherwise just do a straight query
-=======
    * Query a single url.  If there is not an API Key in the query string, append one, but otherwise just do a straight query
->>>>>>> wp_dev
    * 
    * @param string $url -- the full url to query.
    */
@@ -61,7 +56,6 @@ class NPRAPIWordpress extends NPRAPI {
     $response = wp_remote_get( $url );
     if( !is_wp_error( $response ) ) {
 	    $this->response = $response;
-	    	
 	    if ($response['response']['code'] == self::NPRAPI_STATUS_OK) {
 	    	
 	      if ($response['body']) {
@@ -71,19 +65,27 @@ class NPRAPIWordpress extends NPRAPI {
 	        $this->notice[] = t('No data available.');
 	      }
 	    }
+	    else {
+	    	ds_npr_show_message('An error occurred pulling your story from the NPR API.  The API responded with message ='. $response['response']['message'], TRUE );
+	    }
     }
     else {
-    	echo ('Error retrieving story for url='.$url);
+    	$error_text = '';
+    	if (!empty($response->errors['http_request_failed'][0])){
+	    	$error_text = '<br> HTTP Error response =  '. $response->errors['http_request_failed'][0];
+    	}
+    	ds_npr_show_message('Error pulling story for url='.$url . $error_text, TRUE);
+    	error_log('Error retrieving story for url='.$url);
     }
   }
   
 	function update_posts_from_stories($publish = TRUE ) {
 
-		$single_story = TRUE;
-		if (sizeof($this->stories) > 1){
-			$single_story = FALSE;
-		}
 		if (!empty($this->stories)){
+			$single_story = TRUE;
+			if (sizeof($this->stories) > 1){
+				$single_story = FALSE;
+			}
 			foreach ($this->stories as $story) { 
 				
 	        $exists = new WP_Query( array( 'meta_key' => NPR_STORY_ID_META_KEY, 
@@ -216,10 +218,11 @@ class NPRAPIWordpress extends NPRAPI {
 		        $ret = wp_insert_post( $args );
 					}
 			}
+			if ($single_story){
+				return $post_id;
+			}
 		}
-		if ($single_story){
-			return $post_id;
-		}
+		
     return;
 	}
 
@@ -240,22 +243,44 @@ class NPRAPIWordpress extends NPRAPI {
   }
 
   function send_request ($nprml, $post_ID) {
+		$error_text = '';
+  	$org_id = get_option( 'ds_npr_api_org_id' );
+  	if (!empty($org_id)){
+	    $url = add_query_arg( array( 
+	        'orgId'  => $org_id,
+	        'apiKey' => get_option( 'ds_npr_api_key' )
+	    ), get_option( 'ds_npr_api_push_url' ) . '/story' );
+	
+	    $result = wp_remote_post( $url, array( 'body' => $nprml ) );
+	    if(  $result['response']['code'] == 200 ) {
+		    $body = wp_remote_retrieve_body( $result );
+		    if ( $body ) {
+		        $response_xml = simplexml_load_string( $body );
+		        $npr_story_id = (string) $response_xml->list->story['id'];
+		        update_post_meta( $post_ID, NPR_STORY_ID_META_KEY, $npr_story_id );
+		    }
+		    else {
+		        error_log( 'NPR API Push ERROR: ' . print_r( $result, true ) );
+		    }
+	    }
+	    else {
+	    	if (!empty($result['response']['message'])){
+		    	$error_text = 'Error pushing story with post_id = '. $post_ID .' for url='.$url . ' HTTP Error response =  '. $result['response']['message'];
+	    	}
+	    	error_log('is this the one' . $error_text);
+	    }
+  	} else {
+  		$error_text = 'Tried to push, but OrgID was not set for post_id ='. $post_ID;
+  		error_log($error_text);
+  	}
 
-    $url = add_query_arg( array( 
-        'orgId'  => get_option( 'ds_npr_api_org_id' ),
-        'apiKey' => get_option( 'ds_npr_api_key' )
-    ), get_option( 'ds_npr_api_push_url' ) . '/story' );
-
-    $result = wp_remote_post( $url, array( 'body' => $nprml ) );
-    $body = wp_remote_retrieve_body( $result );
-    if ( $body ) {
-        $response_xml = simplexml_load_string( $body );
-        $npr_story_id = (string) $response_xml->list->story['id'];
-        update_post_meta( $post_ID, NPR_STORY_ID_META_KEY, $npr_story_id );
-    }
-    else {
-        //error_log( 'INGEST ERROR: ' . print_r( $result, true ) );
-    }
+		if (!empty($error_text)){
+	  	update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $error_text );
+		}
+		else {
+			delete_post_meta($post_ID, NPR_PUSH_STORY_ERROR);
+		}
+  
   }
 
   function send_delete($api_id){

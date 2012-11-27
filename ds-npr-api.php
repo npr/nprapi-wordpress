@@ -35,6 +35,7 @@ define( 'NPR_PUB_DATE_META_KEY', 'npr_pub_date');
 define( 'NPR_STORY_DATE_MEATA_KEY', 'npr_story_date');
 define( 'NPR_LAST_MODIFIED_DATE_KEY', 'npr_last_modified_date');
 define( 'NPR_RETRIEVED_STORY_META_KEY', 'npr_retrieved_story');
+define( 'NPR_PUSH_STORY_ERROR', 'npr_push_story_error');
 
 define('NPR_MAX_QUERIES', 10);
 
@@ -80,5 +81,17 @@ function ds_npr_story_deactivation() {
 	}
 }
 
+
+function ds_npr_show_message($message, $errormsg = false)
+{
+	if ($errormsg) {
+		echo '<div id="message" class="error">';
+	}
+	else {
+		echo '<div id="message" class="updated fade">';
+	}
+
+	echo "<p><strong>$message</strong></p></div>";
+}   
 require_once('push_story.php');
 

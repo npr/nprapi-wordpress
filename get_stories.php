@@ -105,8 +105,10 @@ register_deactivation_hook(DS_NPR_PLUGIN_FILE, array ('DS_NPR_API','ds_npr_story
             }
             else {
 	            if ( empty($story) ) {
-	                error_log('Not going to save the return from query for '. $story_id .', we got an error='.$api->message->id. ' error');
-	                return;
+	            	$xml = simplexml_load_string($api->xml);
+	            	ds_npr_show_message('Error retrieving story for id = '.$story_id. '<br> API error ='.$api->message->id . '<br> API Message ='. $xml->message->text , TRUE);
+	              error_log('Not going to save the return from query for story_id='. $story_id .', we got an error='.$api->message->id. ' from the API');
+	              return;
 	            }
             }
         }

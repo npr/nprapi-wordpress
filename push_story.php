@@ -12,6 +12,13 @@ function npr_push ( $post_ID, $post ) {
 		if ( $post->post_type != 'post' || $post->post_status != 'publish' ) {
 			return;
 		}
+		if (empty($post->post_content)){
+			update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, 'Body is required for a post to be pushed to the NPR API.' );
+			return;
+		}
+		else {
+			delete_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, 'Body is required for a post to be pushed to the NPR API.' );
+		}
 		$api = new NPRAPIWordpress();
 		$retrieved = get_post_meta($post_ID, NPR_RETRIEVED_STORY_META_KEY, true);
 		
