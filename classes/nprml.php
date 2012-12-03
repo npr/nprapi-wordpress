@@ -14,27 +14,67 @@ function as_nprml( $post ) {
     return array_to_xml( 'nprml', array( 'version' => '0.93' ), $doc );
 }
 
+/**
+ * 
+ * Do the mapping from WP post to the array that we're going to build the NPRML from.  
+ * This is also where we will do custom mapping if need be.
+ * @param  $post
+ */
 function post_to_nprml_story( $post ) {
-    $content = strip_shortcodes( $post->post_content );
-    $content = apply_filters( 'the_content', $content );
     $story = array();
     $story[] = array( 
         'tag' => 'link',
         'attr' => array( 'type' => 'html' ),
         'text' => get_permalink( $post ),
     );
-    $story[] = array(
-        'tag' => 'title',
-        'text' => $post->post_title,
-    );
+    $use_custom = get_option('dp_npr_push_use_custom_map');
+    
+    $custom_content_meta = get_option('ds_npr_api_mapping_body');
+    if ($use_custom && !empty($custom_content_meta) && $custom_content_meta != '#NONE#'){
+    	$content = get_post_meta($post->ID, $custom_content_meta, true);
+    	$post_for_teaser = $post;
+    	$post_for_teaser->post_content = $content;
+    	$teaser_text = nai_get_excerpt( $post_for_teaser );
+    }
+    else {
+	    $content = strip_shortcodes( $post->post_content );
+	    $teaser_text = nai_get_excerpt( $post );
+    }
+    $content = apply_filters( 'the_content', $content );
+    
     $story[] = array(
         'tag' => 'teaser',
-        'text' => nai_get_excerpt( $post ),
+        'text' => $teaser_text,
     );
-    $story[] = array(
-        'tag' => 'byline',
-        'text' => get_the_author_meta( 'display_name', $post->post_author ),
-    );
+    $custom_title_meta = get_option('ds_npr_api_mapping_title');
+    if ($use_custom && !empty($custom_title_meta) && $custom_title_meta != '#NONE#'){
+    	$custom_title = get_post_meta($post->ID, $custom_title_meta, true);
+    	$story[] = array(
+	        'tag' => 'title',
+	        'text' => $custom_title,
+	    );
+    }
+    else {
+	    $story[] = array(
+	        'tag' => 'title',
+	        'text' => $post->post_title,
+	    );
+    }
+    
+    $custom_byline_meta = get_option('ds_npr_api_mapping_byline');
+    if ($use_custom && !empty($custom_byline_meta) && $custom_byline_meta != '#NONE#'){
+    	$custom_byline = get_post_meta($post->ID, $custom_byline_meta, true);
+    	$story[] = array(
+	        'tag' => 'byline',
+	        'text' => $custom_byline,
+	    );
+    }
+    else {
+	    $story[] = array(
+	        'tag' => 'byline',
+	        'text' => get_the_author_meta( 'display_name', $post->post_author ),
+	    );
+    }
     #'miniTeaser' => array( 'text' => '' ),
     #'slug' => array( 'text' => '' ),
     $story[] = array(
@@ -67,19 +107,25 @@ function post_to_nprml_story( $post ) {
 			'post_type' => 'attachment'
 			);		
 			$images = get_children( $args );
+			$primary_image = get_post_thumbnail_id($post->ID);
 			
 			foreach ($images as $image){
+				$image_type = 'standard';
+				if ($image->ID == $primary_image){
+					$image_type = 'primary';
+				}
 				$story[] = array( 
 					'tag' => 'image',
-					'attr' => array( 'src' => $image->guid ), 
+					'attr' => array( 'src' => $image->guid, 'type' => $image_type ), 
 					'children' => array ( array(
 							'tag' => 'title',
 							'text' => $image->post_title,
-					)),
-					'children' => array ( array(
-						'tag' => 'caption',
-						'text' => $image->post_excerpt,
- 					)),
+							),
+							array(
+								'tag' => 'caption',
+								'text' => $image->post_excerpt,
+ 					)
+						),
 				);
 			}
 			
@@ -118,8 +164,6 @@ function split_paragraphs( $html ) {
     $parts = array_filter( 
         array_map( 'trim', preg_split( "/<\/?p>/", $html ) ) 
     );
-    // XXX: for testing purposes
-    //$parts[] = 'From ' . get_bloginfo( 'name' ) . ', part of the Argo Network.';
     $graphs = array();
     $num = 1;
     foreach ( $parts as $part ) {
