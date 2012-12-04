@@ -79,6 +79,13 @@ class NPRAPIWordpress extends NPRAPI {
     }
   }
   
+  /**
+   * 
+   * This function will go through the list of stories in the object and check to see if there are updates
+   * available from the NPR API if the pubDate on the API is after the pubDate originally stored locally.
+   * 
+   * @param unknown_type $publish
+   */
 	function update_posts_from_stories($publish = TRUE ) {
 
 		if (!empty($this->stories)){
@@ -86,7 +93,7 @@ class NPRAPIWordpress extends NPRAPI {
 			if (sizeof($this->stories) > 1){
 				$single_story = FALSE;
 			}
-			foreach ($this->stories as $story) { 
+			foreach ($this->stories as $story) {
 				
 	        $exists = new WP_Query( array( 'meta_key' => NPR_STORY_ID_META_KEY, 
 	                                       'meta_value' => $story->id ) );
@@ -110,7 +117,12 @@ class NPRAPIWordpress extends NPRAPI {
 	        }
 	        else {
 	            $existing = null;
-	        }	        
+	        }
+    
+	        //add the transcript
+	        
+					$story->body .= $this->get_transcript_body($story);
+
 	        //set the story as draft, so we don't try ingesting it
 	        $args = array(
 	            'post_title'   => $story->title,
@@ -242,6 +254,11 @@ class NPRAPIWordpress extends NPRAPI {
 		return as_nprml($post);
   }
 
+  /**
+   * This function will send the push request to the NPR API to add/update a story.
+   * 
+   * @see NPRAPI::send_request()
+   */
   function send_request ($nprml, $post_ID) {
 		$error_text = '';
   	$org_id = get_option( 'ds_npr_api_org_id' );
@@ -283,6 +300,13 @@ class NPRAPIWordpress extends NPRAPI {
   
   }
 
+  /**
+   * 
+   * Because wordpress doesn't offer a method=DELETE for wp_remote_post, we needed to write a curl version to send delete 
+   * requests to the NPR API
+   * 
+   * @param  $api_id
+   */
   function send_delete($api_id){
   	
   	$url = add_query_arg( array( 
@@ -302,4 +326,31 @@ class NPRAPIWordpress extends NPRAPI {
 		
   }
 
+  /**
+   * 
+   * This function will check a story to see if there are transcripts that should go with it, if there are
+   * we'll return the transcript as one big strang with Transcript at the top and each paragraph separated by <p>
+   * 
+   * @param  $story
+   */
+  function get_transcript_body($story){
+  	$transcript_body = "";
+	  if (!empty($story->transcript)){
+	  	foreach ($story->transcript as $transcript){
+	    	if ($transcript->type == 'api'){
+			  	$response = wp_remote_get( $transcript->value );
+    			if( !is_wp_error( $response ) ) {
+    				$transcript_body .= "<p><strong>Transcript :</strong><p>";
+    				$body_xml = simplexml_load_string($response['body']);
+    				if (!empty($body_xml->paragraph)){
+	    				foreach($body_xml->paragraph as $paragraph){
+	    					$transcript_body .= (strip_tags($paragraph)) . '<p>';
+	    				}
+    				}
+    			}
+	    	}
+	  	}
+	  }
+	  return $transcript_body;
+  }
 }
