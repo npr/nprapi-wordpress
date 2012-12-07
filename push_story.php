@@ -9,11 +9,18 @@ require_once ('classes/NPRAPIWordpress.php');
  * @param unknown_type $post
  */
 function npr_push ( $post_ID, $post ) {
+	$push_post_type = get_option('ds_npr_push_post_type');
+	if (empty($push_post_type)){
+		$push_post_type = 'post';
+	}
+	
+	
 	//if the push url isn't set, don't even try to push.
 	$push_url = get_option( 'ds_npr_api_push_url' );
+
 	if (!empty ($push_url)){
 		// For now, only submit regular posts, and only on publish.
-		if ( $post->post_type != 'post' || $post->post_status != 'publish' ) {
+		if ( $post->post_type != $push_post_type || $post->post_status != 'publish' ) {
 			return;
 		}
 		if (empty($post->post_content)){
@@ -42,12 +49,17 @@ function npr_push ( $post_ID, $post ) {
  * @param unknown_type $post_ID
  */
 function npr_delete ( $post_ID ) {
+	$push_post_type = get_option('ds_npr_push_post_type');
+	if (empty($push_post_type)){
+		$push_post_type = 'post';
+	}
+	
 	$api_id_meta = get_post_meta($post_ID, NPR_STORY_ID_META_KEY);
 	$api_id = $api_id_meta[0];
 	$post = get_post($post_ID);
 	//if the push url isn't set, don't even try to delete.
 	$push_url = get_option( 'ds_npr_api_push_url' );
-	if (!empty ($push_url) && !empty($api_id)){
+	if ($post->post_type == $push_post_type && !empty ($push_url) && !empty($api_id)){
 		// For now, only submit regular posts, and only on publish.
 		if ( $post->post_type != 'post' || $post->post_status != 'publish' ) {
 			return;
@@ -177,25 +189,38 @@ function ds_npr_api_use_custom_mapping_callback(){
 /**
  * callback for title mapping
  */
-function ds_npr_api_mapping_title_callback() { 
-	 $keys = ds_npr_get_post_meta_keys();
-	 ds_npr_show_keys_select('ds_npr_api_mapping_title', $keys);
+function ds_npr_api_mapping_title_callback() {
+	$push_post_type = get_option('ds_npr_push_post_type');
+	if (empty($push_post_type)){
+		$push_post_type = 'post';
+	}
+	
+	$keys = ds_npr_get_post_meta_keys($push_post_type);
+	ds_npr_show_keys_select('ds_npr_api_mapping_title', $keys);
 }
 
 /**
  * callback for body mapping
  */
-function ds_npr_api_mapping_body_callback() { 
-	 $keys = ds_npr_get_post_meta_keys();
-	 ds_npr_show_keys_select('ds_npr_api_mapping_body', $keys);
+function ds_npr_api_mapping_body_callback() {
+	$push_post_type = get_option('ds_npr_push_post_type');
+	if (empty($push_post_type)){
+		$push_post_type = 'post';
+	}
+	$keys = ds_npr_get_post_meta_keys($push_post_type);
+	ds_npr_show_keys_select('ds_npr_api_mapping_body', $keys);
 }
 
 /**
  * callback for byline mapping
  */
-function ds_npr_api_mapping_byline_callback() { 
-	 $keys = ds_npr_get_post_meta_keys();
-	 ds_npr_show_keys_select('ds_npr_api_mapping_byline', $keys);
+function ds_npr_api_mapping_byline_callback() {
+	$push_post_type = get_option('ds_npr_push_post_type');
+	if (empty($push_post_type)){
+		$push_post_type = 'post';
+	}
+	$keys = ds_npr_get_post_meta_keys($push_post_type);
+	ds_npr_show_keys_select('ds_npr_api_mapping_byline', $keys);
 }
 
 /**

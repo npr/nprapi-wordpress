@@ -40,6 +40,9 @@ define( 'NPR_PUSH_STORY_ERROR', 'npr_push_story_error');
 define('NPR_MAX_QUERIES', 10);
 
 define('DS_NPR_PLUGIN_FILE', plugin_dir_path(__FILE__) );
+
+define('NPR_POST_TYPE', 'npr_story_post');
+
 require_once( 'settings.php' );
 require_once('classes/NPRAPIWordpress.php');
 
@@ -95,3 +98,19 @@ function ds_npr_show_message($message, $errormsg = false)
 }   
 require_once('push_story.php');
 
+
+add_action( 'init', 'ds_npr_create_post_type' );
+function ds_npr_create_post_type() {
+	register_post_type( NPR_POST_TYPE,
+		array(
+			'labels' => array(
+				'name' => __( 'NPR Stories' ),
+				'singular_name' => __( 'NPR Story' ),
+			),
+		'public' => true,
+		'has_archive' => true,
+		'menu_position' => 5,
+		'supports' => array( 'title', 'editor', 'thumbnail', 'custom-fields' ),
+		)
+	);
+}

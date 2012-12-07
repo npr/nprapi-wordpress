@@ -13,6 +13,13 @@ register_deactivation_hook(DS_NPR_PLUGIN_FILE, array ('DS_NPR_API','ds_npr_story
 
 	var $created_message = '';
 
+	public static function ds_npr_get_pull_post_type (){
+		$pull_post_type = get_option('ds_npr_pull_post_type');
+		if (empty($pull_post_type)){
+			$pull_post_type = 'post';
+		}
+		return $pull_post_type;
+	}
 	public static function ds_npr_story_cron_pull() {
 		// here we should get the list of IDs/full urls that need to be checked hourly
 
@@ -95,7 +102,6 @@ register_deactivation_hook(DS_NPR_PLUGIN_FILE, array ('DS_NPR_API','ds_npr_story
             $api->parse();
             
             if (empty($api->message) || ($api->message->level != 'warning')){
-            	$story = $api->update_posts_from_stories($publish);
             	$post_id = $api->update_posts_from_stories($publish);
             	if (!empty($post_id)){
 	            	//redirect to the edit page if we just updated one story

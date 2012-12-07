@@ -87,6 +87,10 @@ class NPRAPIWordpress extends NPRAPI {
    * @param unknown_type $publish
    */
 	function update_posts_from_stories($publish = TRUE ) {
+		$pull_post_type = get_option('ds_npr_pull_post_type');;
+		if (empty($pull_post_type)){
+			$pull_post_type = 'post';
+		}
 
 		if (!empty($this->stories)){
 			$single_story = TRUE;
@@ -94,15 +98,13 @@ class NPRAPIWordpress extends NPRAPI {
 				$single_story = FALSE;
 			}
 			foreach ($this->stories as $story) {
-				
 	        $exists = new WP_Query( array( 'meta_key' => NPR_STORY_ID_META_KEY, 
-	                                       'meta_value' => $story->id ) );
+	                                       'meta_value' => $story->id,
+	        															 'post_type' => $pull_post_type ) );
 	        //set the mod_date and pub_date to now so that for a new story we will fail the test below and do the update
 	        $post_mod_date = strtotime(date('Y-m-d H:i:s'));
 	        $post_pub_date = $post_mod_date;
-	        
 	        if ( $exists->post_count ) {
-	            // XXX: might be more than one here;
 	            $existing = $exists->post;
 	            $post_id = $existing->ID;	            
 	            $existing_status = $exists->posts[0]->post_status;
@@ -128,7 +130,8 @@ class NPRAPIWordpress extends NPRAPI {
 	            'post_title'   => $story->title,
 	            'post_excerpt' => $story->teaser,
 	            'post_content' => $story->body,
-	        		'post_status'  => 'draft'
+	        		'post_status'  => 'draft',
+	        		'post_type'    => $pull_post_type,
 	        );
 					//check the last modified date and pub date (sometimes the API just updates the pub date), if the story hasn't changed, just go on
 					if (($post_mod_date != strtotime($story->lastModifiedDate->value))  || ($post_pub_date !=  strtotime($story->pubDate->value)) ){
@@ -211,7 +214,8 @@ class NPRAPIWordpress extends NPRAPI {
 		        $args = array(
 		        		'post_title'   => $story->title,
 		            'post_content' => $story->body,
-		        		'post_excerpt' => $story->teaser,    
+		        		'post_excerpt' => $story->teaser,
+		        		'post_type'    => $pull_post_type,  
 		            'ID'   => $post_id,
 		        );
 					 //now set the status
