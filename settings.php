@@ -117,7 +117,7 @@ function ds_npr_pull_post_type_callback() {
 function ds_npr_push_post_type_callback() {
 	$post_types = get_post_types();
 	ds_npr_show_post_types_select('ds_npr_push_post_type', $post_types);
-		echo ('<div> If you change the Push Post Type setting remember to change the mappings for API Fields at <a href="' . admin_url('options-general.php?page=ds_npr_api_push_mapping') . '">NPR API Field Mapping </a> page.</div>');
+		echo ('<div> If you change the Push Post Type setting remember to update the mappings for API Fields at <a href="' . admin_url('options-general.php?page=ds_npr_api_push_mapping') . '">NPR API Field Mapping </a> page.</div>');
 	
 }
 
