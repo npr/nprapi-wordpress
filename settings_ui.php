@@ -41,6 +41,8 @@ function ds_npr_add_field_mapping_page(){
 	?>
 	<form action="options.php" method="post">
 	<div>Use this page to map your custom WordPress Meta fields to fields sent the NPR API.  <P>Clicking the <strong>Use Custom Settings</strong> checkbox will enable these mappings.  If you wish to use the default mapping for a field, select &mdash; default &mdash; and we will use the obvious WordPress field. </div>
+	<p>
+	<div>Select for the Meta fields for the <strong> <?php echo ds_npr_get_push_post_type(); ?></strong> post type</div>
 	<?php
 	
 	settings_fields('ds_npr_api_push_mapping');

@@ -18,6 +18,7 @@ function as_nprml( $post ) {
  * 
  * Do the mapping from WP post to the array that we're going to build the NPRML from.  
  * This is also where we will do custom mapping if need be.
+ * If a mapped custom field does not exist in a certain post, just send the default field.
  * @param  $post
  */
 function post_to_nprml_story( $post ) {
@@ -29,8 +30,11 @@ function post_to_nprml_story( $post ) {
     );
     $use_custom = get_option('dp_npr_push_use_custom_map');
     
+    //get the list of metas available for this post
+    $post_metas = get_post_custom_keys($post->ID);
+    
     $custom_content_meta = get_option('ds_npr_api_mapping_body');
-    if ($use_custom && !empty($custom_content_meta) && $custom_content_meta != '#NONE#'){
+    if ($use_custom && !empty($custom_content_meta) && $custom_content_meta != '#NONE#' && in_array($custom_content_meta,$post_metas)){
     	$content = get_post_meta($post->ID, $custom_content_meta, true);
     	$post_for_teaser = $post;
     	$post_for_teaser->post_content = $content;
@@ -47,7 +51,7 @@ function post_to_nprml_story( $post ) {
         'text' => $teaser_text,
     );
     $custom_title_meta = get_option('ds_npr_api_mapping_title');
-    if ($use_custom && !empty($custom_title_meta) && $custom_title_meta != '#NONE#'){
+    if ($use_custom && !empty($custom_title_meta) && $custom_title_meta != '#NONE#' && in_array($custom_content_meta,$post_metas)){
     	$custom_title = get_post_meta($post->ID, $custom_title_meta, true);
     	$story[] = array(
 	        'tag' => 'title',
@@ -62,7 +66,7 @@ function post_to_nprml_story( $post ) {
     }
     
     $custom_byline_meta = get_option('ds_npr_api_mapping_byline');
-    if ($use_custom && !empty($custom_byline_meta) && $custom_byline_meta != '#NONE#'){
+    if ($use_custom && !empty($custom_byline_meta) && $custom_byline_meta != '#NONE#' && in_array($custom_content_meta,$post_metas)){
     	$custom_byline = get_post_meta($post->ID, $custom_byline_meta, true);
     	$story[] = array(
 	        'tag' => 'byline',

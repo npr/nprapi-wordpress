@@ -111,19 +111,25 @@ function ds_npr_api_push_mapping_callback() { }
  * @param  $post_type
  */
 function ds_npr_push_meta_keys($post_type = 'post'){
+	
   global $wpdb;
   $limit = (int) apply_filters( 'postmeta_form_limit', 30 );
-	$keys = $wpdb->get_col( "
-		SELECT meta_key
-		FROM $wpdb->postmeta
-		GROUP BY meta_key
-		HAVING meta_key NOT LIKE '\_%'
-		ORDER BY meta_key
-		LIMIT $limit" );
+
+  $query = "
+        SELECT DISTINCT($wpdb->postmeta.meta_key) 
+        FROM $wpdb->posts 
+        LEFT JOIN $wpdb->postmeta 
+        ON $wpdb->posts.ID = $wpdb->postmeta.post_id 
+        WHERE $wpdb->posts.post_type = '%s' 
+        AND $wpdb->postmeta.meta_key != '' 
+        AND $wpdb->postmeta.meta_key NOT RegExp '(^[_0-9].+$)' 
+        AND $wpdb->postmeta.meta_key NOT RegExp '(^[0-9]+$)'
+    ";
+  $keys = $wpdb->get_col($wpdb->prepare($query, $post_type));
 	if ( $keys )
 		natcasesort($keys);
 
-  set_transient('ds_npr_' .  $post_type .'_meta_keys', $keys, 60*60*24); # 1 Day Expiration
+  //set_transient('ds_npr_' .  $post_type .'_meta_keys', $keys, 60*60*24); # 1 Day Expiration
   return $keys;
 }
 
@@ -134,7 +140,7 @@ function ds_npr_push_meta_keys($post_type = 'post'){
  * @param  $post_type default is 'post'
  */
 function ds_npr_get_post_meta_keys($post_type = 'post'){
-    $cache = get_transient('ds_npr_' .  $post_type .'_meta_keys');
+    //$cache = get_transient('ds_npr_' .  $post_type .'_meta_keys');
     if (!empty($cache)){
     	$meta_keys = $cache;
     }
@@ -190,10 +196,7 @@ function ds_npr_api_use_custom_mapping_callback(){
  * callback for title mapping
  */
 function ds_npr_api_mapping_title_callback() {
-	$push_post_type = get_option('ds_npr_push_post_type');
-	if (empty($push_post_type)){
-		$push_post_type = 'post';
-	}
+	$push_post_type = ds_npr_get_push_post_type();
 	
 	$keys = ds_npr_get_post_meta_keys($push_post_type);
 	ds_npr_show_keys_select('ds_npr_api_mapping_title', $keys);
@@ -203,10 +206,7 @@ function ds_npr_api_mapping_title_callback() {
  * callback for body mapping
  */
 function ds_npr_api_mapping_body_callback() {
-	$push_post_type = get_option('ds_npr_push_post_type');
-	if (empty($push_post_type)){
-		$push_post_type = 'post';
-	}
+	$push_post_type = ds_npr_get_push_post_type();
 	$keys = ds_npr_get_post_meta_keys($push_post_type);
 	ds_npr_show_keys_select('ds_npr_api_mapping_body', $keys);
 }
@@ -215,10 +215,7 @@ function ds_npr_api_mapping_body_callback() {
  * callback for byline mapping
  */
 function ds_npr_api_mapping_byline_callback() {
-	$push_post_type = get_option('ds_npr_push_post_type');
-	if (empty($push_post_type)){
-		$push_post_type = 'post';
-	}
+	$push_post_type = ds_npr_get_push_post_type();
 	$keys = ds_npr_get_post_meta_keys($push_post_type);
 	ds_npr_show_keys_select('ds_npr_api_mapping_byline', $keys);
 }
@@ -248,3 +245,10 @@ function ds_npr_show_keys_select($field_name, $keys){
 	
 }
 
+function ds_npr_get_push_post_type() {
+	$push_post_type = get_option('ds_npr_push_post_type');
+	if (empty($push_post_type)){
+		$push_post_type = 'post';
+	}
+	return $push_post_type;
+}
