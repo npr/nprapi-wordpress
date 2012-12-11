@@ -1,0 +1,14 @@
+V1.2 Release Notes
+This version of the Wordpress NPR API Plugin will have changes to enhance our error messages when there are connectivity or permissions issues with your NPR API work.  We have also included the ability for admins to map custom Meta fields to certain Post fields that are pushed to the NPR API.  And finally, we've add the ability to retrieve transcripts for stories that have transcripts associated with them.
+
+
+Better Error messages - We've gone through lots of our possible error scenarios when connecting with the NPR API.  For story pull we've moved our error messages to the UI to better keep the admin informed of possible issues.
+   For story push, where the WP redirect to the edit form after save prohibits us from writing error messages to the screen, we've created a meta field for the post named NPR_PUSH_STORY_ERROR.  This will be displayed under custom fields if an error occurred while pushing a story to the NPR API. 
+
+Mapping push fields -   For story push, an admin can now map any of their custom meta fields to the the three fields we are supporting for story push, namely story body, title and byline.  And admin can make this mappings from the settings page named NPR API Field Mapping (wp-admin/options-general.php?page=ds_npr_api_push_mapping) and from there map any of their custom meta fields for Post content type to be used instead of the default fields of the post object.
+
+Transcripts -  Many NPR API stories contain transcripts from the program segment they are referencing.  Transcripts are stored in a separate API at NPR, but now when a story you have pulled from the NPR API has transcripts that transcript data will be appended to the body of your post.
+
+Custom Post Types -  Now the NPR API Plug-in can use your custom post types.  We will also create a custom post type for stories pulled from the NPR API.  From the NPR API settings page (wp-admin/options-general.php?page=ds_npr_api) you can now select which post type you would like the plug-in to pull content into.  For your convenience we also created npr_story_post.  You do not have to use it.  You can also select which post type you will push to the NPR API.  If neither of these options are set, we will use the post, post type.
+
+Mapping Push Fields -  You can now map any custom fields to Title, Body and Byline for posts being pushed to the NPR API.  From the NPR API Field Mapping page (wp-admin/options-general.php?page=ds_npr_api_push_mapping) you can select which meta fields are used from your selected post type for push, to be sent to the API for Title, Body and Byline.  You can also leave this with the default setting, or not check the "Use Custom Settings" checkbox, and the plug-in will use the default WordPress fields.
