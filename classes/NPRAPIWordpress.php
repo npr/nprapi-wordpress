@@ -57,7 +57,7 @@ class NPRAPIWordpress extends NPRAPI {
     if( !is_wp_error( $response ) ) {
 	    $this->response = $response;
 	    if ($response['response']['code'] == self::NPRAPI_STATUS_OK) {
-	    	
+
 	      if ($response['body']) {
 	        $this->xml = $response['body'];
 	      }
@@ -122,7 +122,7 @@ class NPRAPIWordpress extends NPRAPI {
 	        }
     
 	        //add the transcript
-	        
+
 					$story->body .= $this->get_transcript_body($story);
 
 	        //set the story as draft, so we don't try ingesting it
@@ -139,7 +139,7 @@ class NPRAPIWordpress extends NPRAPI {
 		        if (isset($story->byline->name->value)){
 		        	$by_line = $story->byline->name->value;
 		        }
-		        
+
 		        //set the meta RETRIEVED so when we publish the post, we dont' try ingesting it
 		        $metas = array(
 		            NPR_STORY_ID_META_KEY      => $story->id,
@@ -155,15 +155,19 @@ class NPRAPIWordpress extends NPRAPI {
 		        );
 		        //get audio
 		        if ( isset($story->audio) ) {
-		        	foreach ($story->audio as $audio){
-								if (isset($audio->format->mp3['mp3'])){
-									if ($audio->format->mp3['mp3']->type == 'mp3' && $audio->permissions->download->allow == 'true' ){	
-			 	       			$metas[NPR_AUDIO_META_KEY][] =  $audio->format->mp3['mp3']->value;
+		        	foreach ($story->audio as $n => $audio){
+								if (!empty($audio->format->mp3['mp3']) && $audio->permissions->download->allow == 'true'){
+									if ($audio->format->mp3['mp3']->type == 'mp3' ){
+										$mp3_array[] = $audio->format->mp3['mp3']->value;	
+									}
+									if ($audio->format->mp3['m3u']->type == 'm3u' ){
+			 	       			$m3u_array[] = $audio->format->mp3['m3u']->value;
 									}
 								}
 		        	}
+		        	$metas[NPR_AUDIO_META_KEY] =  implode(',', $mp3_array);
+		        	$metas[NPR_AUDIO_M3U_META_KEY] = implode(',', $m3u_array); 
 		        }
-		        
 		        if ( $existing ) {
 		            $created = false;
 		            $args[ 'ID' ] = $existing->ID;
@@ -172,13 +176,13 @@ class NPRAPIWordpress extends NPRAPI {
 		            $created = true;
 		        }
 		        $post_id = wp_insert_post( $args );
-		
+
 		        //now that we have an id, we can add images
 		        //this is the way WP seems to do it, but we couldn't call media_sideload_image or media_ because that returned only the URL
 		        //for the attachment, and we want to be able to set the primary image, so we had to use this method to get the attachment ID.
 						if (isset($story->image[0])){
 		        	foreach ($story->image as $image){
-		        		
+
 		        		// Download file to temp location
 		            $tmp = download_url( $image->src );
 		            // Set variables for storage
@@ -186,31 +190,31 @@ class NPRAPIWordpress extends NPRAPI {
 		            preg_match('/[^\?]+\.(jpg|JPG|jpe|JPE|jpeg|JPEG|gif|GIF|png|PNG)/', $image->src, $matches);
 		            $file_array['name'] = basename($matches[0]);
 		            $file_array['tmp_name'] = $tmp;
-		
+
 		            // If error storing temporarily, unlink
 		            if ( is_wp_error( $tmp ) ) {
 		            	@unlink($file_array['tmp_name']);
 		              $file_array['tmp_name'] = '';
 		            }
-		
+
 		            // do the validation and storage stuff
 		            $id = media_handle_sideload( $file_array, $post_id, $image->title->value );
 		            // If error storing permanently, unlink
 		            if ( is_wp_error($id) ) {
 		            	@unlink($file_array['tmp_name']);
 		            }
-		
+
 		            //set the primary image
 		            if ($image->type == 'primary'){
 		            	add_post_meta($post_id, '_thumbnail_id', $id, true);
 		            }
-		        		
+
 		        	}
 		        }
 		        foreach ( $metas as $k => $v ) {
 		            update_post_meta( $post_id, $k, $v );
 		        }
-		       
+
 		        $args = array(
 		        		'post_title'   => $story->title,
 		            'post_content' => $story->body,
@@ -238,7 +242,7 @@ class NPRAPIWordpress extends NPRAPI {
 				return $post_id;
 			}
 		}
-		
+
     return;
 	}
 
@@ -271,7 +275,7 @@ class NPRAPIWordpress extends NPRAPI {
 	        'orgId'  => $org_id,
 	        'apiKey' => get_option( 'ds_npr_api_key' )
 	    ), get_option( 'ds_npr_api_push_url' ) . '/story' );
-	
+
 	    $result = wp_remote_post( $url, array( 'body' => $nprml ) );
 	    if(  $result['response']['code'] == 200 ) {
 		    $body = wp_remote_retrieve_body( $result );
@@ -327,7 +331,7 @@ class NPRAPIWordpress extends NPRAPI {
 	  curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_exec( $handle );
 		curl_close( $handle );
-		
+
   }
 
   /**

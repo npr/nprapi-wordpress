@@ -31,6 +31,7 @@ define( 'NPR_STORY_CONTENT_META_KEY', 'npr_story_content' );
 define( 'NPR_BYLINE_META_KEY', 'npr_byline' );
 define( 'NPR_IMAGE_GALLERY_META_KEY', 'npr_image_gallery');
 define( 'NPR_AUDIO_META_KEY', 'npr_audio');
+define( 'NPR_AUDIO_M3U_META_KEY', 'npr_audio_m3u');
 define( 'NPR_PUB_DATE_META_KEY', 'npr_pub_date');
 define( 'NPR_STORY_DATE_MEATA_KEY', 'npr_story_date');
 define( 'NPR_LAST_MODIFIED_DATE_KEY', 'npr_last_modified_date');
