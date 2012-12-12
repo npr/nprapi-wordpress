@@ -155,15 +155,19 @@ class NPRAPIWordpress extends NPRAPI {
 		        );
 		        //get audio
 		        if ( isset($story->audio) ) {
-		        	foreach ($story->audio as $audio){
-								if (isset($audio->format->mp3['mp3'])){
-									if ($audio->format->mp3['mp3']->type == 'mp3' && $audio->permissions->download->allow == 'true' ){	
-			 	       			$metas[NPR_AUDIO_META_KEY][] =  $audio->format->mp3['mp3']->value;
+		        	foreach ($story->audio as $n => $audio){
+								if (!empty($audio->format->mp3['mp3']) && $audio->permissions->download->allow == 'true'){
+									if ($audio->format->mp3['mp3']->type == 'mp3' ){
+										$mp3_array[] = $audio->format->mp3['mp3']->value;	
+									}
+									if ($audio->format->mp3['m3u']->type == 'm3u' ){
+			 	       			$m3u_array[] = $audio->format->mp3['m3u']->value;
 									}
 								}
 		        	}
+		        	$metas[NPR_AUDIO_META_KEY] =  implode(',', $mp3_array);
+		        	$metas[NPR_AUDIO_M3U_META_KEY] = implode(',', $m3u_array); 
 		        }
-		        
 		        if ( $existing ) {
 		            $created = false;
 		            $args[ 'ID' ] = $existing->ID;

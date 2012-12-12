@@ -99,14 +99,16 @@ function ds_npr_bulk_action_update_action() {
         global $is_IE;
         $api_key =  get_option('ds_npr_api_key');
         $pull_url = get_option('ds_npr_api_pull_url');
+        
+        
 ?>
         <div class="wrap">
             <?php screen_icon(); ?>
-            <h2>Get NPR Stories</h2>
-            <?php if ( ! $api_key ) : ds_npr_show_message ('You do not currently have an API Key set.  <a href="' . menu_page_url( 'npr_api' ) . '">Set your API Key here.</a>', TRUE);?>
+            <h2>Get NPR Stories</h2>  
+            <?php if ( ! $api_key ) : ds_npr_show_message ('You do not currently have an API Key set.  <a href="' . admin_url('options-general.php?page=ds_npr_api') . '">Set your API Key here.</a>', TRUE);?>
             <?php endif;
 
-            if ( ! $pull_url ) : ds_npr_show_message ('You do not currently have an API Pull URL set.  <a href="' . menu_page_url( 'npr_api' ) . '">Set your API Pull URL here.</a>', TRUE);?>    
+            if ( ! $pull_url ) : ds_npr_show_message ('You do not currently have an API Pull URL set.  <a href="' . admin_url('options-general.php?page=ds_npr_api') . '">Set your API Pull URL here.</a>', TRUE);?>    
             <?php endif;
             $story_id = '';
             if ( ( isset( $_POST ) and isset( $_POST[ 'story_id' ] ) ) || ( isset( $_GET) && isset( $_GET['story_id'] ) ) ): ?>
