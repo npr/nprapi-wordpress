@@ -252,3 +252,23 @@ function ds_npr_get_push_post_type() {
 	}
 	return $push_post_type;
 }
+
+function ds_npr_get_permission_groups(){
+	
+$perm_groups = '';
+	//query the API for the lists for this org.
+	$perm_url = get_option('ds_npr_api_push_url') . '/orgs/' . get_option('ds_npr_api_org_id') . '/groups'.'?apiKey='. get_option('ds_npr_api_key');;
+	$http_result = wp_remote_get($perm_url);
+	if( !is_wp_error( $http_result ) ) {
+		$perm_groups_objs = json_decode($http_result['body']);
+		foreach($perm_groups_objs as $pg){
+			$perm_groups[$pg->group_id]['name'] = $pg->name;
+		}
+	}
+	else {
+		$perm_groups = -1;
+	}
+	//var_dump($perm_groups);
+	//exit;
+	return $perm_groups;
+}

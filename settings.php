@@ -70,6 +70,9 @@ function ds_npr_settings_init() {
     
     add_settings_field( 'ds_npr_push_post_type', 'NPR Push Post Type', 'ds_npr_push_post_type_callback', 'ds_npr_api', 'ds_npr_api_settings' );
     register_setting( 'ds_npr_api', 'ds_npr_push_post_type' );
+    
+    add_settings_field( 'ds_npr_story_default_permission', 'NPR Permissions', 'ds_npr_push_story_permissions_callback', 'ds_npr_api', 'ds_npr_api_settings' );
+    register_setting( 'ds_npr_api', 'ds_npr_story_default_permission' );
 
 }
 add_action( 'admin_init', 'ds_npr_settings_init' );
@@ -121,11 +124,20 @@ function ds_npr_push_post_type_callback() {
 	
 }
 
+function ds_npr_push_story_permissions_callback() {
+	$permissions_groups = ds_npr_get_permission_groups();
+	
+	ds_npr_show_perms_select('ds_npr_story_default_permission', $permissions_groups);
+	
+		echo ('<div> This is where you select the default permissions group to use when pushing stories to the NPR API.</div>');
+	
+}
+
  /**
  * 
- * create the select widget of all meta fields
+ * create the select widget where the Id is the value in the array
  * @param  $field_name
- * @param  $keys
+ * @param  $keys - an array like (1=>'Value1', 2=>'Value2', 3=>'Value3');
  */
 function ds_npr_show_post_types_select($field_name, $keys){
 	
@@ -140,6 +152,29 @@ function ds_npr_show_post_types_select($field_name, $keys){
 			$option_string .= " selected ";
 		}
 		$option_string .=   "value='" . esc_attr($key) . "'>" . esc_html($key) . " </option>";
+		echo $option_string;
+	}
+	echo "</select> </div>";
+	
+}
+
+/**
+ * 
+ * create the select widget where the ID for an element is the index to the array
+ * @param  $field_name
+ * @param  $keys an array like (id1=>'Value1', id2=>'Value2', id3=>'Value3');
+ */
+function ds_npr_show_perms_select($field_name, $keys){
+	$selected = get_option($field_name);
+	echo "<div><select id=" . $field_name . " name=" . $field_name . ">";
+	
+	echo '<option value=""> &mdash; Select &mdash; </option>'; 
+	foreach ( $keys as $id => $key ) {
+		$option_string = "\n<option  ";
+		if ($id == $selected) {
+			$option_string .= " selected ";
+		}
+		$option_string .=   "value='" . esc_attr($id) . "'>" . esc_html($key['name']) . " </option>";
 		echo $option_string;
 	}
 	echo "</select> </div>";
