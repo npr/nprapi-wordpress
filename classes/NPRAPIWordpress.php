@@ -155,6 +155,8 @@ class NPRAPIWordpress extends NPRAPI {
 		        );
 		        //get audio
 		        if ( isset($story->audio) ) {
+		        	$mp3_array = array();
+		        	$m3u_array = array();
 		        	foreach ($story->audio as $n => $audio){
 								if (!empty($audio->format->mp3['mp3']) && $audio->permissions->download->allow == 'true'){
 									if ($audio->format->mp3['mp3']->type == 'mp3' ){
@@ -181,6 +183,20 @@ class NPRAPIWordpress extends NPRAPI {
 		        //this is the way WP seems to do it, but we couldn't call media_sideload_image or media_ because that returned only the URL
 		        //for the attachment, and we want to be able to set the primary image, so we had to use this method to get the attachment ID.
 						if (isset($story->image[0])){
+							
+							//are there any images saved for this post, probably on update, but no sense looking of the post didn't already exist
+							if ($existing){
+								$image_args = array(
+									'order'=> 'ASC',
+									'post_mime_type' => 'image',
+									'post_parent' => $post_id,
+									'post_status' => null,
+									'post_type' => 'attachment'
+									);
+								$attached_images = get_children( $image_args );
+							}
+							
+							
 		        	foreach ($story->image as $image){
 
 		        		// Download file to temp location
@@ -191,10 +207,12 @@ class NPRAPIWordpress extends NPRAPI {
 		            $file_array['name'] = basename($matches[0]);
 		            $file_array['tmp_name'] = $tmp;
 
+		            $file_OK = TRUE;
 		            // If error storing temporarily, unlink
 		            if ( is_wp_error( $tmp ) ) {
 		            	@unlink($file_array['tmp_name']);
 		              $file_array['tmp_name'] = '';
+		              $file_OK = FALSE;
 		            }
 
 		            // do the validation and storage stuff
@@ -202,10 +220,27 @@ class NPRAPIWordpress extends NPRAPI {
 		            // If error storing permanently, unlink
 		            if ( is_wp_error($id) ) {
 		            	@unlink($file_array['tmp_name']);
+		            	$file_OK - FALSE;
+		            }
+		            else {
+		            	$image_post = get_post($id);
+		            	if (!empty($attached_images)) {
+			            	foreach($attached_images as $att_image){
+			            			//see if the filename is very similar
+			            			$att_guid = explode('.', $att_image->guid);
+			            			//so if the already attached image name is part of the name of the file
+			            			//coming in, ignore the new/temp file, it's probably the same
+			            			if (strstr($image_post->guid, $att_guid[0])){
+			            				@unlink($file_array['tmp_name']);
+			            				wp_delete_attachment($id);
+			            				$file_OK - FALSE;
+			            			}
+			            	}
+		            	}
 		            }
 
 		            //set the primary image
-		            if ($image->type == 'primary'){
+		            if ($image->type == 'primary' && $file_OK){
 		            	add_post_meta($post_id, '_thumbnail_id', $id, true);
 		            }
 

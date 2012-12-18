@@ -14,3 +14,4 @@ Mapping Push Fields -  You can now map any custom field to Title, Body or Byline
 
 Audio -  We are now going to be saving a link to .m3u files for stories with audio.  It seems that not all .mp3 files are always available, but more often than not the .m3u file is available.  If there are more than one .mp3 or .m3u file for one story, they will be included in a coma separated list.  M3U files will be stored in the meta field named npr_audio_m3u.
 
+BUG FIX -  We found a bug where if there was a story from the API that had images attached, and the story was updated on the API and you used the "Update" function, we would reload the images from the API creating duplicates.  This is now fixed and we will not download or attach images with the same name as the images that are already attached to a story.
