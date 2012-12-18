@@ -261,12 +261,14 @@ $perm_groups = '';
 	$http_result = wp_remote_get($perm_url);
 	if( !is_wp_error( $http_result ) ) {
 		$perm_groups_objs = json_decode($http_result['body']);
-		foreach($perm_groups_objs as $pg){
-			$perm_groups[$pg->group_id]['name'] = $pg->name;
+		if (!empty($perm_groups_objs) && !isset($perm_groups_objs->error)){
+			foreach($perm_groups_objs as $pg){
+				$perm_groups[$pg->group_id]['name'] = $pg->name;
+			}
 		}
 	}
 	else {
-		$perm_groups = -1;
+		$perm_groups = null;
 	}
 	//var_dump($perm_groups);
 	//exit;

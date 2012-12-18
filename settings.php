@@ -127,10 +127,14 @@ function ds_npr_push_post_type_callback() {
 function ds_npr_push_story_permissions_callback() {
 	$permissions_groups = ds_npr_get_permission_groups();
 	
-	ds_npr_show_perms_select('ds_npr_story_default_permission', $permissions_groups);
+	if (!empty($permissions_groups)){
+		ds_npr_show_perms_select('ds_npr_story_default_permission', $permissions_groups);
 	
 		echo ('<div> This is where you select the default permissions group to use when pushing stories to the NPR API.</div>');
-	
+	}
+	else {
+		echo ('<div> You have no Permission Groups defined with the NPR API. </div>');
+	}
 }
 
  /**

@@ -11,7 +11,9 @@ function as_nprml( $post ) {
         'tag' => 'list',
         'children' => array( array( 'tag' => 'story', 'children' => $story ), ),
     );
-    return array_to_xml( 'nprml', array( 'version' => '0.93' ), $doc );
+    $ret_xml = array_to_xml( 'nprml', array( 'version' => '0.93' ), $doc );
+    
+    return $ret_xml;
 }
 
 /**
@@ -102,6 +104,16 @@ function post_to_nprml_story( $post ) {
         'children' => split_paragraphs( $content ),
     );
 
+    $perms_group = get_option('ds_npr_story_default_permission');
+    if (!empty($perms_group)){
+     	$story[] = array(
+    			'tag' => 'permissions',
+    			'children' => array ( array( 
+    				'tag' => 'permGroup',
+    				'text' => $perms_group
+    			)),
+    	);
+    }
     $args = array(
 			'numberposts' => 1,
 			'order'=> 'ASC',
