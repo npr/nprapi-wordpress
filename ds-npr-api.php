@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP DS NPR API
  * Description: A collection of tools for reusing content from NPR.org supplied by Digital Services.
- * Version: 0.1
+ * Version: 1.3
  * Author: Kevin Moylan
  * License: GPLv2
 */
@@ -40,22 +40,43 @@ define( 'NPR_PUSH_STORY_ERROR', 'npr_push_story_error');
 
 define('NPR_MAX_QUERIES', 10);
 
-define('DS_NPR_PLUGIN_FILE', plugin_dir_path(__FILE__) );
+define('DS_NPR_PLUGIN_DIR', plugin_dir_path(__FILE__) );
 
 define('NPR_POST_TYPE', 'npr_story_post');
+require_once( DS_NPR_PLUGIN_DIR .'/settings.php' );
+require_once( DS_NPR_PLUGIN_DIR .'/classes/NPRAPIWordpress.php');
 
-require_once( 'settings.php' );
-require_once('classes/NPRAPIWordpress.php');
-
-require_once('get_stories.php');
+require_once( DS_NPR_PLUGIN_DIR .'/get_stories.php');
 //add the cron to get stories
-register_activation_hook(WP_PLUGIN_DIR.'/WP-DS-NPR-API/ds-npr-api.php', 'ds_npr_story_activation');
+register_activation_hook(DS_NPR_PLUGIN_DIR .'/ds-npr-api.php', 'ds_npr_story_activation');
 add_action('npr_ds_hourly_cron', array ('DS_NPR_API','ds_npr_story_cron_pull'));
-register_deactivation_hook(WP_PLUGIN_DIR.'/WP-DS-NPR-API/ds-npr-api.php', 'ds_npr_story_deactivation');
+register_deactivation_hook(DS_NPR_PLUGIN_DIR .'/ds-npr-api.php', 'ds_npr_story_deactivation');
 
 
-function ds_npr_story_activation() {		
+function ds_npr_story_activation() {
+	
+	global $wpdb;
+
+	if (function_exists('is_multisite') && is_multisite()) {
+	  // check if it is a network activation - if so, run the activation function for each blog id
+		$old_blog = $wpdb->blogid;
+		// Get all blog ids
+		$blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM $wpdb->blogs"));
+		foreach ($blogids as $blog_id) {
+			switch_to_blog($blog_id);
+			_ds_npr_activate();
+		}
+		switch_to_blog($old_blog);      
+	}
+	else {
+		_ds_npr_activate();
+	}
+}
+
+function _ds_npr_activate() {
+
 	if ( !wp_next_scheduled( 'npr_ds_hourly_cron' ) ) {
+		error_log('turning on cron event');
 		wp_schedule_event( time(), 'hourly', 'npr_ds_hourly_cron');
 	}
 
@@ -69,9 +90,30 @@ function ds_npr_story_activation() {
 	if (empty($push_url)){
 		update_option('ds_npr_api_push_url', $def_url);
 	}
+	
 }
 	
 function ds_npr_story_deactivation() {
+	global $wpdb;
+
+	if (function_exists('is_multisite') && is_multisite()) {
+	  // check if it is a network activation - if so, run the activation function for each blog id
+		$old_blog = $wpdb->blogid;
+		// Get all blog ids
+		$blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM $wpdb->blogs"));
+		foreach ($blogids as $blog_id) {
+			switch_to_blog($blog_id);
+			_ds_npr_deactivate();
+		}
+		switch_to_blog($old_blog);      
+	}
+	else {
+		_ds_npr_deactivate();
+	}
+}
+
+function _ds_npr_deactivate() {
+
 	wp_clear_scheduled_hook('npr_ds_hourly_cron');
 	
 	$num =  get_option('ds_npr_num');

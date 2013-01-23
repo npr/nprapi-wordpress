@@ -1,14 +1,8 @@
 <?php
-require_once( 'get_stories_ui.php' );
+require_once( DS_NPR_PLUGIN_DIR .'get_stories_ui.php' );
  
-require_once ('classes/NPRAPIWordpress.php');
+require_once ( DS_NPR_PLUGIN_DIR .'classes/NPRAPIWordpress.php');
 
-
-
-register_activation_hook(DS_NPR_PLUGIN_FILE, array ('DS_NPR_API','ds_npr_story_activation'));
-add_action('npr_ds_hourly_cron', array ('DS_NPR_API','ds_npr_story_cron_pull'));
-register_deactivation_hook(DS_NPR_PLUGIN_FILE, array ('DS_NPR_API','ds_npr_story_deactivation'));
-		
  class DS_NPR_API {
 
 	var $created_message = '';
@@ -37,30 +31,32 @@ register_deactivation_hook(DS_NPR_PLUGIN_FILE, array ('DS_NPR_API','ds_npr_story
 			$api = new NPRAPIWordpress(); 
 			$q = 'ds_npr_query_'.$i;
 			$query_string = get_option($q);
-			error_log('querying for '. $query_string);
-			//if the query string contains the pull url and 'query', just make request from the API
-			if (stristr($query_string, get_option('ds_npr_api_pull_url')) && stristr($query_string,'query')){
-				$api->query_by_url($query_string);
-			}
-			//if the string doesn't contain the base url, try to query using an ID
-			else{
-				$params = array ('id' => $query_string, 'apiKey' => get_option( 'ds_npr_api_key' ));
-        $api->request($params, 'query', get_option( 'ds_npr_api_pull_url' ));
-			}
-			$api->parse();
-      //var_dump($api);
-      try {
-	      if (empty($api->message) || ($api->message->level != 'warning')){
-	      	$story = $api->update_posts_from_stories();
-	      }
-	      else {
-		    	if ( empty($story) ) {
-		          error_log('Not going to save story.  Return from query='. $query_string .', we got an error='.$api->message->id. ' error');
+			if (!empty($query_string)){
+				error_log('querying for '. $query_string);
+				//if the query string contains the pull url and 'query', just make request from the API
+				if (stristr($query_string, get_option('ds_npr_api_pull_url')) && stristr($query_string,'query')){
+					$api->query_by_url($query_string);
+				}
+				//if the string doesn't contain the base url, try to query using an ID
+				else{
+					$params = array ('id' => $query_string, 'apiKey' => get_option( 'ds_npr_api_key' ));
+	        $api->request($params, 'query', get_option( 'ds_npr_api_pull_url' ));
+				}
+				$api->parse();
+	      //var_dump($api);
+	      try {
+		      if (empty($api->message) || ($api->message->level != 'warning')){
+		      	$story = $api->update_posts_from_stories();
 		      }
+		      else {
+			    	if ( empty($story) ) {
+			          error_log('Not going to save story.  Return from query='. $query_string .', we got an error='.$api->message->id. ' error');
+			      }
+		      }
+	      } catch (Exception $e){
+	      	error_log('we have an error going in '. __FUNCTION__. ' like this :'. $e);
 	      }
-      } catch (Exception $e){
-      	error_log('we have an error going in '. __FUNCTION__. ' like this :'. $e);
-      }
+			}
 		}
 	}
    
