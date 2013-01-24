@@ -147,7 +147,7 @@ class NPRAPI {
     $this->add_simplexml_attributes($element, $NPRMLElement);
     if (count($element->children())) { // works for PHP5.2
       foreach ($element->children() as $i => $child) {
-        if ($i == 'paragraph' || $i == 'mp3') {
+        if ($i == 'paragraph' || $i == 'mp3' || $i == 'link') {
           if ($i == 'paragraph') {
             $paragraph = $this->parse_simplexml_element($child);
             $NPRMLElement->paragraphs[$paragraph->num] = $paragraph;
@@ -155,6 +155,10 @@ class NPRAPI {
           if ($i == 'mp3') {
             $mp3 = $this->parse_simplexml_element($child);
             $NPRMLElement->mp3[$mp3->type] = $mp3;
+          }
+        if ($i == 'link') {
+            $link = $this->parse_simplexml_element($child);
+            $NPRMLElement->links[] = $link;
           }
         }
         else {

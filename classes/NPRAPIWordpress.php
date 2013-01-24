@@ -136,10 +136,18 @@ class NPRAPIWordpress extends NPRAPI {
 					//check the last modified date and pub date (sometimes the API just updates the pub date), if the story hasn't changed, just go on
 					if (($post_mod_date != strtotime($story->lastModifiedDate->value))  || ($post_pub_date !=  strtotime($story->pubDate->value)) ){
 		        $by_line = '';
+		        $byline_link = '';
 		        if (isset($story->byline->name->value)){
 		        	$by_line = $story->byline->name->value;
+		        	if (!empty($story->byline->links)){
+		        		foreach($story->byline->links as $link){
+		        			if ($link->type == 'html'){
+		        				$byline_link = $link->value;
+		        			}
+		        		}
+		        	}
 		        }
-
+//var_dump($story->byline->links);  var_dump($story->audio); exit;
 		        //set the meta RETRIEVED so when we publish the post, we dont' try ingesting it
 		        $metas = array(
 		            NPR_STORY_ID_META_KEY      => $story->id,
@@ -148,6 +156,7 @@ class NPRAPIWordpress extends NPRAPI {
 		            //NPR_SHORT_LINK_META_KEY    => $story->link['short']->value,
 		            NPR_STORY_CONTENT_META_KEY => $story->body,
 		            NPR_BYLINE_META_KEY        => $by_line,
+		            NPR_BYLINE_LINK_META_KEY   => $byline_link,
 		            NPR_RETRIEVED_STORY_META_KEY => 1,
 		            NPR_PUB_DATE_META_KEY => $story->pubDate->value,
 		            NPR_STORY_DATE_MEATA_KEY => $story->storyDate->value,
@@ -246,6 +255,7 @@ class NPRAPIWordpress extends NPRAPI {
 
 		        	}
 		        }
+
 		        foreach ( $metas as $k => $v ) {
 		            update_post_meta( $post_id, $k, $v );
 		        }
