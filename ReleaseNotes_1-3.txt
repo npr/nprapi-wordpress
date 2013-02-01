@@ -1,10 +1,7 @@
 Release notes for V1.3
-- Permissions -- Now if you have created any NPR API Permissions Groups you can select which (if any) group you would
-like to use as your default group to be used when pushing content to the NPR API.  Learn more about NPR API Permissions
+- Permissions -- Now if you have created any NPR API Permissions Groups you can select which (if any) group you would like to use as your default group to be used when pushing content to the NPR API.  Learn more about NPR API Permissions
 Groups here http://digitalservices.npr.org/post/npr-api-content-permissions-control
 
-- Multi-Site -- Seems the plugin just was not ready for multi site WordPress installations.  We've fixed the problem where
-the cron set up and other activation tasks will now happen on every site in a multi site configuration.
+- Multi-Site -- Seems the plugin just was not ready for multi site WordPress installations.  We've fixed the problem where the cron set up and other activation tasks will now happen on every site in a multi site configuration.
 
-- Cron queries, we won't try to query for any of the configured queries on the Get Multi page if the field isn't filled 
-in with data.
+- Cron queries, we won't try to query for any of the configured queries on the Get Multi page if the field isn't filled in with data.
