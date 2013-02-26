@@ -5,3 +5,5 @@ Groups here http://digitalservices.npr.org/post/npr-api-content-permissions-cont
 - Multi-Site -- Seems the plugin just was not ready for multi site WordPress installations.  We've fixed the problem where the cron set up and other activation tasks will now happen on every site in a multi site configuration.
 
 - Cron queries, we won't try to query for any of the configured queries on the Get Multi page if the field isn't filled in with data.
+
+- Content and short codes - Instead of blindly removing all shortcodes from a story's content, we are not trying to let any plugins replace the shortcodes with HTML, and then if there are any left over shortcodes
