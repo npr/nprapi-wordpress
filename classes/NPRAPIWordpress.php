@@ -337,7 +337,7 @@ class NPRAPIWordpress extends NPRAPI {
 	    	if (!empty($result['response']['message'])){
 		    	$error_text = 'Error pushing story with post_id = '. $post_ID .' for url='.$url . ' HTTP Error response =  '. $result['response']['message'];
 	    	}
-	    	error_log('is this the one' . $error_text);
+	    	error_log('is this the one ' . $error_text);
 	    }
   	} else {
   		$error_text = 'Tried to push, but OrgID was not set for post_id ='. $post_ID;

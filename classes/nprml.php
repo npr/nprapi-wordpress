@@ -43,9 +43,13 @@ function post_to_nprml_story( $post ) {
     	$teaser_text = nai_get_excerpt( $post_for_teaser );
     }
     else {
-	    $content = strip_shortcodes( $post->post_content );
+	    $content = $post->post_content ;
 	    $teaser_text = nai_get_excerpt( $post );
     }
+    //let any plugin that has short codes try and replace those with HTML
+	  $content = do_shortcodes( $content );
+    //for any remaining short codes, nuke 'em
+    $content = strip_shortcode( $content );
     $content = apply_filters( 'the_content', $content );
     
     $story[] = array(
@@ -99,6 +103,10 @@ function post_to_nprml_story( $post ) {
         'tag' => 'partnerId',
         'text' => $post->guid,
     );
+    //TODO:  When the API accepts sending both text and textWithHTML, send a totally bare text.  Don't do do_shortcodes(). 
+    //for now (using the npr story api) we can either send text or textWithHTML, not both.
+    //it would be nice to send text after we strip all html and shortcodes, but we need the html
+    //and sending both will duplicate the data in the API
     $story[] = array(
         'tag' => 'textWithHtml',
         'children' => split_paragraphs( $content ),
@@ -115,7 +123,6 @@ function post_to_nprml_story( $post ) {
     	);
     }
     $args = array(
-			'numberposts' => 1,
 			'order'=> 'ASC',
 			'post_mime_type' => 'image',
 			'post_parent' => $post->ID,
@@ -147,7 +154,6 @@ function post_to_nprml_story( $post ) {
 			
 			//should be able to do the same as image for audio, with post_mime_typ = 'audio' or something.
 			$args = array(
-			'numberposts' => 1,
 			'order'=> 'ASC',
 			'post_mime_type' => 'audio',
 			'post_parent' => $post->ID,
