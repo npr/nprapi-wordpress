@@ -46,8 +46,10 @@ function post_to_nprml_story( $post ) {
 	    $content = $post->post_content ;
 	    $teaser_text = nai_get_excerpt( $post );
     }
+    //lets see if there are any plugins that need to fix their shortcodes before we run do_shortcode
+    do_action();
     //let any plugin that has short codes try and replace those with HTML
-	  $content = do_shortcodes( $content );
+	  $content = do_shortcode( $content );
     //for any remaining short codes, nuke 'em
     $content = strip_shortcode( $content );
     $content = apply_filters( 'the_content', $content );
@@ -103,7 +105,7 @@ function post_to_nprml_story( $post ) {
         'tag' => 'partnerId',
         'text' => $post->guid,
     );
-    //TODO:  When the API accepts sending both text and textWithHTML, send a totally bare text.  Don't do do_shortcodes(). 
+    //TODO:  When the API accepts sending both text and textWithHTML, send a totally bare text.  Don't do do_shortcode(). 
     //for now (using the npr story api) we can either send text or textWithHTML, not both.
     //it would be nice to send text after we strip all html and shortcodes, but we need the html
     //and sending both will duplicate the data in the API
