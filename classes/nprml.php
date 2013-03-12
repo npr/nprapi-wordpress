@@ -47,11 +47,11 @@ function post_to_nprml_story( $post ) {
 	    $teaser_text = nai_get_excerpt( $post );
     }
     //lets see if there are any plugins that need to fix their shortcodes before we run do_shortcode
-    do_action();
+    //do_action();
     //let any plugin that has short codes try and replace those with HTML
 	  $content = do_shortcode( $content );
     //for any remaining short codes, nuke 'em
-    $content = strip_shortcode( $content );
+    $content = strip_shortcodes( $content );
     $content = apply_filters( 'the_content', $content );
     
     $story[] = array(

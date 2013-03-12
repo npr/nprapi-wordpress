@@ -23,12 +23,26 @@ function npr_push ( $post_ID, $post ) {
 		if ( $post->post_type != $push_post_type || $post->post_status != 'publish' ) {
 			return;
 		}
-		if (empty($post->post_content)){
-			update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, 'Body is required for a post to be pushed to the NPR API.' );
+		//we may be able to have a custom body, so we need to check for that.
+		$content = $post->post_content;
+		$use_custom = get_option('dp_npr_push_use_custom_map');
+		$body_field = 'Body';
+    if ($use_custom){
+	    //get the list of metas available for this post
+	    $post_metas = get_post_custom_keys($post->ID);
+	    
+	    $custom_content_meta = get_option('ds_npr_api_mapping_body');
+	    $body_field = $custom_content_meta;
+	    if (!empty($custom_content_meta) && $custom_content_meta != '#NONE#' && in_array($custom_content_meta,$post_metas)){
+	    	$content = get_post_meta($post->ID, $custom_content_meta, true);
+	    } 
+    }
+		if (empty($content)){
+			update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $body_field . ' is required for a post to be pushed to the NPR API.' );
 			return;
 		}
 		else {
-			delete_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, 'Body is required for a post to be pushed to the NPR API.' );
+			delete_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $body_field . ' is required for a post to be pushed to the NPR API.' );
 		}
 		$api = new NPRAPIWordpress();
 		$retrieved = get_post_meta($post_ID, NPR_RETRIEVED_STORY_META_KEY, true);
