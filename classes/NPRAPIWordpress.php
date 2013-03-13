@@ -321,23 +321,29 @@ class NPRAPIWordpress extends NPRAPI {
 	        'apiKey' => get_option( 'ds_npr_api_key' )
 	    ), get_option( 'ds_npr_api_push_url' ) . '/story' );
 
+	    //error_log('Sending nprml = '.$nprml);
+	    
 	    $result = wp_remote_post( $url, array( 'body' => $nprml ) );
-	    if(  $result['response']['code'] == 200 ) {
-		    $body = wp_remote_retrieve_body( $result );
-		    if ( $body ) {
-		        $response_xml = simplexml_load_string( $body );
-		        $npr_story_id = (string) $response_xml->list->story['id'];
-		        update_post_meta( $post_ID, NPR_STORY_ID_META_KEY, $npr_story_id );
+	    if ( !is_wp_error($result) ) {
+		    if(  $result['response']['code'] == 200 ) {
+			    $body = wp_remote_retrieve_body( $result );
+			    if ( $body ) {
+			        $response_xml = simplexml_load_string( $body );
+			        $npr_story_id = (string) $response_xml->list->story['id'];
+			        update_post_meta( $post_ID, NPR_STORY_ID_META_KEY, $npr_story_id );
+			    }
+			    else {
+			        error_log( 'NPR API Push ERROR: ' . print_r( $result, true ) );
+			    }
 		    }
 		    else {
-		        error_log( 'NPR API Push ERROR: ' . print_r( $result, true ) );
+		    	if (!empty($result['response']['message'])){
+			    	$error_text = 'Error pushing story with post_id = '. $post_ID .' for url='.$url . ' HTTP Error response =  '. $result['response']['message'];
+		    	}
+		    	error_log('Error returned from API ' . $error_text);
 		    }
-	    }
-	    else {
-	    	if (!empty($result['response']['message'])){
-		    	$error_text = 'Error pushing story with post_id = '. $post_ID .' for url='.$url . ' HTTP Error response =  '. $result['response']['message'];
-	    	}
-	    	error_log('is this the one ' . $error_text);
+	    } else {
+	    	error_log('WP Error returned from sending story with post_id = '. $post_ID .' for url='.$url . ' to API ='. $result->get_error_message());
 	    }
   	} else {
   		$error_text = 'Tried to push, but OrgID was not set for post_id ='. $post_ID;
