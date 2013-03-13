@@ -120,7 +120,7 @@ function post_to_nprml_story( $post ) {
     			'tag' => 'permissions',
     			'children' => array ( array( 
     				'tag' => 'permGroup',
-    				'text' => $perms_group
+			     	'attr' => array( 'id' => $perms_group ),
     			)),
     	);
     }
