@@ -47,13 +47,15 @@ function post_to_nprml_story( $post ) {
 	    $teaser_text = nai_get_excerpt( $post );
     }
     //lets see if there are any plugins that need to fix their shortcodes before we run do_shortcode
-    //do_action();
-    //let any plugin that has short codes try and replace those with HTML
+    if (has_filter('npr_ds_shortcode_filter')) {
+	    $content = apply_filters('npr_ds_shortcode_filter', $content);
+    }
+	  //let any plugin that has short codes try and replace those with HTML
 	  $content = do_shortcode( $content );
     //for any remaining short codes, nuke 'em
     $content = strip_shortcodes( $content );
     $content = apply_filters( 'the_content', $content );
-    
+
     $story[] = array(
         'tag' => 'teaser',
         'text' => $teaser_text,
@@ -291,5 +293,15 @@ function nai_get_excerpt( $post, $word_count = 30 ) {
     return $text;
 }
 
+/** this was a test filter
+function my_shortie_filter($text )
+{
+	error_log('Hooking it old school from my hook');
+	return $text;
+}
+
+// add_action( $tag, $function_to_add, $priority, $accepted_args );
+add_filter( 'npr_ds_shortcode_filter', 'my_shortie_filter', 10, 1 );
+*/
 
 ?>
