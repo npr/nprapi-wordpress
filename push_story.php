@@ -288,3 +288,76 @@ $perm_groups = '';
 	//exit;
 	return $perm_groups;
 }
+
+//add the bulk action to the dropdown on the post admin page
+add_action('admin_footer-edit.php', 'ds_npr_bulk_action_push_dropdown');
+function ds_npr_bulk_action_push_dropdown() {
+
+	$push_post_type = get_option('ds_npr_push_post_type');
+	if (empty($push_post_type)){
+		$push_post_type = 'post';
+	}
+	
+	$push_url = get_option( 'ds_npr_api_push_url' );
+	
+  global $post_type;
+
+  //make sure we have the right post_type and that the push URL is filled in, so we know we want to push this post-type
+  if($post_type == $push_post_type && !empty($push_url)) {
+    ?>
+    <script type="text/javascript">
+      jQuery(document).ready(function() {
+    	  jQuery('<option>').val('pushNprStory').text('<?php _e('Push Story to NPR')?>').appendTo("select[name='action']");
+        jQuery('<option>').val('pushNprStory').text('<?php _e('Push Story to NPR')?>').appendTo("select[name='action2']");
+      });
+      
+    </script>
+    <?php
+  }
+ 
+}
+
+//do the new bulk action
+add_action('load-edit.php', 'ds_npr_bulk_action_push_action');
+
+function ds_npr_bulk_action_push_action() {
+
+  // 1. get the action
+  $wp_list_table = _get_list_table('WP_Posts_List_Table');
+  $action = $wp_list_table->current_action();
+  
+  
+  switch($action) {
+    // 3. Perform the action
+    case 'pushNprStory':
+      
+      // make sure ids are submitted.  depending on the resource type, this may be 'media' or 'ids'
+			if(isset($_REQUEST['post'])) {
+				$post_ids = array_map('intval', $_REQUEST['post']);
+			}
+    	
+			//only export 20 at a time.
+			//TODO : can we indicate on the screen what's been exported already?  that'd be tough.
+      $exported = 0;
+      foreach( $post_ids as $post_id ) {
+        $api_id = get_post_meta($post_id, NPR_STORY_ID_META_KEY, TRUE);
+        //if this story doesn't have an API ID, push it to the API.
+        if (empty($api_id) && $exported < 20){
+        	$post = get_post($post_id);
+	        npr_push($post_id, $post);
+	        $exported ++;
+        }
+      }
+      
+      // build the redirect url						
+      //$sendback = add_query_arg( array('exported' => $exported, 'ids' => join(',', $post_ids) ), $sendback );
+    break;
+    default: return;
+  }
+  
+  // ...
+  
+  // 4. Redirect client
+  //wp_redirect($sendback);
+  //exit();
+}
