@@ -337,9 +337,16 @@ class NPRAPIWordpress extends NPRAPI {
 			    }
 		    }
 		    else {
+		    	$error_text = '';
 		    	if (!empty($result['response']['message'])){
 			    	$error_text = 'Error pushing story with post_id = '. $post_ID .' for url='.$url . ' HTTP Error response =  '. $result['response']['message'];
 		    	}
+		    	$body = wp_remote_retrieve_body( $result );
+		    	
+			    if ( $body ) {
+			    	$response_xml = simplexml_load_string( $body );
+			    	$error_text .= '  API Error Message = ' .$response_xml->message->text;
+			    }
 		    	error_log('Error returned from API ' . $error_text);
 		    }
 	    } else {
