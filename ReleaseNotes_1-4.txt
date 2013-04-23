@@ -1,0 +1,10 @@
+Release Notes for 1.4
+
+- Filters for shortCodes - We've now created a filter that will be used to alter any short codes that a plugin may own in a post before pushing 
+    that post to the NPR API.  The filter npr_ds_shortcode_filter will fire before we remove short codes when we're pushing the post.  Each
+    plugin that has any short codes it can alter should alter those short codes via this filter to something that's more HTML-friendly so that 
+    other clients could possibly access that information.
+
+- Bulk Push - From the post list page for you NPR Push post type you can now select multiple posts and using the bulk operation drop down
+    on that page, push the selected posts to the NPR API.  This would be helpful for posts that have been living on a site before the
+    NPR API plugin was installed and an admin wanted to push multiple posts.  Note that this will only push up to 20 posts at one time.
