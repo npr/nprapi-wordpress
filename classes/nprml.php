@@ -293,15 +293,4 @@ function nai_get_excerpt( $post, $word_count = 30 ) {
     return $text;
 }
 
-/** this was a test filter
-function my_shortie_filter($text )
-{
-	error_log('Hooking it old school from my hook');
-	return $text;
-}
-
-// add_action( $tag, $function_to_add, $priority, $accepted_args );
-add_filter( 'npr_ds_shortcode_filter', 'my_shortie_filter', 10, 1 );
-*/
-
 ?>
