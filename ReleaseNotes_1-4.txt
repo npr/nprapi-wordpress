@@ -8,3 +8,9 @@ Release Notes for 1.4
 - Bulk Push - From the post list page for you NPR Push post type you can now select multiple posts and using the bulk operation drop down
     on that page, push the selected posts to the NPR API.  This would be helpful for posts that have been living on a site before the
     NPR API plugin was installed and an admin wanted to push multiple posts.  Note that this will only push up to 20 posts at one time.
+    
+- Publish or Draft for Get Multi -  It's not possible for an admin to select Draft or Publish for the resultant posts that come from a
+    query on the get multi page.  This way, the return from each query can be reviewed before it's published to a site.
+    
+- Run Get Multi on Demand -  An admin can now select a checkbox if they would like the get multi queries to run when the page is saved.  
+    This will allow admins to immediately check returns from queries instead of having to wait for the cron to run.
