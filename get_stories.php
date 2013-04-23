@@ -23,7 +23,7 @@ require_once ( DS_NPR_PLUGIN_DIR .'classes/NPRAPIWordpress.php');
 		require_once (WP_PLUGIN_DIR.'/../../wp-admin/includes/admin.php');
 		require_once (WP_PLUGIN_DIR.'/../../wp-load.php');
 		require_once (WP_PLUGIN_DIR.'/../../wp-includes/class-wp-error.php');
-		
+
 		//here we go.
 		$num =  get_option('ds_npr_num');
 
@@ -32,7 +32,7 @@ require_once ( DS_NPR_PLUGIN_DIR .'classes/NPRAPIWordpress.php');
 			$q = 'ds_npr_query_'.$i;
 			$query_string = get_option($q);
 			if (!empty($query_string)){
-				error_log('querying for '. $query_string);
+				error_log('Cron '. $i .' querying NPR API for '. $query_string);
 				//if the query string contains the pull url and 'query', just make request from the API
 				if (stristr($query_string, get_option('ds_npr_api_pull_url')) && stristr($query_string,'query')){
 					$api->query_by_url($query_string);
@@ -46,7 +46,13 @@ require_once ( DS_NPR_PLUGIN_DIR .'classes/NPRAPIWordpress.php');
 	      //var_dump($api);
 	      try {
 		      if (empty($api->message) || ($api->message->level != 'warning')){
-		      	$story = $api->update_posts_from_stories();
+		      	//check the publish flag and send that along.
+		      	$pub_flag = FALSE;
+		      	$pub_option = get_option('ds_npr_query_publish_'.$i);
+		      	if ($pub_option == 'Publish'){
+		      		$pub_flag = TRUE;
+		      	}
+		      	$story = $api->update_posts_from_stories($pub_flag);
 		      }
 		      else {
 			    	if ( empty($story) ) {

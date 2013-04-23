@@ -63,7 +63,14 @@ function ds_npr_settings_init() {
     for($i = 0; $i < $num; $i++){
     	add_settings_field( 'ds_npr_query_'.$i, 'Query String '.$i, 'ds_npr_api_query_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
     	register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_'.$i );
+    	
+    	//ds_npr_query_publish_
+    	add_settings_field( 'ds_npr_query_publish_'.$i, 'Publish Stories '.$i, 'ds_npr_api_query_publish_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
+    	register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_publish_'.$i );
     }
+    
+    add_settings_field( 'dp_npr_query_run_multi', 'Run the queries on saving changes', 'dp_npr_query_run_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
+    register_setting( 'ds_npr_api_get_multi_settings', 'dp_npr_query_run_multi' );
     
     add_settings_field( 'ds_npr_pull_post_type', 'NPR Pull Post Type', 'ds_npr_pull_post_type_callback', 'ds_npr_api', 'ds_npr_api_settings' );
     register_setting( 'ds_npr_api', 'ds_npr_pull_post_type' );
@@ -80,7 +87,40 @@ add_action( 'admin_init', 'ds_npr_settings_init' );
 function ds_npr_api_settings_callback() { }
 
 function ds_npr_api_get_multi_settings_callback() { 
-	 
+	 $run_multi = get_option('dp_npr_query_run_multi');
+	 if ($run_multi){
+	 	DS_NPR_API::ds_npr_story_cron_pull();
+	 }
+}
+
+function dp_npr_query_run_multi_callback() {
+	$run_multi = get_option('dp_npr_query_run_multi');
+	$check_box_string = "<input id='dp_npr_query_run_multi' name='dp_npr_query_run_multi' type='checkbox' value='true'";
+
+	if ($run_multi){
+		$check_box_string .= ' checked="checked" ';
+	}
+	$check_box_string .= "/>";
+
+	echo $check_box_string;
+}
+
+function ds_npr_api_query_publish_callback($i){
+	$selected = get_option('ds_npr_query_publish_'.$i);
+	
+	echo "<div>Publish or Draft the returns from Query ". $i ."? <select id=" . 'ds_npr_query_publish_'.$i . " name=" . 'ds_npr_query_publish_'.$i . ">";
+	
+	//echo '<option value=""> &mdash; Select &mdash; </option>'; 
+	$keys = array( "Publish", "Draft");
+	foreach ( $keys as $key ) {
+		$option_string = "\n<option  ";
+		if ($key == $selected) {
+			$option_string .= " selected ";
+		}
+		$option_string .=   "value='" . esc_attr($key) . "'>" . esc_html($key) . " </option>";
+		echo $option_string;
+	}
+	echo "</select> </div><p><hr></p>";
 }
 
 function ds_npr_api_query_callback($i){
