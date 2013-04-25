@@ -1,9 +1,15 @@
 Release Notes for 1.4
 
-- Filters for shortCodes - We've now created a filter that will be used to alter any short codes that a plugin may own in a post before pushing 
-    that post to the NPR API.  The filter npr_ds_shortcode_filter will fire before we remove short codes when we're pushing the post.  Each
-    plugin that has any short codes it can alter should alter those short codes via this filter to something that's more HTML-friendly so that 
-    other clients could possibly access that information.
+- Filters for shortCodes - We've now implemented a hook to a filter that will be used to alter any short codes that a plugin may own in a post
+    before pushing that post to the NPR API.  The filter (npr_ds_shortcode_filter) will fire before we remove short codes when we're pushing 
+    the post.  Each plugin that has any short codes it can alter should alter those short codes via this filter to something that's more 
+    HTML-friendly so that other clients could possibly access that information.
+    As an example of what needs to be done in a plug-in to take advantage of this new filter please see the branch for the following plugin.
+    https://github.com/argoproject/navis-documentcloud/tree/kmoylan-filter  What I've done here is write a function my_documentCloud_filter 
+    that is linked to the filter npr_ds_shortcode_filter (all near the bottom of the PHP file).  This function will turn any shortcode created
+    by this plugin into an HTML <a>-tag to link to what was an embedded document.
+    As with any other filter in WordPress, nothing will happen if you do not have any plugins installed that have implemented the filter.  
+    It will be up to any other plugin's maintainer to implement the filter correctly if they wish to take advantage of this functionality.
 
 - Bulk Push - From the post list page for you NPR Push post type you can now select multiple posts and using the bulk operation drop down
     on that page, push the selected posts to the NPR API.  This would be helpful for posts that have been living on a site before the
