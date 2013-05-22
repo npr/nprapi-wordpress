@@ -127,7 +127,7 @@ function post_to_nprml_story( $post ) {
     	);
     }
     $args = array(
-			'order'=> 'ASC',
+			'order'=> 'DESC',
 			'post_mime_type' => 'image',
 			'post_parent' => $post->ID,
 			'post_status' => null,
@@ -158,7 +158,7 @@ function post_to_nprml_story( $post ) {
 			
 			//should be able to do the same as image for audio, with post_mime_typ = 'audio' or something.
 			$args = array(
-			'order'=> 'ASC',
+			'order'=> 'DESC',
 			'post_mime_type' => 'audio',
 			'post_parent' => $post->ID,
 			'post_status' => null,
