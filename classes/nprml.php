@@ -34,16 +34,25 @@ function post_to_nprml_story( $post ) {
     //get the list of metas available for this post
     $post_metas = get_post_custom_keys($post->ID);
     
+    $teaser_text = '';
+    if (!empty($post->post_excerpt)){
+    	$teaser_text = nai_get_excerpt($post->post_excerpt);
+    }
+    
     $custom_content_meta = get_option('ds_npr_api_mapping_body');
     if ($use_custom && !empty($custom_content_meta) && $custom_content_meta != '#NONE#' && in_array($custom_content_meta,$post_metas)){
     	$content = get_post_meta($post->ID, $custom_content_meta, true);
     	$post_for_teaser = $post;
     	$post_for_teaser->post_content = $content;
-    	$teaser_text = nai_get_excerpt( $post_for_teaser );
+    	if (empty($teaser_text)){
+	    	$teaser_text = nai_get_excerpt( $post_for_teaser );
+    	}
     }
     else {
 	    $content = $post->post_content ;
-	    $teaser_text = nai_get_excerpt( $post );
+	    if (empty($teaser_text)){
+		    $teaser_text = nai_get_excerpt( $post );
+	    }
     }
     //lets see if there are any plugins that need to fix their shortcodes before we run do_shortcode
     if (has_filter('npr_ds_shortcode_filter')) {
@@ -74,20 +83,42 @@ function post_to_nprml_story( $post ) {
 	    );
     }
     
+    /**
+     * 
+     *If there is a custom byline configured, send that.
+     *If the site is using the coauthurs plugin, and get_coauthors exists, send the display names
+     *
+     *If no cool things are going on, just send the display name for the post_author field.
+     *
+     */
+    $byline = FALSE;
     $custom_byline_meta = get_option('ds_npr_api_mapping_byline');
     if ($use_custom && !empty($custom_byline_meta) && $custom_byline_meta != '#NONE#' && in_array($custom_content_meta,$post_metas)){
-    	$custom_byline = get_post_meta($post->ID, $custom_byline_meta, true);
+ 			$byline = TRUE;
     	$story[] = array(
 	        'tag' => 'byline',
-	        'text' => $custom_byline,
+	        'text' => get_post_meta($post->ID, $custom_byline_meta, true),
 	    );
     }
-    else {
-	    $story[] = array(
-	        'tag' => 'byline',
-	        'text' => get_the_author_meta( 'display_name', $post->post_author ),
-	    );
+    if (function_exists('get_coathors')){
+    	$coauthors = get_coauthors($post->ID);
+    	if (!empty($coauthors)){
+    		$byline = TRUE;   			
+				foreach($coauthors as $i=>$co){
+					$story[] = array(
+	       		'tag' => 'byline',
+	       		'text' => $co->display_name,
+	   			);
+				}    			
+    	}
+   	}    
+		if (!$byline){
+			$story[] = array(
+	        		'tag' => 'byline',
+	        		'text' => get_the_author_meta( 'display_name', $post->post_author ),
+	    			);
     }
+    
     #'miniTeaser' => array( 'text' => '' ),
     #'slug' => array( 'text' => '' ),
     $story[] = array(
@@ -129,9 +160,10 @@ function post_to_nprml_story( $post ) {
     $custom_media_credit = get_option('ds_npr_api_mapping_media_credit');
 		$custom_media_agency = get_option('ds_npr_api_mapping_media_agency');
 
+		/* remove this for now until we decide if we're going to actually do this...km
 		$dist_media_option = get_option('ds_npr_api_mapping_distribute_media');
 		$dist_media_polarity = get_option('ds_npr_api_mapping_distribute_media_polarity');
-    
+    */
     $args = array(
 			'order'=> 'DESC',
 			'post_mime_type' => 'image',

@@ -1,0 +1,10 @@
+- Reversed the order of images and audio that are being pushed to the NPR API.  We're now sending them in the order the file was created.  
+
+- Mapping of media credit and agency.  If you have a field that you are storing image credit and agency, you can now send these to the NPR API.  
+  In making this change we needed to expose meta fields that begin with an underscore ('_').  So you may see more meta fields visable on the 
+  mapping page.
+  
+- Multiple bylines are now being pushed to the NPR API if you use the plugin co-author-plus (http://wordpress.org/plugins/co-authors-plus/stats/)
+  We insert a byline row for each of the co-authors of a post when we push.  You can still use a custom byline field if you want to use that along
+  with the co-authors plugin.
+   

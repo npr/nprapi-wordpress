@@ -188,13 +188,15 @@ function ds_npr_push_settings_init() {
     
     add_settings_field( 'ds_npr_api_mapping_media_agency', 'Media Agency Field', 'ds_npr_api_mapping_media_agency_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_media_agency' );
-    
+    /**  This will add the mapping for media distribution.  But for now, hold off.
     add_settings_field( 'ds_npr_api_mapping_distribute_media', 'Distribute Media Field', 'ds_npr_api_mapping_distribute_media_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_distribute_media' );
     
     add_settings_field( 'ds_npr_api_mapping_distribute_media_polarity', 'Distribute Media Field Polarity', 'ds_npr_api_mapping_distribute_media_polarity_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_distribute_media_polarity' );
     //ds_npr_api_mapping_distribute_media_polarity_callback
+     *
+     */
 }
 add_action( 'admin_init', 'ds_npr_push_settings_init' );
 
