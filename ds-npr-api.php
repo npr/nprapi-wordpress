@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP DS NPR API
  * Description: A collection of tools for reusing content from NPR.org supplied by Digital Services.
- * Version: 1.4
+ * Version: 1.5
  * Author: Kevin Moylan
  * License: GPLv2
 */
