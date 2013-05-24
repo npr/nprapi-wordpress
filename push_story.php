@@ -136,9 +136,10 @@ function ds_npr_push_meta_keys($post_type = 'post'){
         ON $wpdb->posts.ID = $wpdb->postmeta.post_id 
         WHERE $wpdb->posts.post_type = '%s' 
         AND $wpdb->postmeta.meta_key != '' 
-        AND $wpdb->postmeta.meta_key NOT RegExp '(^[_0-9].+$)' 
+        AND $wpdb->postmeta.meta_key NOT RegExp '(^[_0-9]wp_.+$)' 
         AND $wpdb->postmeta.meta_key NOT RegExp '(^[0-9]+$)'
     ";
+  //AND $wpdb->postmeta.meta_key NOT RegExp '(^[_0-9].+$)' 
   $keys = $wpdb->get_col($wpdb->prepare($query, $post_type));
 	if ( $keys )
 		natcasesort($keys);
@@ -182,6 +183,18 @@ function ds_npr_push_settings_init() {
     add_settings_field( 'ds_npr_api_mapping_byline', 'Story Byline', 'ds_npr_api_mapping_byline_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_byline' );
 
+    add_settings_field( 'ds_npr_api_mapping_media_credit', 'Media Credit Field', 'ds_npr_api_mapping_media_credit_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
+    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_media_credit' );
+    
+    add_settings_field( 'ds_npr_api_mapping_media_agency', 'Media Agency Field', 'ds_npr_api_mapping_media_agency_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
+    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_media_agency' );
+    
+    add_settings_field( 'ds_npr_api_mapping_distribute_media', 'Distribute Media Field', 'ds_npr_api_mapping_distribute_media_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
+    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_distribute_media' );
+    
+    add_settings_field( 'ds_npr_api_mapping_distribute_media_polarity', 'Distribute Media Field Polarity', 'ds_npr_api_mapping_distribute_media_polarity_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
+    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_distribute_media_polarity' );
+    //ds_npr_api_mapping_distribute_media_polarity_callback
 }
 add_action( 'admin_init', 'ds_npr_push_settings_init' );
 
@@ -234,6 +247,49 @@ function ds_npr_api_mapping_byline_callback() {
 	ds_npr_show_keys_select('ds_npr_api_mapping_byline', $keys);
 }
 
+/**
+ * callback for  media credit setting
+ */
+function ds_npr_api_mapping_media_credit_callback() {
+	
+	$keys = ds_npr_get_post_meta_keys('attachment');
+	ds_npr_show_keys_select('ds_npr_api_mapping_media_credit', $keys);
+}
+
+/**
+ * callback for  media agency setting
+ */
+function ds_npr_api_mapping_media_agency_callback() {
+	
+	$keys = ds_npr_get_post_meta_keys('attachment');
+	ds_npr_show_keys_select('ds_npr_api_mapping_media_agency', $keys);
+}
+
+/**
+ * callback for distribut media setting
+ */
+function ds_npr_api_mapping_distribute_media_callback() {
+	
+	$keys = ds_npr_get_post_meta_keys('attachment');
+	ds_npr_show_keys_select('ds_npr_api_mapping_distribute_media', $keys);
+}
+
+function ds_npr_api_mapping_distribute_media_polarity_callback(){
+	
+	echo "<div>Do Distribute or Do Not Distribute? <select id=ds_npr_api_mapping_distribute_media_polarity name=ds_npr_api_mapping_distribute_media_polarity>";
+	
+	$selected = get_option('ds_npr_api_mapping_distribute_media_polarity');
+	$keys = array( 1 => "DO Distribute", 0 => "DO NOT Dsitribute");
+	foreach ( $keys as $i=>$key ) {
+		$option_string = "\n<option  ";
+		if ($i == $selected) {
+			$option_string .= " selected ";
+		}
+		$option_string .=   "value='" . $i . "'>" . esc_html($key) . " </option>";
+		echo $option_string;
+	}
+	echo "</select> </div><p><hr></p>";
+}
 /**
  * 
  * create the select widget of all meta fields

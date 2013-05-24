@@ -5,7 +5,6 @@
  */
 function as_nprml( $post ) {
     $story = post_to_nprml_story( $post );
-
     $doc = array();
     $doc[] = array(
         'tag' => 'list',
@@ -126,6 +125,13 @@ function post_to_nprml_story( $post ) {
     			)),
     	);
     }
+    
+    $custom_media_credit = get_option('ds_npr_api_mapping_media_credit');
+		$custom_media_agency = get_option('ds_npr_api_mapping_media_agency');
+
+		$dist_media_option = get_option('ds_npr_api_mapping_distribute_media');
+		$dist_media_polarity = get_option('ds_npr_api_mapping_distribute_media_polarity');
+    
     $args = array(
 			'order'=> 'DESC',
 			'post_mime_type' => 'image',
@@ -133,56 +139,80 @@ function post_to_nprml_story( $post ) {
 			'post_status' => null,
 			'post_type' => 'attachment'
 			);		
-			$images = get_children( $args );
-			$primary_image = get_post_thumbnail_id($post->ID);
+		$images = get_children( $args );
+		$primary_image = get_post_thumbnail_id($post->ID);
 			
-			foreach ($images as $image){
-				$image_type = 'standard';
-				if ($image->ID == $primary_image){
-					$image_type = 'primary';
-				}
-				$story[] = array( 
-					'tag' => 'image',
-					'attr' => array( 'src' => $image->guid, 'type' => $image_type ), 
-					'children' => array ( array(
-							'tag' => 'title',
-							'text' => $image->post_title,
-							),
-							array(
-								'tag' => 'caption',
-								'text' => $image->post_excerpt,
- 					)
-						),
-				);
+		foreach ($images as $image){
+			$custom_credit = '';
+			$custom_agency = '';
+			$image_metas = get_post_custom_keys($image->ID);
+	    if ($use_custom && !empty($custom_media_credit) && $custom_media_credit != '#NONE#' && in_array($custom_media_credit,$image_metas)){
+	    	$custom_credit = get_post_meta($image->ID, $custom_media_credit, true);
+	    }
+			if ($use_custom && !empty($custom_media_agency) && $custom_media_agency != '#NONE#' && in_array($custom_media_agency,$image_metas)){
+	    	$custom_agency = get_post_meta($image->ID, $custom_media_agency, true);
+	    }
+	    
+			if ($use_custom && !empty($dist_media_option) && $dist_media_option != '#NONE#' && in_array($dist_media_option,$image_metas)){
+	    	$dist_media = get_post_meta($image->ID, $dist_media_option, true);
+	    }
+
+			//if the image field for distribute is set and polarity then send it.
+			//all kinds of other math when polarity is negative or the field isn't set.
+			$image_type = 'standard';
+			if ($image->ID == $primary_image){
+				$image_type = 'primary';
 			}
+			$story[] = array( 
+				'tag' => 'image',
+				'attr' => array( 'src' => $image->guid, 'type' => $image_type ), 
+				'children' => array ( array(
+						'tag' => 'title',
+						'text' => $image->post_title,
+						),
+						array(
+							'tag' => 'caption',
+							'text' => $image->post_excerpt,
+ 						),
+ 						array(
+ 							'tag' => 'producer',  
+ 							'text' => $custom_credit
+ 						),
+ 						array(
+ 							'tag' => 'provider',  
+ 							'text' => $custom_agency
+ 						)
+					),
+			);
+		}
 			
-			//should be able to do the same as image for audio, with post_mime_typ = 'audio' or something.
-			$args = array(
+		//should be able to do the same as image for audio, with post_mime_typ = 'audio' or something.
+		$args = array(
 			'order'=> 'DESC',
 			'post_mime_type' => 'audio',
 			'post_parent' => $post->ID,
 			'post_status' => null,
 			'post_type' => 'attachment'
-			);		
-			$audios = get_children( $args );
+		);		
+		$audios = get_children( $args );
 			
-			foreach ($audios as $audio){
-				$caption = $audio->post_excerpt;
-				$description = $audio->post_content;
-				$story[] = array( 
-					'tag' => 'audio',
-					'children' => array( array(
-							'tag' => 'format',
-							'children' => array ( array(
-									'tag' => 'mp3',
-									'text' => $audio->guid,
-							)),
+		foreach ($audios as $audio){
+			$caption = $audio->post_excerpt;
+			$description = $audio->post_content;
+			$story[] = array( 
+				'tag' => 'audio',
+				'children' => array( array(
+						'tag' => 'format',
+						'children' => array ( array(
+								'tag' => 'mp3',
+								'text' => $audio->guid,
 						)),
-						'description' => $description, 
-				);
+					)),
+					'description' => $description, 
+			);
 				
-			}
-    return $story;
+		}
+  return $story;
 }
 
 
