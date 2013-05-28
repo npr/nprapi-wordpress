@@ -97,7 +97,10 @@ function post_to_nprml_story( $post ) {
  			$byline = TRUE;
     	$story[] = array(
 	        'tag' => 'byline',
-	        'text' => get_post_meta($post->ID, $custom_byline_meta, true),
+    			'children' => array ( array(
+								'tag' => 'name',
+	        			'text' => get_post_meta($post->ID, $custom_byline_meta, true),
+    			)),
 	    );
     }
     if (function_exists('get_coauthors')){
@@ -107,8 +110,11 @@ function post_to_nprml_story( $post ) {
 				foreach($coauthors as $i=>$co){
 					$story[] = array(
 	       		'tag' => 'byline',
-	       		'text' => $co->display_name,
-	   			);
+						'children' => array ( array(
+								'tag' => 'name',
+	       										'text' => $co->display_name,
+	   												)
+	   									));
 				}    			
     	}
     	else {
@@ -121,7 +127,9 @@ function post_to_nprml_story( $post ) {
 		if (!$byline){
 			$story[] = array(
 	        		'tag' => 'byline',
-	        		'text' => get_the_author_meta( 'display_name', $post->post_author ),
+							'children' => array ( array(
+		        		'text' => get_the_author_meta( 'display_name', $post->post_author ),
+							)),
 	    			);
     }
     
