@@ -36,7 +36,7 @@ function post_to_nprml_story( $post ) {
     
     $teaser_text = '';
     if (!empty($post->post_excerpt)){
-    	$teaser_text = nai_get_excerpt($post->post_excerpt);
+    	$teaser_text = $post->post_excerpt;
     }
     
     $custom_content_meta = get_option('ds_npr_api_mapping_body');
@@ -100,7 +100,7 @@ function post_to_nprml_story( $post ) {
 	        'text' => get_post_meta($post->ID, $custom_byline_meta, true),
 	    );
     }
-    if (function_exists('get_coathors')){
+    if (function_exists('get_coauthors')){
     	$coauthors = get_coauthors($post->ID);
     	if (!empty($coauthors)){
     		$byline = TRUE;   			
@@ -111,6 +111,12 @@ function post_to_nprml_story( $post ) {
 	   			);
 				}    			
     	}
+    	else {
+    		error_log('we do not have co authors');
+    	}
+   	}
+   	else {
+   		error_log('can not find get_coauthors');
    	}    
 		if (!$byline){
 			$story[] = array(
