@@ -125,6 +125,9 @@ class NPRAPIWordpress extends NPRAPI {
 
 					$story->body .= $this->get_transcript_body($story);
 
+					$story_date = new DateTime($story->storyDate->value);
+					$post_date = $story_date->format('Y-m-d H:i:s');
+					
 	        //set the story as draft, so we don't try ingesting it
 	        $args = array(
 	            'post_title'   => $story->title,
@@ -132,6 +135,7 @@ class NPRAPIWordpress extends NPRAPI {
 	            'post_content' => $story->body,
 	        		'post_status'  => 'draft',
 	        		'post_type'    => $pull_post_type,
+	        		'post_date'		 => $post_date,
 	        );
 					//check the last modified date and pub date (sometimes the API just updates the pub date), if the story hasn't changed, just go on
 					if (($post_mod_date != strtotime($story->lastModifiedDate->value))  || ($post_pub_date !=  strtotime($story->pubDate->value)) ){
@@ -200,7 +204,8 @@ class NPRAPIWordpress extends NPRAPI {
 									'post_mime_type' => 'image',
 									'post_parent' => $post_id,
 									'post_status' => null,
-									'post_type' => 'attachment'
+									'post_type' => 'attachment',
+									'post_date'		 => $post_date,
 									);
 								$attached_images = get_children( $image_args );
 							}
@@ -266,6 +271,7 @@ class NPRAPIWordpress extends NPRAPI {
 		        		'post_excerpt' => $story->teaser,
 		        		'post_type'    => $pull_post_type,  
 		            'ID'   => $post_id,
+		        		'post_date'		 => $post_date,
 		        );
 					 //now set the status
 						if ( ! $existing ) {
@@ -321,7 +327,7 @@ class NPRAPIWordpress extends NPRAPI {
 	        'apiKey' => get_option( 'ds_npr_api_key' )
 	    ), get_option( 'ds_npr_api_push_url' ) . '/story' );
 
-	    //error_log('Sending nprml = '.$nprml);
+	    error_log('Sending nprml = '.$nprml);
 	    
 	    $result = wp_remote_post( $url, array( 'body' => $nprml ) );
 	    if ( !is_wp_error($result) ) {

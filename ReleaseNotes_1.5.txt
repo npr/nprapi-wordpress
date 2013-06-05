@@ -8,3 +8,7 @@
   We insert a byline row for each of the co-authors of a post when we push.  You can still use a custom byline field if you want to use that along
   with the co-authors plugin.
    
+- Retrieved story dates -  Now when you retrieve a story from the NPR API the published date for WP will be the date from the <storyDate> field in
+  the NPR API.  This will better allow stories to fall into their natural order when publishing from the Get Multi page.  It's always possible
+  to edit the date by hand when pulling single stories from the NPR API.  Do remember though that you are contractually obligated to show the
+  original date when rendering a story from the NPR API.
