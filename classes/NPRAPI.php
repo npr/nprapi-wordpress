@@ -130,6 +130,11 @@ class NPRAPI {
         $parsed->body = $body;
         $this->stories[] = $parsed;
       }
+      //if the query didn't have a sort parameter, reverse the order so that we end up with
+      //stories in reverse-chron order.
+      if (!array_key_exists('sort', $this->request->params)){
+      	$this->stories = array_reverse($this->stories);
+      }
     }
   }
 
