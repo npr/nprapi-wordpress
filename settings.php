@@ -72,6 +72,9 @@ function ds_npr_settings_init() {
     add_settings_field( 'dp_npr_query_run_multi', 'Run the queries on saving changes', 'dp_npr_query_run_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
     register_setting( 'ds_npr_api_get_multi_settings', 'dp_npr_query_run_multi' );
     
+    add_settings_field( 'dp_npr_query_multi_cron_interval', 'Interval to run Get Multi cron', 'dp_npr_query_multi_cron_interval_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
+    register_setting( 'ds_npr_api_get_multi_settings', 'dp_npr_query_multi_cron_interval' );
+    
     add_settings_field( 'ds_npr_pull_post_type', 'NPR Pull Post Type', 'ds_npr_pull_post_type_callback', 'ds_npr_api', 'ds_npr_api_settings' );
     register_setting( 'ds_npr_api', 'ds_npr_pull_post_type' );
     
@@ -86,11 +89,36 @@ add_action( 'admin_init', 'ds_npr_settings_init' );
 
 function ds_npr_api_settings_callback() { }
 
+add_filter( 'cron_schedules', 'cron_add_ds_interval' );
+function cron_add_ds_interval( $schedules ) {
+	$ds_interval = get_option('dp_npr_query_multi_cron_interval');
+	//if for some reason we don't get a number in the option, use 60 minutes as the default.
+	if (!is_numeric($ds_interval) || $ds_interval < 1){
+		$ds_interval = 60;
+		update_option('dp_npr_query_multi_cron_interval', 60);
+	}
+	$new_interval = $ds_interval*60;
+	error_log('in interval ds_interval ='. $ds_interval);
+  $schedules['ds_interval'] = array(
+      'interval' => $new_interval,
+      'display' => __( 'DS Cron, run Once every '. $ds_interval .' minutes' )
+  );
+  return $schedules;
+}
+ 
 function ds_npr_api_get_multi_settings_callback() { 
-	 $run_multi = get_option('dp_npr_query_run_multi');
-	 if ($run_multi){
+	$run_multi = get_option('dp_npr_query_run_multi');
+	if ($run_multi){
 	 	DS_NPR_API::ds_npr_story_cron_pull();
-	 }
+	}
+	 
+	//change the cron timer
+	if ( wp_next_scheduled( 'npr_ds_hourly_cron' ) ) {
+		wp_clear_scheduled_hook('npr_ds_hourly_cron');
+	}
+	error_log('updating the cron event');
+	wp_schedule_event( time(), 'ds_interval', 'npr_ds_hourly_cron');
+	
 }
 
 function dp_npr_query_run_multi_callback() {
@@ -103,6 +131,11 @@ function dp_npr_query_run_multi_callback() {
 	$check_box_string .= "/>";
 
 	echo $check_box_string;
+}
+
+function dp_npr_query_multi_cron_interval_callback() {
+	$option = get_option('dp_npr_query_multi_cron_interval');
+	echo "<input type='text' value='$option' name='dp_npr_query_multi_cron_interval' id='dp_npr_query_multi_cron_interval' style='width: 30px;' /> <p> How often, in minutes, should the Get Multi function run?  (default = 60)";
 }
 
 function ds_npr_api_query_publish_callback($i){

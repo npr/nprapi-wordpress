@@ -76,6 +76,7 @@ function ds_npr_story_activation() {
 
 function _ds_npr_activate() {
 
+	update_option('dp_npr_query_multi_cron_interval', 60);
 	if ( !wp_next_scheduled( 'npr_ds_hourly_cron' ) ) {
 		error_log('turning on cron event');
 		wp_schedule_event( time(), 'hourly', 'npr_ds_hourly_cron');

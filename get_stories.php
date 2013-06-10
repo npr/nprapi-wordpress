@@ -24,9 +24,11 @@ require_once ( DS_NPR_PLUGIN_DIR .'classes/NPRAPIWordpress.php');
 		require_once (WP_PLUGIN_DIR.'/../../wp-load.php');
 		require_once (WP_PLUGIN_DIR.'/../../wp-includes/class-wp-error.php');
 
+		//this was debug code it may be good keep it around for a bit
+		//$now = gmDate("D, d M Y G:i:s O ");
+		//error_log("right now the time is -- ".$now);
 		//here we go.
 		$num =  get_option('ds_npr_num');
-
 		for ($i=0; $i<$num; $i++){
 			$api = new NPRAPIWordpress(); 
 			$q = 'ds_npr_query_'.$i;
