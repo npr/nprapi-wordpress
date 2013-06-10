@@ -12,3 +12,14 @@
   the NPR API.  This will better allow stories to fall into their natural order when publishing from the Get Multi page.  It's always possible
   to edit the date by hand when pulling single stories from the NPR API.  Do remember though that you are contractually obligated to show the
   original date when rendering a story from the NPR API.
+  
+- Retrieved story order -  When you retrieve stories from the API, if you do not include a 'sort=' parameter in your query, we will insure that 
+   the order of the stories is in reverse cron for any stories that have the same storyDate in the API.  Often some aggregate groups in the API
+   will publish stories with the same storyDate.  Shows like Morning Edition do this often, and prior to this fix stories would appear to be 
+   published in reverse order from what the API shows.  Now if you do not include 'sort=' in your query, the stories with the same time
+   will be published in the same order as the API shows them.
+    
+- Configurable Cron interval -  When you use the Get Multi page, which fires off of wp-cron, you can now set the interval for the wp-cron to fire.
+   This is on the Get Multi configuration page, and allows you to enter a number of minutes you want as your wp-cron interval.  If you enter any 
+   thing that is not a number, or a number less than 1, we will resolve that to 60 minutes...because, well, that's a resonable interval, and 
+   the wp-cron doesn't understand 'every now and then' as an interval.  
