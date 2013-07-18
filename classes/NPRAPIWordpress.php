@@ -223,9 +223,36 @@ class NPRAPIWordpress extends NPRAPI {
 							
 							
 		        	foreach ($story->image as $image){
-
+								$image_url = '';
+		        		//check the <enlargement> and then the crops, in this order "enlargement", "standard"  if they don't exist, just get the image->src
+		        		if (!empty($image->enlargement)){
+		        			$image_url = $image->enlargement->src;
+		        		}
+		        		else {
+		        			if (!empty($image->crop)) {
+		        				foreach ($image->crop as $crop){
+		        					if ($crop->type == 'enlargement') {
+		        						$image_url = $crop->src;
+		        						continue;
+		        					}
+		        				}
+		        				if (empty($image_url)){
+			        				foreach ($image->crop as $crop){
+			        					if ($crop->type == 'standard') {
+			        						$image_url = $crop->src;
+			        						continue;
+			        					}
+			        				}
+		        				}
+		        			}
+		        		}
+		        		
+		        		if (empty($tmp)){
+		        			$image_url = $image->src;
+			        	}
 		        		// Download file to temp location
-		            $tmp = download_url( $image->src );
+			          $tmp = download_url( $image_url );
+			        			        		
 		            // Set variables for storage
 		            // fix file filename for query strings
 		            preg_match('/[^\?]+\.(jpg|JPG|jpe|JPE|jpeg|JPEG|gif|GIF|png|PNG)/', $image->src, $matches);
