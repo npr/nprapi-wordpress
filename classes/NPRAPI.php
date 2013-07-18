@@ -118,20 +118,20 @@ class NPRAPI {
 
           }
           else {
-          	//if ->$key exist, see if it's an array.  if it is, add the next child.
-          	if (!empty($parsed->{$key})){
-	        		//if it's not an array, make an array, add the existing element to it
-	        		if (!is_array($parsed->{$key})){
-	        			$my_array[] = $parsed->{$key};
-	        			$parsed->{$key} = $my_array;
-	        		}
-	        		// then add the new child. 
-          	$parsed->{$key}[] = $this->parse_simplexml_element($current);
-	        	}
-	        	else {  
-							//The key wasn't parsed already, so just add the current element.
-            	$parsed->{$key} = $this->parse_simplexml_element($current);
-	        	}
+            //if ->$key exist, see if it's an array.  if it is, add the next child.
+            if (!empty($parsed->{$key})){
+              //if it's not an array, make an array, add the existing element to it
+              if (!is_array($parsed->{$key})){
+                $my_array[] = $parsed->{$key};
+                $parsed->{$key} = $my_array;
+              }
+              // then add the new child. 
+              $parsed->{$key}[] = $this->parse_simplexml_element($current);
+            }
+            else {  
+              //The key wasn't parsed already, so just add the current element.
+              $parsed->{$key} = $this->parse_simplexml_element($current);
+            }
           }
         }
         $body ='';
@@ -148,11 +148,12 @@ class NPRAPI {
       //there are no params and 'sort=' is not in the URL
       if (empty($this->request->params) && !stristr($this->request->url, 'sort=')){
       	$this->stories = array_reverse($this->stories);
-      }
+      } 
       //there are params, and sort is not one of them
       if (!empty($this->request->params) && !array_key_exists('sort', $this->request->params)){
       	$this->stories = array_reverse($this->stories);
       }
+      
     }
   }
 
@@ -170,7 +171,7 @@ class NPRAPI {
     $this->add_simplexml_attributes($element, $NPRMLElement);
     if (count($element->children())) { // works for PHP5.2
       foreach ($element->children() as $i => $child) {
-        if ($i == 'paragraph' || $i == 'mp3' || $i == 'link') {
+        if ($i == 'paragraph' || $i == 'mp3') {
           if ($i == 'paragraph') {
             $paragraph = $this->parse_simplexml_element($child);
             $NPRMLElement->paragraphs[$paragraph->num] = $paragraph;
@@ -179,26 +180,21 @@ class NPRAPI {
             $mp3 = $this->parse_simplexml_element($child);
             $NPRMLElement->mp3[$mp3->type] = $mp3;
           }
-        if ($i == 'link') {
-            $link = $this->parse_simplexml_element($child);
-            $NPRMLElement->links[] = $link;
-          }
         }
         else {
-        	//if ->$i exist, see if it's an array.  if it is, add the next child.
-        	if (!empty($NPRMLElement->$i)){
-        		//if it's not an array, make an array, add the existing element to it
-        		if (!is_array($NPRMLElement->$i)) {
-        			//$my_array - array();
-        			$my_array[] = $NPRMLElement->$i;
-        			$NPRMLElement->$i = $my_array;
-        		}
-        		// then add the new child. 
-        		$NPRMLElement->{$i}[] = $this->parse_simplexml_element($child);
-        	}
-        	else {  
-          	$NPRMLElement->$i = $this->parse_simplexml_element($child);
-        	}
+          //if ->$i exist, see if it's an array.  if it is, add the next child.
+          if (!empty($NPRMLElement->$i)){
+            //if it's not an array, make an array, add the existing element to it
+            if (!is_array($NPRMLElement->$i)) {
+              $my_array[] = $NPRMLElement->$i;
+              $NPRMLElement->$i = $my_array;
+            }
+            // then add the new child. 
+            $NPRMLElement->{$i}[] = $this->parse_simplexml_element($child);
+          }
+          else {  
+            $NPRMLElement->$i = $this->parse_simplexml_element($child);
+          }
         }
       }
     }
