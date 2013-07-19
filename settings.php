@@ -98,7 +98,6 @@ function cron_add_ds_interval( $schedules ) {
 		update_option('dp_npr_query_multi_cron_interval', 60);
 	}
 	$new_interval = $ds_interval*60;
-	error_log('in interval ds_interval ='. $ds_interval);
   $schedules['ds_interval'] = array(
       'interval' => $new_interval,
       'display' => __( 'DS Cron, run Once every '. $ds_interval .' minutes' )

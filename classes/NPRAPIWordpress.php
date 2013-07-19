@@ -162,7 +162,6 @@ class NPRAPIWordpress extends NPRAPI {
 		        		}
 		        	}
 		        }
-//var_dump($story->byline->links);  var_dump($story->audio); exit;
 		        //set the meta RETRIEVED so when we publish the post, we dont' try ingesting it
 		        $metas = array(
 		            NPR_STORY_ID_META_KEY      => $story->id,
@@ -226,6 +225,7 @@ class NPRAPIWordpress extends NPRAPI {
 								$image_url = '';
 		        		//check the <enlargement> and then the crops, in this order "enlargement", "standard"  if they don't exist, just get the image->src
 		        		if (!empty($image->enlargement)){
+		        			error_log('Got image from enlargement');
 		        			$image_url = $image->enlargement->src;
 		        		}
 		        		else {
@@ -233,6 +233,7 @@ class NPRAPIWordpress extends NPRAPI {
 		        				foreach ($image->crop as $crop){
 		        					if ($crop->type == 'enlargement') {
 		        						$image_url = $crop->src;
+		        						error_log('Got image from CROP enlargement');
 		        						continue;
 		        					}
 		        				}
@@ -240,6 +241,7 @@ class NPRAPIWordpress extends NPRAPI {
 			        				foreach ($image->crop as $crop){
 			        					if ($crop->type == 'standard') {
 			        						$image_url = $crop->src;
+			        						error_log('Got image from CROP STANDARD');
 			        						continue;
 			        					}
 			        				}
@@ -247,15 +249,16 @@ class NPRAPIWordpress extends NPRAPI {
 		        			}
 		        		}
 		        		
-		        		if (empty($tmp)){
+		        		if (empty($image_url)){
 		        			$image_url = $image->src;
 			        	}
+			        	error_log('Got image from :'.$image_url);
 		        		// Download file to temp location
 			          $tmp = download_url( $image_url );
 			        			        		
 		            // Set variables for storage
 		            // fix file filename for query strings
-		            preg_match('/[^\?]+\.(jpg|JPG|jpe|JPE|jpeg|JPEG|gif|GIF|png|PNG)/', $image->src, $matches);
+		            preg_match('/[^\?]+\.(jpg|JPG|jpe|JPE|jpeg|JPEG|gif|GIF|png|PNG)/', $image_url, $matches);
 		            $file_array['name'] = basename($matches[0]);
 		            $file_array['tmp_name'] = $tmp;
 
@@ -272,7 +275,7 @@ class NPRAPIWordpress extends NPRAPI {
 		            // If error storing permanently, unlink
 		            if ( is_wp_error($id) ) {
 		            	@unlink($file_array['tmp_name']);
-		            	$file_OK - FALSE;
+		            	$file_OK = FALSE;
 		            }
 		            else {
 		            	$image_post = get_post($id);
@@ -285,7 +288,7 @@ class NPRAPIWordpress extends NPRAPI {
 			            			if (strstr($image_post->guid, $att_guid[0])){
 			            				@unlink($file_array['tmp_name']);
 			            				wp_delete_attachment($id);
-			            				$file_OK - FALSE;
+			            				$file_OK = FALSE;
 			            			}
 			            	}
 		            	}
