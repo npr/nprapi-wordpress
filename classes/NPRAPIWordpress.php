@@ -225,7 +225,6 @@ class NPRAPIWordpress extends NPRAPI {
 								$image_url = '';
 		        		//check the <enlargement> and then the crops, in this order "enlargement", "standard"  if they don't exist, just get the image->src
 		        		if (!empty($image->enlargement)){
-		        			error_log('Got image from enlargement');
 		        			$image_url = $image->enlargement->src;
 		        		}
 		        		else {
@@ -233,7 +232,6 @@ class NPRAPIWordpress extends NPRAPI {
 		        				foreach ($image->crop as $crop){
 		        					if ($crop->type == 'enlargement') {
 		        						$image_url = $crop->src;
-		        						error_log('Got image from CROP enlargement');
 		        						continue;
 		        					}
 		        				}
@@ -241,7 +239,6 @@ class NPRAPIWordpress extends NPRAPI {
 			        				foreach ($image->crop as $crop){
 			        					if ($crop->type == 'standard') {
 			        						$image_url = $crop->src;
-			        						error_log('Got image from CROP STANDARD');
 			        						continue;
 			        					}
 			        				}
