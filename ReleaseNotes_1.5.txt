@@ -23,3 +23,8 @@
    This is on the Get Multi configuration page, and allows you to enter a number of minutes you want as your wp-cron interval.  If you enter any 
    thing that is not a number, or a number less than 1, we will resolve that to 60 minutes...because, well, that's a resonable interval, and 
    the wp-cron doesn't understand 'every now and then' as an interval.  
+   
+- Images from crops -  In earlier versions of the plugin we would pull down the image from the URL in <image src=>.  Well, seems that a lot of those 
+  images were small, with ?s=12 in the URL, or thumbnails.  So now we're bringing down any bigger versions that we can find.  We'll look for the 
+  following elements under <image> tags.  In order <enlargement>, <crop type=enlargement>, <crop type=standard>, and then get <image src=> if those
+  other elements do not exist.  This should help with getting bigger images.  If you need a smaller image, just theme the bigger one.
