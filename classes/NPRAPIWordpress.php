@@ -115,9 +115,10 @@ class NPRAPIWordpress extends NPRAPI {
 	        //set the mod_date and pub_date to now so that for a new story we will fail the test below and do the update
 	        $post_mod_date = strtotime(date('Y-m-d H:i:s'));
 	        $post_pub_date = $post_mod_date;
-	        if ( $exists->post_count ) {
+
+	        if ( $exists->found_posts ) {
 	            $existing = $exists->post;
-	            $post_id = $existing->ID;	            
+	            $post_id = $existing->ID;	          
 	            $existing_status = $exists->posts[0]->post_status;
 	            $post_mod_date_meta = get_post_meta($existing->ID, NPR_LAST_MODIFIED_DATE_KEY);
 	            if (!empty($post_mod_date_meta[0])){
