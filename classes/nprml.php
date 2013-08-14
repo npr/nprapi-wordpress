@@ -209,9 +209,23 @@ function post_to_nprml_story( $post ) {
 			if ($image->ID == $primary_image){
 				$image_type = 'primary';
 			}
+			
+			//is the image in the content?  If so, tell the APi with a flag that CorePublisher knows
+			//WP may add something like "-150X150" to the end of the filename, before the extension.  Isn't that nice?
+			$image_name_parts = split(".", $image_guid);
+			$image_regex = "/". $image_name_parts[0] . "\-[a-zA-Z0-9]*" . $image_name_parts[1] . "/"; 
+			$in_body = "";
+			if (preg_match($image_regex, $content)) {
+				if (strstr($image->guid, '?')){
+					$in_body = "&origin=body";
+				}
+				else {
+					$in_body = "?origin=body";
+				}
+			}
 			$story[] = array( 
 				'tag' => 'image',
-				'attr' => array( 'src' => $image->guid, 'type' => $image_type ), 
+				'attr' => array( 'src' => $image->guid . $in_body, 'type' => $image_type ), 
 				'children' => array ( array(
 						'tag' => 'title',
 						'text' => $image->post_title,
