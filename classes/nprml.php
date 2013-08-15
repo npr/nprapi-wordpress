@@ -258,19 +258,27 @@ function post_to_nprml_story( $post ) {
 			
 		foreach ($audios as $audio){
 			$caption = $audio->post_excerpt;
-			$description = $audio->post_content;
-			$story[] = array( 
-				'tag' => 'audio',
-				'children' => array( array(
-						'tag' => 'format',
-						'children' => array ( array(
-								'tag' => 'mp3',
-								'text' => $audio->guid,
-						)),
-					)),
-					'description' => $description, 
-			);
-				
+			//if we don't have excerpt filled in, try content
+			if (empty($caption)) {
+				$caption = $audio->post_content;
+			}
+			
+			$story[] = array(
+      	'tag' => 'audio',
+        'children' => array(
+        	array(
+          	'tag' => 'format',
+            'children' => array ( array(
+            	'tag' => 'mp3',
+              'text' => $audio->guid,
+            )),
+          ),
+          array(
+            'tag' => 'description',
+            'text' => $caption,
+          ),
+        ),
+      );				
 		}
   return $story;
 }
