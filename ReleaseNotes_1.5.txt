@@ -28,3 +28,12 @@
   images were small, with ?s=12 in the URL, or thumbnails.  So now we're bringing down any bigger versions that we can find.  We'll look for the 
   following elements under <image> tags.  In order <enlargement>, <crop type=enlargement>, <crop type=standard>, and then get <image src=> if those
   other elements do not exist.  This should help with getting bigger images.  If you need a smaller image, just theme the bigger one.
+  
+- When pushing a story to the NPR API, we will now be checking to see if images exist in the content, if so, add the query string parameter origin=body to the image url 
+  so CorePublisher will like it.  This is only something the Core Publisher uses, but it will help greatly for stories published in WP and retrieved into 
+  CorePublisher.
+
+- Adding meta data as meta fields to each pulled image.  The following meta fields will be attahced to the posts for pulled images now
+  npr_image_credit =>$api_image->producer,
+  npr_image_agency =>$api_image->provider,
+  npr_image_caption =>$api_image->caption

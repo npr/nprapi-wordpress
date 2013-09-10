@@ -290,6 +290,15 @@ class NPRAPIWordpress extends NPRAPI {
 			            			}
 			            	}
 		            	}
+		            	//get any image meta data and attatch it to the image post
+		            	$image_metas = array(
+		            		NPR_IMAGE_CREDIT_META_KEY =>$image->producer->value,
+										NPR_IMAGE_AGENCY_META_KEY =>$image->provider->value,
+										NPR_IMAGE_CAPTION_META_KEY =>$image->caption->value
+		            	);
+		            	foreach ( $image_metas as $k => $v ) {
+					        	update_post_meta( $id, $k, $v );
+					        }
 		            }
 
 		            //set the primary image

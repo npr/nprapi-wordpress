@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP DS NPR API
  * Description: A collection of tools for reusing content from NPR.org supplied by Digital Services.
- * Version: 1.5-2
+ * Version: 1.5-3
  * Author: Kevin Moylan
  * License: GPLv2
 */
@@ -37,6 +37,11 @@ define( 'NPR_PUB_DATE_META_KEY', 'npr_pub_date');
 define( 'NPR_STORY_DATE_MEATA_KEY', 'npr_story_date');
 define( 'NPR_LAST_MODIFIED_DATE_KEY', 'npr_last_modified_date');
 define( 'NPR_RETRIEVED_STORY_META_KEY', 'npr_retrieved_story');
+
+define( 'NPR_IMAGE_CREDIT_META_KEY', 'npr_image_credit');
+define( 'NPR_IMAGE_AGENCY_META_KEY', 'npr_image_agency');
+define( 'NPR_IMAGE_CAPTION_META_KEY', 'npr_image_caption');
+
 define( 'NPR_PUSH_STORY_ERROR', 'npr_push_story_error');
 
 define('NPR_MAX_QUERIES', 10);
