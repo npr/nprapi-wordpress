@@ -404,7 +404,8 @@ class NPRAPIWordpress extends NPRAPI {
 		    	error_log('Error returned from API ' . $error_text);
 		    }
 	    } else {
-	    	error_log('WP Error returned from sending story with post_id = '. $post_ID .' for url='.$url . ' to API ='. $result->get_error_message());
+	    	$error_text = 'WP Error returned from sending story with post_id = '. $post_ID .' for url='.$url . ' to API ='. $result->get_error_message();
+	    	error_log($error_text);
 	    }
   	} else {
   		$error_text = 'Tried to push, but OrgID was not set for post_id ='. $post_ID;
