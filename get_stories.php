@@ -41,8 +41,13 @@ require_once ( DS_NPR_PLUGIN_DIR .'classes/NPRAPIWordpress.php');
 				}
 				//if the string doesn't contain the base url, try to query using an ID
 				else{
-					$params = array ('id' => $query_string, 'apiKey' => get_option( 'ds_npr_api_key' ));
-	        $api->request($params, 'query', get_option( 'ds_npr_api_pull_url' ));
+					if (stristr($query_string, 'http:')) {
+						error_log('Not going to run query because the query string contains http and is not pointing to the pullURL');
+					}
+					else {
+						$params = array ('id' => $query_string, 'apiKey' => get_option( 'ds_npr_api_key' ));
+		        $api->request($params, 'query', get_option( 'ds_npr_api_pull_url' ));
+					}
 				}
 				$api->parse();
 	      //var_dump($api);
