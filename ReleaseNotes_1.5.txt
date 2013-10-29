@@ -37,3 +37,5 @@
   npr_image_credit =>$api_image->producer,
   npr_image_agency =>$api_image->provider,
   npr_image_caption =>$api_image->caption
+  
+- When pushing a story with Audio, make sure we push the Audio description if there is one.
