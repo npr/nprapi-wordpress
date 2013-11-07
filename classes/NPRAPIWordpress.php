@@ -151,18 +151,45 @@ class NPRAPIWordpress extends NPRAPI {
 	        );
 					//check the last modified date and pub date (sometimes the API just updates the pub date), if the story hasn't changed, just go on
 					if (($post_mod_date != strtotime($story->lastModifiedDate->value))  || ($post_pub_date !=  strtotime($story->pubDate->value)) ){
-		        $by_line = '';
+						
+						$by_line = '';
 		        $byline_link = '';
-		        if (isset($story->byline->name->value)){
+		        $multi_by_line = '';
+		        //continue to save single byline into npr_byline as is, but also set multi to false
+		        if (isset($story->byline->name->value)){ //fails if there are multiple bylines or no bylines
 		        	$by_line = $story->byline->name->value;
-		        	if (!empty($story->byline->links)){
-		        		foreach($story->byline->links as $link){
+		        	$multi_by_line = 0; //only single author, set multi to false
+		        	if (!empty($story->byline->link)){
+		        		foreach($story->byline->link as $link){
 		        			if ($link->type == 'html'){
 		        				$byline_link = $link->value;
 		        			}
 		        		}
 		        	}
-		        }
+					 }
+				
+						//construct delimited string if there are multiple bylines
+		        if(is_array($story->byline) && !empty($story->byline) ) {
+							$i = 0;
+		        	foreach ($story->byline as $single) {
+        				if($i==0){
+									$multi_by_line .= $single->name->value; //builds multi byline string without delimiter on first pass
+								} else{
+									$multi_by_line .= '|' . $single->name->value ; //builds multi byline string with delimiter
+								}
+								$by_line = $single->name->value; //overwrites so as to save just the last byline for previous single byline themes
+									
+								if (!empty($single->link)){
+	        				foreach($single->link as $link){
+	        					if ($link->type == 'html'){
+											$byline_link = $link->value; //overwrites so as to save just the last byline link for previous single byline themes
+											$multi_by_line .= '~' . $link->value; //builds multi byline string links
+										}
+		        			}
+			        	}
+							  $i++;    
+							}
+						} 
 		        //set the meta RETRIEVED so when we publish the post, we dont' try ingesting it
 		        $metas = array(
 		            NPR_STORY_ID_META_KEY      => $story->id,
@@ -172,6 +199,7 @@ class NPRAPIWordpress extends NPRAPI {
 		            NPR_STORY_CONTENT_META_KEY => $story->body,
 		            NPR_BYLINE_META_KEY        => $by_line,
 		            NPR_BYLINE_LINK_META_KEY   => $byline_link,
+		            NPR_MULTI_BYLINE_META_KEY  => $multi_by_line,
 		            NPR_RETRIEVED_STORY_META_KEY => 1,
 		            NPR_PUB_DATE_META_KEY => $story->pubDate->value,
 		            NPR_STORY_DATE_MEATA_KEY => $story->storyDate->value,
