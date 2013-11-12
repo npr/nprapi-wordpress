@@ -5,3 +5,6 @@ An example of data for multiple bylines is :
    Ari Shapiro~http://www-s2.npr.org/people/2101154/ari-shapiro|kmoylan@npr.org|Tommy Writer
 Here there are three authors for this story, Ari Shapiro (and his bio link), then "kmoylan@npr.org" and a third author "Tommy Writer".
 Single author stories will not be changed.
+
+Do not re-pull stories that are already in draft status - The get multi would repleatedly re-pull stories into draft mode if there is already a draft copy.
+This fix will check for status=any when checking to see if a story already exists in the WP database. 
