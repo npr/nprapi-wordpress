@@ -165,3 +165,34 @@ function ds_npr_create_post_type() {
 		)
 	);
 }
+/**
+   * 
+   * enables publish management tools to blacklist/whitelist a specific story from pulling using story id number
+   * (applies only to NPR pull post type)
+   */
+
+//create a db table on install to store the npr_story_ids to not pull again
+global $ds_npr_dont_pull_list;
+$ds_npr_dont_pull_list = "1.0";
+
+function dontpull_install() {
+   global $wpdb;
+   global $ds_npr_dont_pull_list;
+
+   $table_name = $wpdb->prefix . "ds_npr_dont_pull_list";
+      
+   $sql = "CREATE TABLE $table_name (
+  id mediumint(9) NOT NULL AUTO_INCREMENT,
+  story_id text NOT NULL,
+  UNIQUE KEY id (id)
+    );";
+
+   require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+   dbDelta( $sql );
+ 
+   add_option( "ds_npr_dont_pull_list", $ds_npr_dont_pull_list );
+}
+register_activation_hook( __FILE__, 'dontpull_install' );
+
+//load project manager php to power db updates, enqueue scripts and create ajax object
+require_once('publish_manager.php');
