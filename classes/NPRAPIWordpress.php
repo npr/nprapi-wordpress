@@ -206,7 +206,7 @@ class NPRAPIWordpress extends NPRAPI {
 		            NPR_RETRIEVED_STORY_META_KEY => 1,
 		            NPR_PUB_DATE_META_KEY => $story->pubDate->value,
 		            NPR_STORY_DATE_MEATA_KEY => $story->storyDate->value,
-								NPR_LAST_MODIFIED_DATE_KEY=> $story->lastModifiedDate->value,
+					NPR_LAST_MODIFIED_DATE_KEY=> $story->lastModifiedDate->value
 		        );
 		        //get audio
 		        if ( isset($story->audio) ) {
@@ -324,11 +324,11 @@ class NPRAPIWordpress extends NPRAPI {
 		            	//get any image meta data and attatch it to the image post
 		            	$image_metas = array(
 		            		NPR_IMAGE_CREDIT_META_KEY =>$image->producer->value,
-										NPR_IMAGE_AGENCY_META_KEY =>$image->provider->value,
-										NPR_IMAGE_CAPTION_META_KEY =>$image->caption->value
+							NPR_IMAGE_AGENCY_META_KEY =>$image->provider->value,
+							NPR_IMAGE_CAPTION_META_KEY =>$image->caption->value
 		            	);
 		            	foreach ( $image_metas as $k => $v ) {
-					        	update_post_meta( $id, $k, $v );
+					        	update_post_meta( $story_id, $k, $v );
 					        }
 		            }
 
