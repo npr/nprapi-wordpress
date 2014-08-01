@@ -127,7 +127,7 @@ function post_to_nprml_story( $post ) {
 		if (!$byline){
 			$story[] = array(
 	        		'tag' => 'byline',
-							'children' => array ( array(
+							'children' => array ( array('tag' => 'name',
 		        		'text' => get_the_author_meta( 'display_name', $post->post_author ),
 							)),
 	    			);
