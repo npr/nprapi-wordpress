@@ -288,9 +288,46 @@ function post_to_nprml_story( $post ) {
         ),
       );				
 		}
+
+		if ($enclosures = get_metadata('post', $post->ID, 'enclosure')) {
+		  // This logic is specifically driven enclosure metadata items that are
+		  // created by the PowerPress podcasting plug-in
+		  foreach($enclosures as $enclosure) {
+		    $pieces = explode("\n", $enclosure);
+
+		    if (!empty($pieces[3])) {
+		      $metadata = unserialize($pieces[3]);
+		      $duration = (!empty($metadata['duration'])) ? nprapi_convert_duration($metadata['duration']) : NULL;
+		    }
+		    $story[] = array(
+              'tag' => 'audio',
+              'children' => array(
+                array(
+                  'tag' => 'duration',
+                  'text' => (!empty($duration)) ? $duration : 0,
+                ),
+                array(
+                  'tag' => 'format',
+                  'children' => array(
+                    array(
+                      'tag' => 'mp3',
+                      'text' => $pieces[0],
+                    ),
+                  ),
+                ),
+              ),
+            );
+		  }
+		}
   return $story;
 }
 
+// Convert "HH:MM:SS" duration (not time) into seconds
+function nprapi_convert_duration($duration) {
+  $pieces = explode(':', $duration);
+  $duration_in_seconds = ($pieces[0] * 60 * 60 + $pieces[1] * 60 + $pieces[2]);
+  return $duration_in_seconds;
+}
 
 function split_paragraphs( $html ) {
     $parts = array_filter( 
