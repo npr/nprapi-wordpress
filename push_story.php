@@ -419,3 +419,27 @@ function ds_npr_bulk_action_push_action() {
   //wp_redirect($sendback);
   //exit();
 }
+
+add_action( 'post_submitbox_misc_actions', 'send_to_nprone' );
+function send_to_nprone()
+{
+    global $post;
+    if ( get_post_type($post) == get_option('ds_npr_push_post_type') ) {
+      $value = get_post_meta($post->ID, '_send_to_nprone', true);
+      $checked = !empty($value) ? ' checked="checked" ' : '';
+      echo '<div class="misc-pub-section misc-pub-section-last"><input type="checkbox"' . $checked . 'value="1" name="send_to_nprone" /><label for="send_to_nprone">Send to NPR One</label></div>';
+    }
+}
+
+add_action( 'save_post', 'save_send_to_nprone');
+
+function save_send_to_nprone($post_ID)
+{
+    global $post;
+    if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
+    if ( !current_user_can( 'edit_page', $post_ID ) ) return false;
+    if ( empty( $post_ID ) ) return false;
+    $value = ($_POST['send_to_nprone']) ? 1 : 0;
+    update_post_meta($post_ID, '_send_to_nprone', $value);
+}

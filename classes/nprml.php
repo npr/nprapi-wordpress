@@ -132,7 +132,15 @@ function post_to_nprml_story( $post ) {
 							)),
 	    			);
     }
-    
+
+    // NPR One
+    if (!empty($_POST['send_to_nprone'])) {
+        $story[] = array(
+            'tag' => 'parent',
+            'attr' => array( 'id' => '319418027', 'type' => 'collection' ),
+        );
+    }
+
     #'miniTeaser' => array( 'text' => '' ),
     #'slug' => array( 'text' => '' ),
     $story[] = array(
