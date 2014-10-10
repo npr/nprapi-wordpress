@@ -290,8 +290,9 @@ function post_to_nprml_story( $post ) {
 		}
 
 		if ($enclosures = get_metadata('post', $post->ID, 'enclosure')) {
-		  // This logic is specifically driven enclosure metadata items that are
-		  // created by the PowerPress podcasting plug-in
+		  // This logic is specifically driven by enclosure metadata items that are
+		  // created by the PowerPress podcasting plug-in. It will likely have to be
+		  // re-worked if we need to accomodate other plug-ins that use enclosures.
 		  foreach($enclosures as $enclosure) {
 		    $pieces = explode("\n", $enclosure);
 
