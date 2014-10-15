@@ -109,7 +109,17 @@ class NPRAPIWordpress extends NPRAPI {
 				$single_story = FALSE;
 			}
 			foreach ($this->stories as $story) {
-
+				
+				//check if story is blacklisted
+				global $wpdb;
+				$table_name = $wpdb->prefix . "ds_npr_dont_pull_list";
+				$sql = $wpdb->prepare(	"SELECT id FROM $table_name  WHERE story_id = '%d'", $story->id );
+				$blacklist = count($wpdb->get_var($sql)); 
+				
+				if ($blacklist >= 1){ //skip story
+					error_log ("Story number " . $story->id ." Blacklisted");
+				} else { //process story instance- ends on 380
+				
 				$exists = new WP_Query( array( 'meta_key' => NPR_STORY_ID_META_KEY, 
 	                                       'meta_value' => $story->id,
 	        															 'post_type' => $pull_post_type,
@@ -368,6 +378,7 @@ class NPRAPIWordpress extends NPRAPI {
 		        }
 		        $ret = wp_insert_post( $args );
 					}
+				} //end blacklist story skip
 			}
 			if ($single_story){
 				return $post_id;

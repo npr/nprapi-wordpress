@@ -30,6 +30,18 @@ function ds_npr_api_get_multi_options_page() {
             <input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
         </form>
     </div>
+     <p>&nbsp;</p>
+     <hr align="LEFT" width="90%">
+   
+	 <!-- New Div for Whitelist UI -->
+    <div>
+	  <h3>Remove Story from Blacklist</h3>
+	    <p>If you have pushed the "Trash/Don't Pull Again" button on the post listing page, that story was added to the database to be ignored.  Enter one NPR Story ID and push remove to lift the blacklist from a specific story. </p>
+	    <div id="whitelistUI">NPR Story ID: <input type="text" id="nprStoryId"> (only enter one) <button type="button" class="whitelist_Btn">Remove from List</button> </div>
+	    
+    </div>
+    <!-- END New Div for Whitelist UI -->
+    
 <?php
 }
 
