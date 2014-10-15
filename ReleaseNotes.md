@@ -89,4 +89,11 @@ This version of the Wordpress NPR API Plugin has changes to enhance our error me
 
   - Here there are three authors for this story, Ari Shapiro (and his bio link), then "kmoylan@npr.org" and a third author "Tommy Writer". Single author stories will not be changed. (This fix came from Ryan Tainter at KERA. Thanks, Ryan!)
 
-- Do not re-pull stories that are already in draft status - The get multi process would repleatedly re-pull stories into draft mode if there is already a draft copy. This fix will check for `status=any` when checking to see if a story already exists in the WordPress database. 
+- Do not re-pull stories that are already in draft status - The get multi process would repleatedly re-pull stories into draft mode if there is already a draft copy. This fix will check for `status=any` when checking to see if a story already exists in the WordPress database.
+
+## V1.5.2 - Release Notes
+
+- Adding support for enclosures created as metadata by the PowerPress plugin.
+- Added NPR One checkbox that makes pushed stories available to the NPR One app (unchecked by default).
+- Users were getting a whitescreen when attempting to push posts. ()The default byline element -- when used with no mapping or co-authors plugin -- was being sent without a tag name, causing a fatal error.)
+- General clean up; small doc tweaks; bug fixes.
