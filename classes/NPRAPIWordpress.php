@@ -368,7 +368,30 @@ class NPRAPIWordpress extends NPRAPI {
 		        }
 		        $ret = wp_insert_post( $args );
 					}
+
+                //set categories for story
+                $category_ids = array();
+                if (is_array($story->parent)) {
+                    foreach ($story->parent as $parent) {
+                        if (isset($parent->type) && $parent->type == 'category') {
+                            $category_id = get_cat_ID($parent->title->value);
+                            if (!empty($category_id)) {
+                                $category_ids[] = $category_id;
+                            }
+                        }
+                    }
+                } elseif (isset($story->parent->type) && $story->parent->type == 'category') {
+                    $category_id = get_cat_ID($story->parent->title->value);
+                    if (!empty($category_id)) {
+                        $category_ids[] = $category_id;
+                    }
+                }
+
+                if (count($category_ids) > 0 && is_integer($ret)) {
+                    wp_set_post_categories($ret, $category_ids);
+                }
 			}
+
 			if ($single_story){
 				return $post_id;
 			}
