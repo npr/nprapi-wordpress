@@ -353,8 +353,24 @@ class NPRAPIWordpress extends NPRAPI {
 		            'ID'   => $post_id,
 		        		'post_date'		 => $post_date,
 		        );
-					 //now set the status
-						if ( ! $existing ) {
+
+                //set author
+                if (!empty($by_line)) {
+                    $userQuery = new WP_User_Query(array(
+                        'search' => trim($by_line),
+                        'search_columns' => array(
+                            'nickname'
+                        )
+                    ));
+
+                    $user_results = $userQuery->get_results();
+                    if (count($user_results) == 1 && isset($user_results[0]->data->ID)) {
+                        $args['post_author'] = $user_results[0]->data->ID;
+                    }
+                }
+
+                //now set the status
+                if ( ! $existing ) {
 		        	if ($publish){
 		            $args['post_status'] = 'publish';
 		        	}
