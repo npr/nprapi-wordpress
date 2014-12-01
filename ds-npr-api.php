@@ -93,7 +93,7 @@ function _ds_npr_activate() {
 		update_option('ds_npr_num', 5);
 	}
 	
-	$def_url = 'http://api-s2.npr.org';
+	$def_url = 'http://api.npr.org';
 	$pull_url = get_option( 'ds_npr_api_pull_url' );
 	if (empty($pull_url)){
 		update_option('ds_npr_api_pull_url', $def_url);
