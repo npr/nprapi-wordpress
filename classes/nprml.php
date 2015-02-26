@@ -265,6 +265,7 @@ function post_to_nprml_story( $post ) {
 		$audios = get_children( $args );
 			
 		foreach ($audios as $audio){
+		    $audio_meta = wp_get_attachment_metadata($audio->ID);
 			$caption = $audio->post_excerpt;
 			//if we don't have excerpt filled in, try content
 			if (empty($caption)) {
@@ -284,6 +285,10 @@ function post_to_nprml_story( $post ) {
           array(
             'tag' => 'description',
             'text' => $caption,
+          ),
+          array(
+            'tag' => 'duration',
+            'text' => $audio_meta['length'],
           ),
         ),
       );				
