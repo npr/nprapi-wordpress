@@ -38,11 +38,11 @@ class NPRAPIWordpress extends NPRAPI {
     $this->request->request_url = $request_url;
     $this->query_by_url($request_url);
   }
-  
+
   /**
-   * 
+   *
    * Query a single url.  If there is not an API Key in the query string, append one, but otherwise just do a straight query
-   * 
+   *
    * @param string $url -- the full url to query.
    */
     function query_by_url( $url ) {
@@ -50,16 +50,16 @@ class NPRAPIWordpress extends NPRAPI {
         if ( ! stristr( $url, 'apiKey=' ) ) {
             $url .= '&apiKey='. get_option( 'ds_npr_api_key' );
         }
-  	
+
         $this->request->request_url = $url;
-  	
+
         //fill out the $this->request->param array so we can know what params were sent
         $parsed_url = parse_url( $url );
         if ( ! empty( $parsed_url['query'] ) ) {
-            $parms = split( '&', $parsed_url['query'] );
+            $parms = explode( '&', $parsed_url['query'] );
             if ( ! empty( $params ) ){
                 foreach ( $params as $p ){
-                    $attrs = split( '=', $p );
+                    $attrs = explode( '=', $p );
                     $this->request->param[$attrs[0]] = $attrs[1];
                 }
             }
@@ -85,19 +85,21 @@ class NPRAPIWordpress extends NPRAPI {
             error_log( 'Error retrieving story for url='.$url );
         }
     }
-  
+
   /**
-   * 
+   *
    * This function will go through the list of stories in the object and check to see if there are updates
    * available from the NPR API if the pubDate on the API is after the pubDate originally stored locally.
-   * 
-   * @param unknown_type $publish
+   *
+   * @param bool $publish
    */
     function update_posts_from_stories( $publish = TRUE ) {
 		$pull_post_type = get_option( 'ds_npr_pull_post_type' );
 		if ( empty( $pull_post_type ) ) {
 			$pull_post_type = 'post';
 		}
+
+        $ret = null;
 
 		if ( ! empty( $this->stories ) ) {
 			$single_story = TRUE;
@@ -132,13 +134,13 @@ class NPRAPIWordpress extends NPRAPI {
                 } else {
                     $existing = null;
                 }
-    
+
                 //add the transcript
                 $story->body .= $this->get_transcript_body($story);
 
                 $story_date = new DateTime($story->storyDate->value);
 				$post_date = $story_date->format('Y-m-d H:i:s');
-					
+
                 //set the story as draft, so we don't try ingesting it
                 $args = array(
                     'post_title'   => $story->title,
@@ -150,7 +152,7 @@ class NPRAPIWordpress extends NPRAPI {
                 );
 				//check the last modified date and pub date (sometimes the API just updates the pub date), if the story hasn't changed, just go on
                 if ( $post_mod_date != strtotime( $story->lastModifiedDate->value ) || $post_pub_date !=  strtotime( $story->pubDate->value ) ) {
-						
+
                     $by_line = '';
                     $byline_link = '';
                     $multi_by_line = '';
@@ -166,7 +168,7 @@ class NPRAPIWordpress extends NPRAPI {
                             }
                         }
                     }
-				
+
                     //construct delimited string if there are multiple bylines
                     if ( is_array( $story->byline ) && !empty( $story->byline ) ) {
                         $i = 0;
@@ -177,7 +179,7 @@ class NPRAPIWordpress extends NPRAPI {
                                 $multi_by_line .= '|' . $single->name->value ; //builds multi byline string with delimiter
                             }
                             $by_line = $single->name->value; //overwrites so as to save just the last byline for previous single byline themes
-									
+
                             if ( ! empty( $single->link ) ) {
                                 foreach( $single->link as $link ) {
                                     if ($link->type == 'html' ) {
@@ -186,7 +188,7 @@ class NPRAPIWordpress extends NPRAPI {
 								    }
                                 }
                             }
-                            $i++; 
+                            $i++;
                         }
 				    }
                     //set the meta RETRIEVED so when we publish the post, we dont' try ingesting it
@@ -211,7 +213,7 @@ class NPRAPIWordpress extends NPRAPI {
                         foreach ( $story->audio as $n => $audio ) {
                             if ( ! empty( $audio->format->mp3['mp3']) && $audio->permissions->download->allow == 'true' ) {
 				                if ($audio->format->mp3['mp3']->type == 'mp3' ) {
-				                    $mp3_array[] = $audio->format->mp3['mp3']->value;	
+				                    $mp3_array[] = $audio->format->mp3['mp3']->value;
 				                }
 				                if ($audio->format->mp3['m3u']->type == 'm3u' ) {
                                     $m3u_array[] = $audio->format->mp3['m3u']->value;
@@ -233,7 +235,7 @@ class NPRAPIWordpress extends NPRAPI {
                     //this is the way WP seems to do it, but we couldn't call media_sideload_image or media_ because that returned only the URL
                     //for the attachment, and we want to be able to set the primary image, so we had to use this method to get the attachment ID.
                     if ( isset( $story->image[0] ) ) {
-							
+
 				    //are there any images saved for this post, probably on update, but no sense looking of the post didn't already exist
                         if ( $existing ) {
                             $image_args = array(
@@ -245,7 +247,7 @@ class NPRAPIWordpress extends NPRAPI {
                                 'post_date'	=> $post_date,
 				            );
                             $attached_images = get_children( $image_args );
-                        }	
+                        }
                         foreach ( $story->image as $image ) {
                             $image_url = '';
 		        		    //check the <enlargement> and then the crops, in this order "enlargement", "standard"  if they don't exist, just get the image->src
@@ -406,22 +408,23 @@ class NPRAPIWordpress extends NPRAPI {
   /**
    * Create NPRML from wordpress post.
    *
-   * @param object $post
-   *   A wordpress post.
+   * @param WP_Post $post A WordPress post object.
    *
-   * @return string
-   *   An NPRML string.
+   * @return bool|string An NPRML string.
    */
     function create_NPRML( $post ) {
         //using some old helper code
         return as_nprml( $post );
     }
 
-  /**
-   * This function will send the push request to the NPR API to add/update a story.
-   * 
-   * @see NPRAPI::send_request()
-   */
+    /**
+     * This function will send the push request to the NPR API to add/update a story.
+     *
+     * @see NPRAPI::send_request()
+     *
+     * @param string $nprml
+     * @param int $post_ID
+     */
     function send_request ( $nprml, $post_ID ) {
         $error_text = '';
         $org_id = get_option( 'ds_npr_api_org_id' );
@@ -432,7 +435,7 @@ class NPRAPIWordpress extends NPRAPI {
             ), get_option( 'ds_npr_api_push_url' ) . '/story' );
 
             error_log('Sending nprml = ' . $nprml);
-	    
+
             $result = wp_remote_post( $url, array( 'body' => $nprml ) );
             if ( ! is_wp_error( $result ) ) {
                 if ( $result['response']['code'] == 200 ) {
@@ -451,7 +454,7 @@ class NPRAPIWordpress extends NPRAPI {
                         $error_text = 'Error pushing story with post_id = '. $post_ID .' for url='.$url . ' HTTP Error response =  '. $result['response']['message'];
                     }
                     $body = wp_remote_retrieve_body( $result );
-		    	
+
                     if ( $body ) {
                         $response_xml = simplexml_load_string( $body );
                         $error_text .= '  API Error Message = ' . $response_xml->message->text;
@@ -476,11 +479,11 @@ class NPRAPIWordpress extends NPRAPI {
     }
 
   /**
-   * 
-   * Because wordpress doesn't offer a method=DELETE for wp_remote_post, we needed to write a curl version to send delete 
+   *
+   * Because wordpress doesn't offer a method=DELETE for wp_remote_post, we needed to write a curl version to send delete
    * requests to the NPR API
-   * 
-   * @param  $api_id
+   *
+   * @param  string $api_id
    */
     function send_delete( $api_id ) {
         $url = add_query_arg( array(
@@ -501,11 +504,12 @@ class NPRAPIWordpress extends NPRAPI {
     }
 
   /**
-   * 
+   *
    * This function will check a story to see if there are transcripts that should go with it, if there are
    * we'll return the transcript as one big strang with Transcript at the top and each paragraph separated by <p>
-   * 
-   * @param  $story
+   *
+   * @param object $story
+   * @return string
    */
     function get_transcript_body( $story ) {
         $transcript_body = "";

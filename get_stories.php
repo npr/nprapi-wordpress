@@ -16,11 +16,11 @@ class DS_NPR_API {
 	public static function ds_npr_story_cron_pull() {
 		// here we should get the list of IDs/full urls that need to be checked hourly
 		//because this is run on cron, and may be fired off by an non-admin, we need to load a bunch of stuff
-		require_once (WP_PLUGIN_DIR . '/../../wp-admin/includes/file.php');
-		require_once (WP_PLUGIN_DIR . '/../../wp-admin/includes/media.php');
-		require_once (WP_PLUGIN_DIR . '/../../wp-admin/includes/admin.php');
-		require_once (WP_PLUGIN_DIR . '/../../wp-load.php');
-		require_once (WP_PLUGIN_DIR . '/../../wp-includes/class-wp-error.php');
+        require_once( ABSPATH . 'wp-admin/includes/file.php');
+        require_once( ABSPATH . 'wp-admin/includes/media.php');
+        require_once( ABSPATH . 'wp-admin/includes/admin.php');
+        require_once( ABSPATH . 'wp-load.php');
+        require_once( ABSPATH . WPINC . '/class-wp-error.php');
 
 		//this was debug code it may be good keep it around for a bit
 		//$now = gmDate("D, d M Y G:i:s O ");
@@ -28,7 +28,7 @@ class DS_NPR_API {
 		//here we go.
 		$num =  get_option( 'ds_npr_num' );
 		for ($i=0; $i<$num; $i++ ) {
-			$api = new NPRAPIWordpress(); 
+			$api = new NPRAPIWordpress();
 			$q = 'ds_npr_query_' . $i;
 			$query_string = get_option( $q );
 			if ( ! empty( $query_string ) ) {
@@ -81,10 +81,10 @@ class DS_NPR_API {
         } else if ( isset( $_GET['story_id']) && isset( $_GET['create_draft'] ) ) {
             $story_id = $_GET['story_id'];
         }
-        
+
         if ( isset( $story_id ) ) {
             // XXX: check that the API key is actually set
-            $api = new NPRAPIWordpress(); 
+            $api = new NPRAPIWordpress();
             //check to see if we got an ID or a URL
             if ( is_numeric( $story_id ) ) {
                 if (strlen($story_id) >= 8) {
@@ -102,7 +102,7 @@ class DS_NPR_API {
             $params = array( 'id' => $story_id, 'apiKey' => get_option( 'ds_npr_api_key' ) );
             $api->request( $params, 'query', get_option( 'ds_npr_api_pull_url' ) );
             $api->parse();
-            
+
             if ( empty( $api->message ) || $api->message->level != 'warning') {
                 $post_id = $api->update_posts_from_stories($publish);
                 if ( ! empty( $post_id ) ) {
@@ -128,11 +128,11 @@ class DS_NPR_API {
         add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
         add_action( 'load-posts_page_get-npr-stories', array( 'DS_NPR_API', 'load_page_hook' ) );
     }
-	
+
     function admin_menu() {
         add_posts_page( 'Get NPR DS Stories', 'Get DS NPR Stories', 'edit_posts', 'get-npr-stories',   'ds_npr_get_stories' );
     }
-    
+
 }
 
 new DS_NPR_API;
