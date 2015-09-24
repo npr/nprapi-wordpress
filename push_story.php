@@ -5,8 +5,8 @@ require_once ( 'classes/NPRAPIWordpress.php' );
 /**
  *
  * push the contents and fields for a post to the NPR API
- * @param unknown_type $post_ID
- * @param unknown_type $post
+ * @param int $post_ID
+ * @param WP_Post $post
  */
 function npr_push ( $post_ID, $post ) {
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
@@ -57,7 +57,7 @@ function npr_push ( $post_ID, $post ) {
 /**
  *
  * Inform the NPR API that a post needs to be deleted.
- * @param unknown_type $post_ID
+ * @param int $post_ID
  */
 function npr_delete ( $post_ID ) {
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
@@ -121,7 +121,8 @@ function ds_npr_api_push_mapping_callback() { }
  * Query the database for any meta fields for a post type, then store that in a WP transient/cache for a day.
  * I don't see the need for this cache to be any shorter, there's not a lot of adding of meta keys happening.
  * To clear this cache, after adding meta keys, you need to run delete_transient('ds_npr_' .  $post_type.'_meta_keys')
- * @param  $post_type
+ * @param string $post_type
+ * @return string[]
  */
 function ds_npr_push_meta_keys( $post_type = 'post' ) {
     global $wpdb;
@@ -148,7 +149,8 @@ function ds_npr_push_meta_keys( $post_type = 'post' ) {
  *
  * get the meta keys for a post type, they could be stored in a cache.
  *
- * @param  $post_type default is 'post'
+ * @param string $post_type default is 'post'
+ * @return string[]
  */
 function ds_npr_get_post_meta_keys( $post_type = 'post' ) {
     //$cache = get_transient('ds_npr_' .  $post_type .'_meta_keys');
@@ -286,8 +288,8 @@ function ds_npr_api_mapping_distribute_media_polarity_callback() {
 /**
  *
  * create the select widget of all meta fields
- * @param  $field_name
- * @param  $keys
+ * @param string $field_name
+ * @param string[] $keys
  */
 function ds_npr_show_keys_select( $field_name, $keys ) {
 
@@ -308,6 +310,9 @@ function ds_npr_show_keys_select( $field_name, $keys ) {
 
 }
 
+/**
+ * @return string
+ */
 function ds_npr_get_push_post_type() {
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
 	if ( empty($push_post_type) ) {
@@ -316,6 +321,9 @@ function ds_npr_get_push_post_type() {
 	return $push_post_type;
 }
 
+/**
+ * @return null|string[]
+ */
 function ds_npr_get_permission_groups(){
     $perm_groups = '';
 	//query the API for the lists for this org.
@@ -415,6 +423,12 @@ function send_to_nprone() {
 }
 
 add_action( 'save_post', 'save_send_to_nprone');
+
+/**
+ * @param int $post_ID
+ *
+ * @return bool|void
+ */
 function save_send_to_nprone( $post_ID ) {
     global $post;
     if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;

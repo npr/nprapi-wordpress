@@ -22,6 +22,21 @@ class NPRAPI {
   const NPRML_VERSION = '0.92.2';
 
   /**
+   * @var string[]
+   */
+  var $notices;
+
+  /**
+   * @var object
+   */
+  var $message;
+
+  /**
+   * @var array[]
+   */
+  var $stories;
+
+  /**
    * Initializes an NPRML object.
    */
   function __construct() {
@@ -37,7 +52,14 @@ class NPRAPI {
     $this->response->code = NULL;
   }
 
-  function request() {
+  /**
+   * Makes HTTP request to NPR API.
+   *
+   * @param array $params Key/value pairs to be sent (within the request's query string).
+   * @param string $path The path part of the request URL (i.e., http://example.com/PATH).
+   * @param string $base The base URL of the request (i.e., HTTP://EXAMPLE.COM/path) with no trailing slash.
+   */
+  function request( $params = array(), $path = 'query', $base = self::NPRAPI_PULL_URL ) {
 
   }
 
@@ -45,7 +67,15 @@ class NPRAPI {
 
   }
 
-  function send_request() {
+  /**
+   * This function will send the push request to the NPR API to add/update a story.
+   *
+   * @see NPRAPI::send_request()
+   *
+   * @param string $nprml
+   * @param int $post_ID
+   */
+  function send_request( $nprml, $post_ID ) {
 
   }
 
@@ -61,7 +91,14 @@ class NPRAPI {
 
   }
 
-  function create_NPRML() {
+  /**
+   * Create NPRML from wordpress post.
+   *
+   * @param WP_Post $post A WordPress post object.
+   *
+   * @return bool|string An NPRML string.
+   */
+  function create_NPRML( $post ) {
 
   }
 
@@ -125,10 +162,10 @@ class NPRAPI {
                 $my_array[] = $parsed->{$key};
                 $parsed->{$key} = $my_array;
               }
-              // then add the new child. 
+              // then add the new child.
               $parsed->{$key}[] = $this->parse_simplexml_element($current);
             }
-            else {  
+            else {
               //The key wasn't parsed already, so just add the current element.
               $parsed->{$key} = $this->parse_simplexml_element($current);
             }
@@ -148,23 +185,21 @@ class NPRAPI {
       //there are no params and 'sort=' is not in the URL
       if (empty($this->request->params) && !stristr($this->request->url, 'sort=')){
       	$this->stories = array_reverse($this->stories);
-      } 
+      }
       //there are params, and sort is not one of them
       if (!empty($this->request->params) && !array_key_exists('sort', $this->request->params)){
       	$this->stories = array_reverse($this->stories);
       }
-      
+
     }
   }
 
   /**
    * Converts SimpleXML element into NPRMLElement.
    *
-   * @param object $element
-   *   A SimpleXML element.
+   * @param SimpleXMLElement $element
    *
-   * @return object
-   *   An NPRML element.
+   * @return NPRMLElement
    */
   function parse_simplexml_element($element) {
     $NPRMLElement = new NPRMLElement();
@@ -189,10 +224,10 @@ class NPRAPI {
               $my_array[] = $NPRMLElement->$i;
               $NPRMLElement->$i = $my_array;
             }
-            // then add the new child. 
+            // then add the new child.
             $NPRMLElement->{$i}[] = $this->parse_simplexml_element($child);
           }
-          else {  
+          else {
             $NPRMLElement->$i = $this->parse_simplexml_element($child);
           }
         }
@@ -227,8 +262,7 @@ class NPRAPI {
   /**
    * Generates basic report of NPRML object.
    *
-   * @return array
-   *   Various messages (strings) .
+   * @return string[] Various messages.
    */
   function report() {
     $msg = array();
@@ -262,11 +296,9 @@ class NPRAPI {
   /**
    * Takes attributes of a SimpleXML element and adds them to an object (as properties).
    *
-   * @param object $element
-   *   A SimpleXML element.
+   * @param SimpleXMLElement $element
    *
-   * @param object $object
-   *   Any PHP object.
+   * @param object $object Any PHP object.
    */
   function add_simplexml_attributes($element, $object) {
     if (count($element->attributes())) {
@@ -288,7 +320,16 @@ class NPRMLEntity {
  * Basic OOP container for NPRML element.
  */
 class NPRMLElement {
+
+  /**
+   * @var mixed
+   */
+  var $value;
+
+  /**
+   * @return string
+   */
   function __toString() {
-    return $this->value;
+    return (string) $this->value;
   }
 }
