@@ -45,7 +45,9 @@ class NPRAPI {
 
   }
 
-  function send_request() {
+  // Edit - Function has no parameters. Without parameters, throws error
+  // Strict standards: Declaration of NPRAPIWordpress::send_request() should be compatible with NPRAPI::send_request()
+  function send_request($nprml, $post_ID ) {
 
   }
 
@@ -61,7 +63,9 @@ class NPRAPI {
 
   }
 
-  function create_NPRML() {
+  // Edit - Function has no parameters. Without parameters, throws error
+  // Strict standards: Declaration of NPRAPIWordpress::create_NPRML() should be compatible with NPRAPI::create_NPRML()
+  function create_NPRML( $post ) {
 
   }
 
@@ -146,7 +150,7 @@ class NPRAPI {
       //if the query didn't have a sort parameter, reverse the order so that we end up with
       //stories in reverse-chron order.
       //there are no params and 'sort=' is not in the URL
-      if (empty($this->request->params) && !stristr($this->request->url, 'sort=')){
+      if (empty($this->request->params) && isset($this->request->url) && !stristr($this->request->url, 'sort=')){
       	$this->stories = array_reverse($this->stories);
       } 
       //there are params, and sort is not one of them
