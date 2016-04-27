@@ -126,7 +126,6 @@ class DS_NPR_API {
             return;
         }
         add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
-        add_action( 'load-posts_page_get-npr-stories', array( 'DS_NPR_API', 'load_page_hook' ) );
         add_action( 'load-posts_page_get-npr-stories', array( $this, 'load_page_hook' ) );
     }
 	

@@ -66,7 +66,7 @@ function npr_delete ( $post_ID ) {
 	}
 
 	$api_id_meta = get_post_meta( $post_ID, NPR_STORY_ID_META_KEY );
-	$api_id = $api_id_meta[0];
+	$api_id = is_array($api_id_meta) && !empty($api_id_meta) ? $api_id_meta[0] : false;
 	$post = get_post($post_ID);
 	//if the push url isn't set, don't even try to delete.
 	$push_url = get_option( 'ds_npr_api_push_url' );
