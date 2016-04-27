@@ -168,22 +168,25 @@ class NPRAPIWordpress extends NPRAPI {
                     }
 				
                     //construct delimited string if there are multiple bylines
-                    if ( is_array( $story->byline ) && !empty( $story->byline ) ) {
+                    if ( isset( $story->byline ) && is_array( $story->byline ) && !empty( $story->byline ) ) {
                         $i = 0;
                         foreach ( $story->byline as $single ) {
-                            if ( $i==0 ) {
-				                $multi_by_line .= $single->name->value; //builds multi byline string without delimiter on first pass
-                            } else {
-                                $multi_by_line .= '|' . $single->name->value ; //builds multi byline string with delimiter
-                            }
-                            $by_line = $single->name->value; //overwrites so as to save just the last byline for previous single byline themes
-									
-                            if ( ! empty( $single->link ) ) {
-                                foreach( $single->link as $link ) {
-                                    if ($link->type == 'html' ) {
-								        $byline_link = $link->value; //overwrites so as to save just the last byline link for previous single byline themes
-								        $multi_by_line .= '~' . $link->value; //builds multi byline string links
-								    }
+                            if( is_object( $single ) ) {
+                                if( isset( $single->name ) ) {
+                                    if ( $i==0 ) {
+        				                $multi_by_line .= $single->name->value; //builds multi byline string without delimiter on first pass
+                                    } else {
+                                        $multi_by_line .= '|' . $single->name->value ; //builds multi byline string with delimiter
+                                    }
+                                    $by_line = $single->name->value; //overwrites so as to save just the last byline for previous single byline themes
+    							}
+                                if ( isset( $single->link ) && ! empty( $single->link ) ) {
+                                    foreach( $single->link as $link ) {
+                                        if ($link->type == 'html' ) {
+                                            $byline_link = $link->value; //overwrites so as to save just the last byline link for previous single byline themes
+                                            $multi_by_line .= '~' . $link->value; //builds multi byline string links
+                                        }
+                                    }
                                 }
                             }
                             $i++; 
@@ -252,16 +255,16 @@ class NPRAPIWordpress extends NPRAPI {
                             if ( ! empty( $image->enlargement ) ) {
                                 $image_url = $image->enlargement->src;
                             } else {
-                                if ( ! empty( $image->crop ) ) {
+                                if ( is_object( $image->crop ) && ! empty( $image->crop ) ) {
                                     foreach ( $image->crop as $crop ) {
-                                        if ( $crop->type == 'enlargement' ) {
+                                        if ( isset( $crop->type ) && $crop->type == 'enlargement' ) {
                                             $image_url = $crop->src;
                                             continue;
                                         }
                                     }
                                     if ( empty( $image_url ) ) {
                                         foreach ( $image->crop as $crop ) {
-                                            if ( $crop->type == 'standard' ) {
+                                            if ( isset( $crop->type ) && $crop->type == 'standard' ) {
                                                 $image_url = $crop->src;
                                                 continue;
                                             }
