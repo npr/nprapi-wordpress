@@ -55,7 +55,7 @@ class DS_NPR_API {
                         if ( $pub_option == 'Publish' ) {
                             $pub_flag = TRUE;
                         }
-                        $story = $api->update_posts_from_stories($pub_flag);
+                        $story = $api->update_posts_from_stories($pub_flag, $i);
                     } else {
                         if ( empty($story) ) {
                             error_log('Not going to save story.  Return from query='. $query_string .', we got an error='.$api->message->id. ' error');

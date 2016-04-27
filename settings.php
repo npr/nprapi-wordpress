@@ -69,6 +69,10 @@ function ds_npr_settings_init() {
     	//ds_npr_query_publish_
         add_settings_field( 'ds_npr_query_publish_' . $i, 'Publish Stories ' . $i, 'ds_npr_api_query_publish_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
         register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_publish_' . $i );
+
+      // add tag(s) to imported stories
+        add_settings_field( 'ds_npr_query_tags_' . $i, 'Add Tags ' . $i, 'ds_npr_api_query_tags_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
+        register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_tags_' . $i );
     }
     
     add_settings_field( 'dp_npr_query_run_multi', 'Run the queries on saving changes', 'dp_npr_query_run_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
@@ -156,13 +160,21 @@ function ds_npr_api_query_publish_callback( $i ){
 		$option_string .=   "value='" . esc_attr($key) . "'>" . esc_html($key) . " </option>";
 		echo $option_string;
 	}
-    echo "</select> </div><p><hr></p>";
+    echo "</select> </div>";
 }
 
 function ds_npr_api_query_callback( $i ) {
 	$option = get_option( 'ds_npr_query_' . $i );
 	$name = 'ds_npr_query_' . $i;
 	echo "<input type='text' value='$option' name='$name' style='width: 300px;' />";
+}
+
+function ds_npr_api_query_tags_callback( $i ) {
+	$name = 'ds_npr_query_tags_' . $i;
+	$option = get_option( $name );
+	
+	echo "<input type='text' value='$option' name='$name' style='width: 300px;' /> <p> Add tag(s) to each story pulled from NPR (comma separated). </p>";
+	echo "<p><hr></p>";
 }
 
 function ds_npr_api_num_multi_callback() {
