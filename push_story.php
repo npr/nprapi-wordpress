@@ -66,7 +66,7 @@ function npr_delete ( $post_ID ) {
 	}
 
 	$api_id_meta = get_post_meta( $post_ID, NPR_STORY_ID_META_KEY );
-	$api_id = $api_id_meta[0];
+	$api_id = is_array($api_id_meta) && !empty($api_id_meta) ? $api_id_meta[0] : false;
 	$post = get_post($post_ID);
 	//if the push url isn't set, don't even try to delete.
 	$push_url = get_option( 'ds_npr_api_push_url' );
@@ -421,6 +421,6 @@ function save_send_to_nprone( $post_ID ) {
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
     if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
     if ( empty( $post_ID ) ) return false;
-    $value = ($_POST['send_to_nprone']) ? 1 : 0;
+    $value = isset($_POST['send_to_nprone']) and ($_POST['send_to_nprone']) ? 1 : 0;
     update_post_meta( $post_ID, '_send_to_nprone', $value );
 }

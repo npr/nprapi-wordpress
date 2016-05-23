@@ -56,10 +56,10 @@ class NPRAPIWordpress extends NPRAPI {
         //fill out the $this->request->param array so we can know what params were sent
         $parsed_url = parse_url( $url );
         if ( ! empty( $parsed_url['query'] ) ) {
-            $parms = split( '&', $parsed_url['query'] );
+        	$parms = explode( '&', $parsed_url['query'] );
             if ( ! empty( $params ) ){
                 foreach ( $params as $p ){
-                    $attrs = split( '=', $p );
+                    $attrs = explode( '=', $p );
                     $this->request->param[$attrs[0]] = $attrs[1];
                 }
             }
@@ -92,8 +92,10 @@ class NPRAPIWordpress extends NPRAPI {
    * available from the NPR API if the pubDate on the API is after the pubDate originally stored locally.
    * 
    * @param unknown_type $publish
+   * @param bool|num $qnum - the query number of story being updated
+   * primarily used for adding tags to new stories
    */
-    function update_posts_from_stories( $publish = TRUE ) {
+    function update_posts_from_stories( $publish = TRUE, $qnum = false ) {
 		$pull_post_type = get_option( 'ds_npr_pull_post_type' );
 		if ( empty( $pull_post_type ) ) {
 			$pull_post_type = 'post';
@@ -148,6 +150,10 @@ class NPRAPIWordpress extends NPRAPI {
 	        		'post_type'    => $pull_post_type,
                     'post_date'    => $post_date,
                 );
+
+                if( false !== $qnum ) {
+                    $args['tags_input'] = 'NPR, ' . get_option('ds_npr_query_tags_'.$qnum);
+                }
 				//check the last modified date and pub date (sometimes the API just updates the pub date), if the story hasn't changed, just go on
                 if ( $post_mod_date != strtotime( $story->lastModifiedDate->value ) || $post_pub_date !=  strtotime( $story->pubDate->value ) ) {
 						
@@ -168,22 +174,25 @@ class NPRAPIWordpress extends NPRAPI {
                     }
 				
                     //construct delimited string if there are multiple bylines
-                    if ( is_array( $story->byline ) && !empty( $story->byline ) ) {
+                    if ( isset( $story->byline ) && is_array( $story->byline ) && !empty( $story->byline ) ) {
                         $i = 0;
                         foreach ( $story->byline as $single ) {
-                            if ( $i==0 ) {
-				                $multi_by_line .= $single->name->value; //builds multi byline string without delimiter on first pass
-                            } else {
-                                $multi_by_line .= '|' . $single->name->value ; //builds multi byline string with delimiter
-                            }
-                            $by_line = $single->name->value; //overwrites so as to save just the last byline for previous single byline themes
-									
-                            if ( ! empty( $single->link ) ) {
-                                foreach( $single->link as $link ) {
-                                    if ($link->type == 'html' ) {
-								        $byline_link = $link->value; //overwrites so as to save just the last byline link for previous single byline themes
-								        $multi_by_line .= '~' . $link->value; //builds multi byline string links
-								    }
+                            if( is_object( $single ) ) {
+                                if( isset( $single->name ) ) {
+                                    if ( $i==0 ) {
+        				                $multi_by_line .= $single->name->value; //builds multi byline string without delimiter on first pass
+                                    } else {
+                                        $multi_by_line .= '|' . $single->name->value ; //builds multi byline string with delimiter
+                                    }
+                                    $by_line = $single->name->value; //overwrites so as to save just the last byline for previous single byline themes
+    							}
+                                if ( isset( $single->link ) && ! empty( $single->link ) ) {
+                                    foreach( $single->link as $link ) {
+                                        if ($link->type == 'html' ) {
+                                            $byline_link = $link->value; //overwrites so as to save just the last byline link for previous single byline themes
+                                            $multi_by_line .= '~' . $link->value; //builds multi byline string links
+                                        }
+                                    }
                                 }
                             }
                             $i++; 
@@ -252,16 +261,16 @@ class NPRAPIWordpress extends NPRAPI {
                             if ( ! empty( $image->enlargement ) ) {
                                 $image_url = $image->enlargement->src;
                             } else {
-                                if ( ! empty( $image->crop ) ) {
+                                if ( is_object( $image->crop ) && ! empty( $image->crop ) ) {
                                     foreach ( $image->crop as $crop ) {
-                                        if ( $crop->type == 'enlargement' ) {
+                                        if ( isset( $crop->type ) && $crop->type == 'enlargement' ) {
                                             $image_url = $crop->src;
                                             continue;
                                         }
                                     }
                                     if ( empty( $image_url ) ) {
                                         foreach ( $image->crop as $crop ) {
-                                            if ( $crop->type == 'standard' ) {
+                                            if ( isset( $crop->type ) && $crop->type == 'standard' ) {
                                                 $image_url = $crop->src;
                                                 continue;
                                             }
@@ -511,7 +520,7 @@ class NPRAPIWordpress extends NPRAPI {
         $transcript_body = "";
         if ( ! empty( $story->transcript ) ) {
             foreach ( $story->transcript as $transcript ) {
-                if ( $transcript->type == 'api' ) {
+                if ( is_object($transcript) && $transcript->type == 'api' ) {
                     $response = wp_remote_get( $transcript->value );
                     if ( !is_wp_error( $response ) ) {
                         $transcript_body .= "<p><strong>Transcript :</strong><p>";
