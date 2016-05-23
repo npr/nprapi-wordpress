@@ -56,7 +56,7 @@ function ds_npr_settings_init() {
 
     add_settings_section( 'ds_npr_api_get_multi_settings', 'NPR API multiple get settings', 'ds_npr_api_get_multi_settings_callback', 'ds_npr_api_get_multi_settings' );
 
-    add_settings_field( 'ds_npr_num', 'Number of things to get', 'ds_npr_api_num_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
+    add_settings_field( 'ds_npr_num', 'Number of queries to run', 'ds_npr_api_num_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
     register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_num' );
     $num =  get_option( 'ds_npr_num' );
     if ( empty($num) ) {
@@ -173,7 +173,7 @@ function ds_npr_api_query_tags_callback( $i ) {
 	$name = 'ds_npr_query_tags_' . $i;
 	$option = get_option( $name );
 	
-	echo "<input type='text' value='$option' name='$name' style='width: 300px;' /> <p> Add tag(s) to each story pulled from NPR (comma separated). </p>";
+	echo "<input type='text' value='$option' name='$name' style='width: 300px;' /> <p> Add tag(s) to each story pulled from NPR (comma separated). The NPR tag is added automatically. </p>";
 	echo "<p><hr></p>";
 }
 
