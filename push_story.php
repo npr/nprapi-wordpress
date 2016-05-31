@@ -9,11 +9,14 @@ require_once ( 'classes/NPRAPIWordpress.php' );
  * @param unknown_type $post
  */
 function npr_push ( $post_ID, $post ) {
+	if ( ! isset( $_POST['ds_npr_update_push'] ) ) {
+		return false;
+	}
+
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
 	if ( empty( $push_post_type ) ) {
 		$push_post_type = 'post';
 	}
-
 
 	//if the push url isn't set, don't even try to push.
 	$push_url = get_option( 'ds_npr_api_push_url' );

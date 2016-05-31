@@ -54,6 +54,8 @@ require_once( DS_NPR_PLUGIN_DIR . '/settings.php' );
 require_once( DS_NPR_PLUGIN_DIR . '/classes/NPRAPIWordpress.php');
 
 require_once( DS_NPR_PLUGIN_DIR . '/get_stories.php');
+require_once( DS_NPR_PLUGIN_DIR . '/meta-boxes.php');
+
 //add the cron to get stories
 register_activation_hook( DS_NPR_PLUGIN_DIR . '/ds-npr-api.php', 'ds_npr_story_activation' );
 add_action( 'npr_ds_hourly_cron', array ( 'DS_NPR_API','ds_npr_story_cron_pull' ) );
@@ -156,3 +158,18 @@ function ds_npr_create_post_type() {
 		)
 	);
 }
+
+function ds_npr_add_meta_boxes() {
+	$screen = get_current_screen();
+	$push_url = get_option( 'ds_npr_api_push_url' );
+	if ( $screen->id == 'post' && ! empty( $push_url ) ) {
+		global $post;
+		add_meta_box(
+			'ds_npr_document_meta',
+			'NPR Story API',
+			'ds_npr_publish_meta_box',
+			'post', 'side'
+		);
+	}
+}
+add_action('add_meta_boxes', 'ds_npr_add_meta_boxes');
