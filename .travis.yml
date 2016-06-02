@@ -21,7 +21,7 @@ env:
     - WP_VERSION=4.1.11 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
     - WP_VERSION=4.2.8 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
     - WP_VERSION=4.3.4 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
-    - WP_VERSION=4.4.4 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
+    - WP_VERSION=4.4.3 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
     - WP_VERSION=4.5.2 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
 
 # Only test the bootstrap-unit-tests branch for now
