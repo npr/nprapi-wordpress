@@ -1,5 +1,5 @@
 === Plugin Name: WordPress NPR Story API ===
-Contributors: (this should be a list of wordpress.org userid's) David Moore, Jeremy Dunn, kgrantNPR, Kevin Moylan, Ryan Nagle, Adam Schweigert, jackbrighton
+Contributors: David Moore, Jeremy Dunn, kgrantNPR, Kevin Moylan, Ryan Nagle, Adam Schweigert, jackbrighton
 Donate link: http://www.npr.org/series/750002/support-public-radio
 Tags: npr, news, public radio, api
 Requires at least: 3.8.14
