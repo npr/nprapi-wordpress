@@ -32,5 +32,5 @@ Stories in the NPR Story API contain lots of metadata. When you pull a story fro
 
 You might use this for customizing your WordPress theme to display content in these custom fields.
 
-## Pull By Custom APIL Query
+## Pull By Custom API Query
 
