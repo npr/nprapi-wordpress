@@ -1,13 +1,18 @@
 # WordPress NPR Story API
 
-Contributors: David Moore, Jeremy Dunn, kgrantNPR, Kevin Moylan, Ryan Nagle, Adam Schweigert, jackbrighton
-Requires at least: 3.8.14
-Tested up to: 4.5.2
-Stable tag: 1.5.2
-License: GPLv2
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
-
 A collection of tools for reusing content from NPR.org supplied by Digital Services.
+
+Contributors: David Moore, Jeremy Dunn, kgrantNPR, Kevin Moylan, Ryan Nagle, Adam Schweigert, jackbrighton
+
+Requires at least: 3.8.14
+
+Tested up to: 4.5.2
+
+Stable tag: 1.5.2
+
+License: GPLv2
+
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
