@@ -20,4 +20,8 @@ For NPR Pull Post Type you can leave the default or pick a custom post type. You
 
 For NPR Push Post Type you can leave the default or set it to another post type, like `post`. 
 
+If you have configured any Permissions Groups for content you distribute through the NPR API you can optionally add them in the NPR Permissions setting. Note that by default all content in the NPR API is open to everyone, unless you restrict access to a Permissions Group. For more on setting these up see the [NPR API Content Permissions Control page](https://nprsupport.desk.com/customer/en/portal/articles/1995557-npr-api-content-permissions-control)
+
+Once you have all the above entered your settings panel should look something like this:
+
 ![NPR API plugin settings page with values filled in as described above](/assets/npr-api-wp-plugin-settings.png)
