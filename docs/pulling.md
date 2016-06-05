@@ -62,8 +62,8 @@ You can add more queries any time. If you run out of Query String fields, just i
 
 If in **Settings > NPR API >NPR Pull Post Type** you selected a post type for pulled content, you'll find pulled stories in the WordPress screen for that post type. For example if you selected `npr_story_post` as the NPR Pull Post Type, WordPress will store pulled stories in the NPR Stories screen:
 
-![NPR Stories screen in WordPress showing pulled stories](/npr-stories.png)
+![NPR Stories screen in WordPress showing pulled stories](/assets//npr-stories.png)
 
 Now you can edit the pulled story much like any other WordPress post. Although note that unlike regular WordPress posts, you can't add Categories or Tags to NPR Stories.
 
-![Editing an NPR story pulled from the API into WordPress](/edit-api-post.png)
+![Editing an NPR story pulled from the API into WordPress](/assets/edit-api-post.png)
