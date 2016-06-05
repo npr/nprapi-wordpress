@@ -34,7 +34,7 @@ You might use this for customizing your WordPress theme to display content in th
 
 ## Pull Multiple Stories By Custom API Query
 
-In the WordPress Dashboard go to **Settings > NPR API Git Multi**. This screen offers several "Query String" fields where you can enter a query string for the NPR API. You can enter multiple queries to pull content for different subjects, programs, etc., and set how often the queries will run. Once you save one or more queries, WordPress will continue to run them against the NPR API and return fresh stories as either WordPress Posts or Drafts.
+In the WordPress Dashboard go to **Settings > NPR API Get Multi**. This screen offers several "Query String" fields where you can enter a query string for the NPR API. You can enter multiple queries to pull content for different subjects, programs, etc., and set how often the queries will run. Once you save one or more queries, WordPress will continue to run them against the NPR API and return fresh stories as either WordPress Posts or Drafts.
 
 ### How to Create a Query String
 
@@ -50,7 +50,9 @@ After you click the button to create your API call, you'll find the full URL of 
 
 Now copy the API call string up to the last segment `&apiKey=demo`. Do not include this in copying the query string. _(That segment would only be useful if you were going to run the query in the Query Generator itself, which we're not doing here.)_
 
-Now that you've created and copied a query string, return to your **WordPress Dashboard > Settings > NPR API Git Multi** and paste the string into one of the Query String fields. Use the dropdown menu to set whether stories returned from the API should be saved as Drafts or Posts.
+Now that you've created and copied a query string, return to your **WordPress Dashboard > Settings > NPR API Git Multi** and paste the string into one of the Query String fields. Use the dropdown menu to set whether stories returned from the API should be saved as Drafts or Posts:
+
+![a query URL entered in the Query String field in WordPress](/assets/npr-api-multiple-get-settings.png)
 
 When you click **Save Changes**, WordPress will begin pulling NPR API content. Note that it may take up to an hour before stories begin showing up as Posts or Drafts.
 
