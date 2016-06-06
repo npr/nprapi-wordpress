@@ -14,4 +14,5 @@ The WordPress plugin is being developed as an Open Source plugin by NPR Digital 
 - [Plugin Settings](settings.md)
 - [Pulling Content from the NPR API](pulling.md)
 - [Pushing Content to the NPR API](pushing.md)
+- [Pushing Content to the NPR One app](npr-one.md)
 - [Custom Field Mapping](field-mapping.md)
