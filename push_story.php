@@ -9,10 +9,6 @@ require_once ( 'classes/NPRAPIWordpress.php' );
  * @param unknown_type $post
  */
 function npr_push ( $post_ID, $post ) {
-	if ( ! isset( $_POST['ds_npr_update_push'] ) ) {
-		return false;
-	}
-
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
 	if ( empty( $push_post_type ) ) {
 		$push_post_type = 'post';
@@ -91,7 +87,9 @@ function npr_delete ( $post_ID ) {
 }
 
 //as far as I can tell, this is where the magic happens
-add_action( 'save_post', 'npr_push', 10, 2 );
+if ( isset( $_POST['ds_npr_update_push'] ) ) {
+	add_action( 'save_post', 'npr_push', 10, 2 );
+}
 add_action( 'trash_post', 'npr_delete', 10, 2 );
 //this may need to check version and use 'wp_trash_post'
 add_action( 'wp_trash_post', 'npr_delete', 10, 2 );
