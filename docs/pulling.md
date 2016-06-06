@@ -27,7 +27,7 @@ You then have the choice to create a draft post of the story, or publish the sto
 
 ![NPR story post in the WordPress post edit screen](/assets/npr-story-draft.png)
 
-## NPR Story Custom Fields
+### NPR Story Custom Fields
 
 Stories in the NPR Story API contain lots of metadata. When you pull a story from the API, WordPress will store this metadata in custom fields. This may include audio files, bylines, image captions and credits, and many other values including the story ID:
 
