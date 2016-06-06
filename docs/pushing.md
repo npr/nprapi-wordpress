@@ -22,6 +22,8 @@ If the push fails you will instead see an error message in a custom field named 
 
 If you get push errors, check **Settings > NPR API** to make sure correct values are entered for your API Key, Pull URL, Push URL, Org ID, and NPR Push Post Type.
 
+If you don't see these custom fields in the post edit screen, click **Screen Option** in the upper right and then the checkbox for Custom Fields.
+
 ## Pushing Multiple Stories to the NPR API
 
 You can select any number of posts for pushing to the NPR API all at once. In the **All Posts** screen for the post type you've selected as the **NPR Push Post Type**, you'll find a new Bulk Action:
