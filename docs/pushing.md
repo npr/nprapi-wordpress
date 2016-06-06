@@ -14,7 +14,7 @@ Let's say we have a lovely post and we want to share it with the world through t
 
 We can easily verify that it was successfully pushed by checking for an `npr_story_id` value in the post's Custom Fields:
 
-![Custom Fields in a post showing an NPR story iD](/assets/post-custom-fields-npr-api.png)
+![Custom Fields in a post showing an NPR story iD](/assets/post-custom-fields-api.png)
 
 If the push fails you will instead see an error message in a custom field named `npr_push_story_error`:
 
@@ -24,7 +24,7 @@ If you get push errors check **Settings > NPR API** to make sure correct values 
 
 ## Pushing Multiple Stories to the NPR API
 
-You can select any number of posts for pushing to the NPR API in bulk. In the All Posts screen for the post type you've selected as the **NPR Push Post Type**, you'll find a new Bulk Action:
+You can select any number of posts for pushing to the NPR API in bulk. In the **All Posts** screen for the post type you've selected as the **NPR Push Post Type**, you'll find a new Bulk Action:
 
 ![NPR API push bulk action menu item](/assets/bulk-action-push-to-npr.png)
 
@@ -36,4 +36,4 @@ If you edit a story that's been previously pushed to the NPR API, when you updat
 
 ## Deleting Posts from the NPR API
 
-You can delete one of your stories from the NPR API by simply deleting it in WordPress. Stories you pull from the API can't be deleted in this way, as you only have delete access to stories created on your WordPress site.
+You can delete any of your stories from the NPR API by simply deleting them in WordPress. Stories you pull from the API can't be deleted in this way, as you only have delete access to stories created on your WordPress site.
