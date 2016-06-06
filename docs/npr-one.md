@@ -6,4 +6,4 @@ After you've [set up the WordPress NPR API Plugin](settings.md) with your API Ke
 
 ![Send to NPR One checkbox in the WordPress post edit screen](/assets/test-post-npr-one.png)
 
-The checkbox isn't selected by default. This allows you to push all your stories to the NPR API, but only select stories to NPR One. If you want to push a post to NPR One, check the box and hit the Publish or Update button. 
+The checkbox isn't selected by default. This allows you to push all your stories to the NPR API, but only selected stories to NPR One. If you want to push a post to NPR One, check the box and hit the Publish or Update button. 
