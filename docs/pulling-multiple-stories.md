@@ -4,6 +4,8 @@ You can set up and save one or more API queries to pull content based on topic, 
 
 In the WordPress Dashboard go to **Settings > NPR API Get Multi**. This screen offers several **Query String** fields where you can enter a query string for the NPR API. 
 
+![NPR API plugin settings for getting multiple stories](/assets/wp-npr-api-get-multi-settings.png)
+
 Note that "Query String" simply means a URL containing query parameters like a Subject ID, content type, date range, number of results to return, etc. An NPR API query string looks something like this:
 
 `http://api.npr.org/query?id=1014,2&requiredAssets=audio&startDate=2016-04-01&endDate=2016-06-05&dateType=story&output=NPRML&numResults=10`
