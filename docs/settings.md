@@ -6,7 +6,7 @@ To pull content from the NPR API you'll need an API Key which you can get by [re
 
 ![NPR account page showing the API key in the developer section of the page](/assets/npr-sccount-page.png)
 
-If you are planning to push content to the NPR API you'll also need an NPR API Org ID. If you are an NPR station or affiliated producer you can find your ORG ID at [NPR StationConnect](https://stationconnect.org/login?redirect=%2F). 
+If you are planning to push content to the NPR API you'll also need an NPR API Org ID. If you are an NPR station or affiliated producer you can find your Org ID at [NPR StationConnect](https://stationconnect.org/login?redirect=%2F). 
 
 If you don't have an Org ID or don't intend to push content into the NPR API you can still pull content from the API, but be mindful of the [Terms of Use](http://www.npr.org/about-npr/179876898/terms-of-use).
 
