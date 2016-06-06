@@ -10,7 +10,7 @@ The WordPress plugin is being developed as an Open Source plugin by NPR Digital 
 
 ## Docs Table of Contents
 
-- [Installation](/installation.md)
+- [Installation](installation.md)
 - [Plugin Settings](settings.md)
 - [Pulling Content from the NPR API](pulling.md)
 - [Pushing Content to the NPR API](pushing.md)
