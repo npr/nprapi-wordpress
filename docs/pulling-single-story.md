@@ -28,7 +28,7 @@ Stories in the NPR Story API contain lots of metadata. When you pull a story fro
 
 ![NPR story custom fields WordPress post edit screen](/assets/npr-story-custom-fields.png)
 
-If you don't see these custom fields in the post edit screen, click **Screen Option** in the upper right and then the checkbox for Custom Fields.
+If you don't see these custom fields in the post edit screen, click **Screen Options** in the upper right and then the checkbox for Custom Fields.
 
 ## Using NPR API Custom Fields in WordPress Templates
 
