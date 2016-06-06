@@ -25,3 +25,5 @@ If you have configured any Permissions Groups for content you distribute through
 Once you have all the above entered your settings panel should look something like this:
 
 ![NPR API plugin settings page with values filled in as described above](/assets/npr-api-wp-plugin-settings.png)
+
+Hit **Save Changes** and you're ready to start using the NPR API.
