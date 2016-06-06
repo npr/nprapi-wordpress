@@ -46,6 +46,6 @@ Now you can edit any pulled story much like any other post. Although note that u
 
 ## Updating Pulled Stories
 
-NPR often updates stories and pushes the updates to the NPR API. The same it true for other sources of content in the NPR API. You can easily update any stories you pulled from the API by visiting the **Posts** screen for your NPR Pull Post Type, and using the **Update NPR Story** Bulk Action:
+NPR often updates stories and pushes the updates to the NPR API. The same is true for other sources of content in the NPR API. You can easily update any stories you pulled from the API by visiting the **Posts** screen for your NPR Pull Post Type, and using the **Update NPR Story** Bulk Action:
 
 ![Bulk Action menu link for Updating NPR Stories](/assets/bulk-actions-update-npr-story.png)
