@@ -51,23 +51,23 @@ You bet, just visit the NPR Query Generator: [http://www.npr.org/api/queryGenera
 
 NPR API Plugin Settings screen
 
-![NPR API Plugin Settings screen](/assets/npr-api-wp-plugin-settings.png)
+![NPR API Plugin Settings screen](assets/img/npr-api-wp-plugin-settings.png)
 
 NPR API multiple get settings
 
-![NPR API multiple get settings](/assets/npr-api-wp-plugin-multiple-get-settings.png)
+![NPR API multiple get settings](assets/img/npr-api-wp-plugin-multiple-get-settings.png)
 
 Get NPR Stories link in the dashboard
 
-![Get NPR Stories link in the dashboard](/assets/get-npr-stories-link.png)
+![Get NPR Stories link in the dashboard](assets/img/get-npr-stories-link.png)
 
 Getting an NPR Story by Story ID
 
-![Getting NPR Stories by Story ID](/assets/get-npr-stories-link.png)
+![Getting NPR Stories by Story ID](assets/img/get-npr-stories-link.png)
 
 NPR Stories having got gotten
 
-![NPR Stories having got gotten](/assets/npr-stories.png)
+![NPR Stories having got gotten](assets/img/npr-stories.png)
 
 
 == Changelog ==

@@ -4,6 +4,6 @@ In most cases your posts will successfully push to the NPR API using the standar
 
 Select your custom fields to map them to the NPR API labels: 
 
-![NPR API push settings for custom fields](/assets/npr-api-wp-plugin-field-mapping.png)
+![NPR API push settings for custom fields](assets/img/npr-api-wp-plugin-field-mapping.png)
 
 Don't forget to click **Save Changes**!

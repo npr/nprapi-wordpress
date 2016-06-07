@@ -4,7 +4,7 @@
 
 To pull content from the NPR API you'll need an API Key which you can get by [registering for an NPR account](http://www.npr.org/account/signup). Once your account is approved by NPR you can [sign in](http://www.npr.org/account/login) and copy your NPR API key from the developer section at the bottom of the page:
 
-![NPR account page showing the API key in the developer section of the page](/assets/npr-sccount-page.png)
+![NPR account page showing the API key in the developer section of the page](assets/img/npr-sccount-page.png)
 
 If you are planning to push content to the NPR API you'll also need an NPR API Org ID. If you are an NPR station or affiliated producer you can find your Org ID at [NPR StationConnect](https://stationconnect.org/login?redirect=%2F). 
 
@@ -24,6 +24,6 @@ If you have configured any Permissions Groups for content you distribute through
 
 Once you have all the above entered your settings panel should look something like this:
 
-![NPR API plugin settings page with values filled in as described above](/assets/npr-api-wp-plugin-settings.png)
+![NPR API plugin settings page with values filled in as described above](assets/img/npr-api-wp-plugin-settings.png)
 
 Hit **Save Changes** and you're ready to start using the NPR API.
