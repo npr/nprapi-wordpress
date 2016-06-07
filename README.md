@@ -59,7 +59,7 @@ NPR API Plugin Settings screen
 
 NPR API multiple get settings
 
-![NPR API multiple get settings](docs/assets/img/npr-api-wp-plugin-multiple-get-settings.png)
+![NPR API multiple get settings](docs/assets/img/npr-api-multiple-get-settings.png)
 
 Get NPR Stories link in the dashboard
 
