@@ -26,7 +26,7 @@ After you click the button to create your API call, you'll find the full URL of 
 
 Now copy the API call string up to the last segment `&apiKey=demo`. Do not include this in copying the query string. _(That segment would only be useful if you were going to run the query in the Query Generator itself, which we're not doing here.)_
 
-Now that you've created and copied a query string, return to your **WordPress Dashboard > Settings > NPR API Get Multi** and paste the string into one of the Query String fields. Use the dropdown menu to set whether stories returned from the API should be saved as Drafts or Posts:
+Now that you've created and copied a query string, return to your WordPress Dashboard and the **Settings > NPR API Get Multi** page. Paste the string into one of the Query String fields. Use the dropdown menu to set whether stories returned from the API should be saved as Drafts or Posts:
 
 ![a query URL entered in the Query String field in WordPress](assets/img/npr-api-multiple-get-settings.png)
 
@@ -36,7 +36,7 @@ You can add more queries any time. If you run out of Query String fields, just i
 
 ## Where to Find the Pulled Stories 
 
-If in **Settings > NPR API > NPR Pull Post Type** you selected a post type for pulled content, you'll find pulled stories in the WordPress screen for that post type. For example if you selected `npr_story_post` as the NPR Pull Post Type, WordPress will store pulled stories in the NPR Stories screen:
+If in **Settings > NPR API > NPR Pull Post Type** you selected a post type for pulled content, you'll find pulled stories in the relevant posts screen for that post type. For example if you selected `npr_story_post` as the NPR Pull Post Type, WordPress will store pulled stories in the NPR Stories screen:
 
 ![NPR Stories screen in WordPress showing pulled stories](assets/img//npr-stories.png)
 
