@@ -38,4 +38,4 @@ If you edit a story that's previously been pushed to the NPR API, when you updat
 
 ## Deleting Posts from the NPR API
 
-You can delete any of your stories from the NPR API by simply deleting them in WordPress. Stories you pull from the API can't be deleted in this way, as you only have delete access to stories created on your WordPress site.
+You can delete any of your stories from the NPR API by simply deleting them in WordPress. Stories you pull from the API can't be deleted in this way, as you only have delete access to stories pushed to the API from your WordPress site.
