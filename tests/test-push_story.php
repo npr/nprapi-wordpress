@@ -3,10 +3,14 @@
 class Test_PushStory extends WP_UnitTestCase {
 
 	function test_npr_push() {
+		# TODO: figure out how to verify a post has been
+		# pushed to the API in order to test npr_push
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
 	function test_npr_delete() {
+		# TODO: figure out how to verify a post has been
+		# pushed to the API so we can attempt deleting with npr_delete
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
@@ -15,23 +19,31 @@ class Test_PushStory extends WP_UnitTestCase {
 	}
 
 	function test_ds_npr_api_push_mapping_callback() {
-		$this->markTestIncomplete('This test has not been implemented yet.');
+		# TODO: do we need ds_npr_get_post_meta_keys if it doesn't actually do anything?
+		$ret = ds_npr_api_push_mapping_callback();
+		$this->assertTrue( is_null( $ret ) );
 	}
 
 	function test_ds_npr_push_meta_keys() {
-		$this->markTestIncomplete('This test has not been implemented yet.');
+		# Should be empty since our test database contains nothing
+		$meta_keys = ds_npr_push_meta_keys();
+		$this->assertTrue( empty( $meta_keys ) );
 	}
 
 	function test_ds_npr_get_post_meta_keys() {
-		$this->markTestIncomplete('This test has not been implemented yet.');
+		$meta_keys = ds_npr_get_post_meta_keys();
+		$this->assertTrue( empty( $meta_keys ) );
 	}
 
 	function test_ds_npr_push_settings_init() {
+		# TODO: not sure how to test this
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
 	function test_ds_npr_api_push_settings_callback() {
-		$this->markTestIncomplete('This test has not been implemented yet.');
+		# TODO: do we need ds_npr_api_push_settings_callback if it doesn't actually do anything?
+		$ret = ds_npr_api_push_settings_callback();
+		$this->assertTrue( is_null( $ret ) );
 	}
 
 	function test_ds_npr_api_use_custom_mapping_callback() {

@@ -1,6 +1,5 @@
 <?php
 /**
- * 
  * Build the options page for the bass NPR API settings
  */
 function ds_npr_api_options_page() {
@@ -17,7 +16,6 @@ function ds_npr_api_options_page() {
 }
 
 /**
- * 
  * Build the options page for multiple automatic retrieval
  */
 function ds_npr_api_get_multi_options_page() {
@@ -34,7 +32,6 @@ function ds_npr_api_get_multi_options_page() {
 }
 
 /**
- * 
  * Build the options page for mapping fields for the NPRML fields pushed with a post to local custom meta fields.
  */
 function ds_npr_add_field_mapping_page() {
@@ -44,13 +41,12 @@ function ds_npr_add_field_mapping_page() {
 	<p>
 	<div>Select for the Meta fields for the <strong> <?php echo ds_npr_get_push_post_type(); ?></strong> post type</div>
 	<?php
-	
+
 	settings_fields( 'ds_npr_api_push_mapping' );
   //do_settings_section('ds_npr_api_push_mapping');
   do_settings_sections( 'ds_npr_api_push_mapping' );
 	?>
   <input name="Submit" type="submit" value="<?php esc_attr_e( 'Save Changes' ); ?>" />
   </form>
-  <?php 
-} 
-?>
+  <?php
+}
