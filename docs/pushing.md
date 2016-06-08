@@ -24,7 +24,7 @@ If you don't see these custom fields in the post edit screen, click **Screen Opt
 
 ## Pushing Story Updates to the NPR API
 
-If you edit a story that's previously been pushed to the NPR API, when you update the post it will automatically update the story in the NPR API.
+If you edit a story that's previously been pushed to the NPR API, you can use the **Push to NPR** button in the post editor to update the post in the NPR API.
 
 ## Deleting Posts from the NPR API
 
