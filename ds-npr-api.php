@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: DS NPR API
+ * Plugin Name: NPR Story API
  * Description: A collection of tools for reusing content from NPR.org supplied by Digital Services.
  * Version: 1.5.2
- * Author: NPRDS
+ * Author: NPR Digital Services
  * License: GPLv2
 */
 /*
