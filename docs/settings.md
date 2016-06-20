@@ -1,6 +1,6 @@
 # Plugin Settings
 
-## Before your start
+## Before you start
 
 To pull content from the NPR API you'll need an API Key which you can get by [registering for an NPR account](http://www.npr.org/account/signup). Once your account is approved by NPR you can [sign in](http://www.npr.org/account/login) and copy your NPR API key from the developer section at the bottom of the page:
 
@@ -10,7 +10,7 @@ If you are planning to push content to the NPR API you'll also need an NPR API O
 
 If you don't have an Org ID or don't intend to push content into the NPR API you can still pull content from the API, but be mindful of the [Terms of Use](http://www.npr.org/about-npr/179876898/terms-of-use).
 
-## Configure Your Settings
+## Configure your settings
 
 With your API Key in hand, visit the **Settings > NPR API** settings screen in your WordPress dashboard. Enter your API Key, and if available your Org ID. 
 
