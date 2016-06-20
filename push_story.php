@@ -425,3 +425,29 @@ function save_send_to_nprone( $post_ID ) {
     $value = ($_POST['send_to_nprone']) ? 1 : 0;
     update_post_meta( $post_ID, '_send_to_nprone', $value );
 }
+
+/**
+ * Add an admin notice to the post editor with the post's error message if it exists
+ */
+function ds_npr_post_admin_message() {
+	$screen = get_current_screen();
+	$errors = get_post_meta(get_the_ID(), 'npr_push_story_error');
+
+	if ( !empty( $errors ) ) {
+		$errortext = '';
+		foreach ( $errors as $error ) {
+			$errortext .= sprintf(
+				'<p>%1$s</p>',
+				$error
+			);
+		}
+
+		printf(
+			'<div class="%1$s"><p>%2$s</p>%3$s</div>',
+			'notice notice-error',
+			__('An error occurred when pushing this post to NPR:'),
+			$errortext
+		);
+	}
+}
+add_action( 'admin_notices', 'ds_npr_post_admin_message' );
