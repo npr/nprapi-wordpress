@@ -1,10 +1,10 @@
 # Pulling a Single Story from the NPR API
 
-Once you have the [WP NPR API Plugin configured](/docs/settings.md), you can easily pull a story from the API into WordPress using a Story ID or URL.
+Once you have the [NPR API Plugin configured](/docs/settings.md), you can easily pull a story from the API into WordPress using a Story ID or URL.
 
-In the WordPress Dashboard under **Posts** you will see a link for **Get DS NPR Stories**:
+In the WordPress Dashboard under **Posts** you will see a link for **Get NPR Stories**:
 
-![Get DS NPR Stories link in the WordPress Dashboard](assets/img/get-npr-stories-link.png)
+![Get NPR Stories link in the WordPress Dashboard](assets/img/get-npr-stories-link.png)
 
 This opens a screen with a single field where you can paste a Story ID:
 

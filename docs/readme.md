@@ -1,6 +1,6 @@
-# WordPress NPR API Plugin Docs
+# NPR API Plugin Docs
 
-The WordPress NPR Story API Plugin provides push and pull functionality with the [NPR API](http://www.npr.org/api/index) along with a user-friendly administrative interface.
+The NPR Story API Plugin provides push and pull functionality with the [NPR API](http://www.npr.org/api/index) along with a user-friendly administrative interface.
 
 NPR's API is a content API, which essentially provides a structured way for other computer applications to pull NPR stories in a predictable, flexible and powerful way. The content that is available includes audio from most NPR programs dating back to 1995 as well as text, images and other web-only content from NPR and NPR member stations. This archive consists of over 250,000 stories that are grouped into more than 5,000 different aggregations.
 
