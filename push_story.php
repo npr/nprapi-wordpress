@@ -472,15 +472,15 @@ add_action( 'admin_notices', 'ds_npr_post_admin_message_error' );
  */
 function ds_npr_post_updated_messages_success( $messages ) {
 	$id = get_post_meta(get_the_ID(), NPR_STORY_ID_META_KEY, true); // single
+
 	if ( !empty($id) ) {
 		$post_type = get_post_type( get_the_ID() );
 		$obj = get_post_type_object( $post_type );
 		$singular = $obj->labels->singular_name;
 
-		$messages['post'][1] = sprintf(
-			__( '%s updated. <a href="%s" target="_blank">View %s</a>. This post\'s NPR ID is %s. ' ),
+		$messages['post'][4] = sprintf(
+			__( '%s updated. This post\'s NPR ID is %s. ' ),
 			esc_attr( $singular ),
-			esc_url( get_permalink( $post_ID ) ),
 			strtolower( $singular ),
 			(string) $id
 		);
