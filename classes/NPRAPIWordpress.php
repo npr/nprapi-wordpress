@@ -432,7 +432,7 @@ class NPRAPIWordpress extends NPRAPI {
             ), get_option( 'ds_npr_api_push_url' ) . '/story' );
 
             error_log('Sending nprml = ' . $nprml);
-	    
+
             $result = wp_remote_post( $url, array( 'body' => $nprml ) );
             if ( ! is_wp_error( $result ) ) {
                 if ( $result['response']['code'] == 200 ) {
@@ -451,7 +451,7 @@ class NPRAPIWordpress extends NPRAPI {
                         $error_text = 'Error pushing story with post_id = '. $post_ID .' for url='.$url . ' HTTP Error response =  '. $result['response']['message'];
                     }
                     $body = wp_remote_retrieve_body( $result );
-		    	
+
                     if ( $body ) {
                         $response_xml = simplexml_load_string( $body );
                         $error_text .= '  API Error Message = ' . $response_xml->message->text;
@@ -467,6 +467,7 @@ class NPRAPIWordpress extends NPRAPI {
             error_log($error_text);
         }
 
+		// Add errors to the post that you just tried to push
 		if ( ! empty( $error_text ) ) {
             update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $error_text );
 		}
@@ -476,17 +477,17 @@ class NPRAPIWordpress extends NPRAPI {
     }
 
   /**
-   * 
+   *
    * Because wordpress doesn't offer a method=DELETE for wp_remote_post, we needed to write a curl version to send delete 
    * requests to the NPR API
-   * 
+   *
    * @param  $api_id
    */
     function send_delete( $api_id ) {
         $url = add_query_arg( array(
             'orgId'  => get_option( 'ds_npr_api_org_id' ),
             'apiKey' => get_option( 'ds_npr_api_key' ),
-  			'id' => $api_id
+			'id' => $api_id
         ), get_option( 'ds_npr_api_push_url' ) . '/story' );
 
 		//wp doesn't let me do a wp_remote_post with method=DELETE so we have to make our own curl request.  fun

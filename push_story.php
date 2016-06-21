@@ -9,6 +9,8 @@ require_once ( 'classes/NPRAPIWordpress.php' );
  * @param unknown_type $post
  */
 function npr_push ( $post_ID, $post ) {
+	// @todo this needs to check that the current user is permitted to push to the API
+	//
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
 	if ( empty( $push_post_type ) ) {
 		$push_post_type = 'post';
@@ -22,6 +24,7 @@ function npr_push ( $post_ID, $post ) {
 		if ( $post->post_type != $push_post_type || $post->post_status != 'publish' ) {
 			return;
 		}
+
 		//we may be able to have a custom body, so we need to check for that.
 		$content = $post->post_content;
 		$use_custom = get_option( 'dp_npr_push_use_custom_map' );
@@ -36,15 +39,19 @@ function npr_push ( $post_ID, $post ) {
 	           $content = get_post_meta( $post->ID, $custom_content_meta, true );
 	       }
         }
+
+		// Abort pushing to NPR if the post has no content
 		if ( empty( $content ) ) {
 			update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $body_field . ' is required for a post to be pushed to the NPR API.' );
 			return;
 		} else {
 			delete_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $body_field . ' is required for a post to be pushed to the NPR API.' );
 		}
-		$api = new NPRAPIWordpress();
-		$retrieved = get_post_meta( $post_ID, NPR_RETRIEVED_STORY_META_KEY, true );
 
+		$api = new NPRAPIWordpress();
+
+		// Don't push stories to the NPR story API if they were originally pulled from the NPR Story API
+		$retrieved = get_post_meta( $post_ID, NPR_RETRIEVED_STORY_META_KEY, true );
 		if ( empty( $retrieved ) || $retrieved == 0 ) {
 			$api->send_request( $api->create_NPRML( $post ), $post_ID);
 		} else {
@@ -86,7 +93,10 @@ function npr_delete ( $post_ID ) {
 	}
 }
 
-//as far as I can tell, this is where the magic happens
+/**
+ * Register npr_push and npr_delete on appropriate hooks
+ * this is where the magic happens
+ */
 if ( isset( $_POST['ds_npr_update_push'] ) ) {
 	add_action( 'save_post', 'npr_push', 10, 2 );
 }
@@ -115,7 +125,6 @@ add_action( 'admin_menu', 'ds_npr_push_add_field_mapping_page' );
  * Callback for push mapping page
  */
 function ds_npr_api_push_mapping_callback() { }
-
 
 /**
  *
@@ -429,7 +438,7 @@ function save_send_to_nprone( $post_ID ) {
 /**
  * Add an admin notice to the post editor with the post's error message if it exists
  */
-function ds_npr_post_admin_message() {
+function ds_npr_post_admin_message_error() {
 	// only run on a post edit page
 	$screen = get_current_screen();
 	if ($screen->id !== 'post' ) {
@@ -437,7 +446,7 @@ function ds_npr_post_admin_message() {
 	}
 
 	// Push errors are saved in this piece of post meta, and there may not ba just one
-	$errors = get_post_meta(get_the_ID(), 'npr_push_story_error');
+	$errors = get_post_meta(get_the_ID(), NPR_PUSH_STORY_ERROR);
 
 	if ( !empty( $errors ) ) {
 		$errortext = '';
@@ -456,4 +465,26 @@ function ds_npr_post_admin_message() {
 		);
 	}
 }
-add_action( 'admin_notices', 'ds_npr_post_admin_message' );
+add_action( 'admin_notices', 'ds_npr_post_admin_message_error' );
+
+/**
+ * Edit the post admin notices to include the post's id when it has been pushed successfully
+ */
+function ds_npr_post_updated_messages_success( $messages ) {
+	$id = get_post_meta(get_the_ID(), NPR_STORY_ID_META_KEY, true); // single
+	if ( !empty($id) ) {
+		$post_type = get_post_type( get_the_ID() );
+		$obj = get_post_type_object( $post_type );
+		$singular = $obj->labels->singular_name;
+
+		$messages['post'][1] = sprintf(
+			__( '%s updated. <a href="%s" target="_blank">View %s</a>. This post\'s NPR ID is %s. ' ),
+			esc_attr( $singular ),
+			esc_url( get_permalink( $post_ID ) ),
+			strtolower( $singular ),
+			(string) $id
+		);
+	}
+	return $messages;
+}
+add_filter( 'post_updated_messages', 'ds_npr_post_updated_messages_success' );
