@@ -430,7 +430,13 @@ function save_send_to_nprone( $post_ID ) {
  * Add an admin notice to the post editor with the post's error message if it exists
  */
 function ds_npr_post_admin_message() {
+	// only run on a post edit page
 	$screen = get_current_screen();
+	if ($screen->id !== 'post' ) {
+		return;
+	}
+
+	// Push errors are saved in this piece of post meta, and there may not ba just one
 	$errors = get_post_meta(get_the_ID(), 'npr_push_story_error');
 
 	if ( !empty( $errors ) ) {
