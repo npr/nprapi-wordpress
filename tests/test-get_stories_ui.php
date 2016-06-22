@@ -21,14 +21,14 @@ class Test_GetStoriesUi extends WP_UnitTestCase {
 		$this->expectOutputRegex('/<a href\=".*">.*/');
 	}
 
-	function test_ds_npr_bulk_action_update_dropdown() {
+	function test_nprstory_bulk_action_update_dropdown() {
 		# global $post_type must be set
 		global $post_type;
 		$post_type = 'post';
 		# The ds_npr_api_push_url option must be set
 		update_option( 'ds_npr_api_push_url', 'test' );
 		$this->expectOutputRegex('/<script type\="text\/javascript">.*/');
-		ds_npr_bulk_action_update_dropdown();
+		nprstory_bulk_action_update_dropdown();
 	}
 
 	function test_ds_npr_bulk_action_update_action() {

@@ -35,8 +35,8 @@ function nprstory_update_column_content ( $column_name, $post_ID ) {
 }
 
 //add the bulk action to the dropdown on the post admin page
-add_action( 'admin_footer-edit.php', 'ds_npr_bulk_action_update_dropdown' );
-function ds_npr_bulk_action_update_dropdown() {
+add_action( 'admin_footer-edit.php', 'nprstory_bulk_action_update_dropdown' );
+function nprstory_bulk_action_update_dropdown() {
 	$pull_post_type = DS_NPR_API::nprstory_get_pull_post_type();
     global $post_type;
     if( $post_type == $pull_post_type ) {
