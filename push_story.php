@@ -373,9 +373,9 @@ function nprstory_bulk_action_push_dropdown() {
 }
 
 //do the new bulk action
-add_action( 'load-edit.php', 'ds_npr_bulk_action_push_action' );
+add_action( 'load-edit.php', 'nprstory_bulk_action_push_action' );
 
-function ds_npr_bulk_action_push_action() {
+function nprstory_bulk_action_push_action() {
     // 1. get the action
     $wp_list_table = _get_list_table( 'WP_Posts_List_Table' );
     $action = $wp_list_table->current_action();

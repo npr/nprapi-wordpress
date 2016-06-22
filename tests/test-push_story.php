@@ -112,7 +112,7 @@ class Test_PushStory extends WP_UnitTestCase {
 		nprstory_bulk_action_push_dropdown();
 	}
 
-	function test_ds_npr_bulk_action_push_action() {
+	function test_nprstory_bulk_action_push_action() {
 		# TODO: another one that requires API credentials and API access
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
