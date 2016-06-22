@@ -176,7 +176,7 @@ function nprstory_get_post_meta_keys( $post_type = 'post' ) {
 function nprstory_push_settings_init() {
     add_settings_section( 'ds_npr_push_settings', 'NPR API PUSH settings', 'nprstory_api_push_settings_callback', 'ds_npr_api_push_mapping' );
 
-    add_settings_field( 'dp_npr_push_use_custom_map', 'Use Custom Settings', 'ds_npr_api_use_custom_mapping_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
+    add_settings_field( 'dp_npr_push_use_custom_map', 'Use Custom Settings', 'nprstory_api_use_custom_mapping_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'dp_npr_push_use_custom_map' );
 
     add_settings_field( 'ds_npr_api_mapping_title', 'Story Title', 'ds_npr_api_mapping_title_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
@@ -215,7 +215,7 @@ function nprstory_api_push_settings_callback() {
 /**
  * callback for use custom mapping checkbox
  */
-function ds_npr_api_use_custom_mapping_callback(){
+function nprstory_api_use_custom_mapping_callback(){
 	$use_custom = get_option( 'dp_npr_push_use_custom_map' );
 	$check_box_string = "<input id='dp_npr_push_use_custom_map' name='dp_npr_push_use_custom_map' type='checkbox' value='true'";
 

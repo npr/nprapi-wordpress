@@ -49,10 +49,10 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->assertTrue( is_null( $ret ) );
 	}
 
-	function test_ds_npr_api_use_custom_mapping_callback() {
+	function test_nprstory_api_use_custom_mapping_callback() {
 		# Simple test of output -- should include an input with id dp_npr_push_use_custom_map
 		$this->expectOutputRegex('/<input id\=\'dp_npr_push_use_custom_map\'.*/');
-		ds_npr_api_use_custom_mapping_callback();
+		nprstory_api_use_custom_mapping_callback();
 	}
 
 	function test_ds_npr_api_mapping_title_callback() {
