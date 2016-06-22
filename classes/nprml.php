@@ -370,8 +370,8 @@ function nprstory_nprml_array_to_xml( $tag, $attrs, $data ) {
     foreach ( $attrs as $k => $v ) {
         $root->setAttribute( $k, $v );
     }
-    foreach ( $data as $item ) { 
-        $elemxml = item_to_xml( $item, $xml );
+    foreach ( $data as $item ) {
+        $elemxml = nprstory_nprml_item_to_xml( $item, $xml );
         $root->appendChild( $elemxml );
     }
     $xml->appendChild( $root );
@@ -379,16 +379,19 @@ function nprstory_nprml_array_to_xml( $tag, $attrs, $data ) {
 }
 
 /**
- * convert a story item to XML
+ * convert a loosely-defined item to XML
+ *
+ * @param Array $item Must have a key 'tag'
+ * @param DOMDocument $xml
  */
-function item_to_xml( $item, $xml ) {
+function nprstory_nprml_item_to_xml( $item, $xml ) {
     if ( ! array_key_exists( 'tag', $item ) ) {
         error_log( "no tag for: " . print_r( $item, true ) );
     }
     $elem = $xml->createElement( $item[ 'tag' ] );
     if ( array_key_exists( 'children', $item ) ) {
         foreach ( $item[ 'children' ] as $child ) {
-            $childxml = item_to_xml( $child, $xml );
+            $childxml = nprstory_nprml_item_to_xml( $child, $xml );
             $elem->appendChild( $childxml );
         }
     }
