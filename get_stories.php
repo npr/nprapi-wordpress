@@ -121,7 +121,7 @@ class DS_NPR_API {
         }
     }
 
-    function DS_NPR_API() {
+    function __construct() {
         if ( ! is_admin() ) {
             return;
         }
