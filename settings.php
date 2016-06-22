@@ -9,7 +9,7 @@ function nprstory_add_options_page() {
 }
 add_action( 'admin_menu', 'nprstory_add_options_page' );
 
-function ds_npr_add_query_page() {
+function nprstory_add_query_page() {
     $num = get_option( 'ds_npr_num' );
     if ( empty($num) ) {
         $num = 1;
@@ -36,7 +36,7 @@ function ds_npr_add_query_page() {
         'ds_npr_api_get_multi_settings',
         'ds_npr_api_get_multi_options_page' );
 }
-add_action( 'admin_menu', 'ds_npr_add_query_page' );
+add_action( 'admin_menu', 'nprstory_add_query_page' );
 
 function ds_npr_settings_init() {
     add_settings_section( 'ds_npr_api_settings', 'NPR API settings', 'ds_npr_api_settings_callback', 'ds_npr_api' );

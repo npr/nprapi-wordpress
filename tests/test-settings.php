@@ -6,7 +6,7 @@ class Test_Settings extends WP_UnitTestCase {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
-	function test_ds_npr_add_query_page() {
+	function test_nprstory_add_query_page() {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
