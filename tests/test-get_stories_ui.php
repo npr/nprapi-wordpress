@@ -37,9 +37,12 @@ class Test_GetStoriesUi extends WP_UnitTestCase {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
-	function test_ds_npr_get_stories() {
+	function test_nprstory_get_stories() {
 		# TODO: figure out what this function is supposed to do
 		# so we can determine how it should be tested
+		# at the minimum we should be expecting a div.wrap
+		# if there is not an API key set, the output changes
+		# If there is not an API pull url set, the output changes
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 

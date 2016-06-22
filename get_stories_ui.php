@@ -94,7 +94,7 @@ function nprstory_bulk_action_update_action() {
     //exit();
 }
 
-function ds_npr_get_stories() {
+function nprstory_get_stories() {
     global $is_IE;
     $api_key =  get_option( 'ds_npr_api_key' );
     $pull_url = get_option( 'ds_npr_api_pull_url' );
