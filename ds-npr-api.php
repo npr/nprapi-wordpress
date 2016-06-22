@@ -142,9 +142,9 @@ function nprstory_show_message( $message, $errormsg = false ) {
 require_once( 'push_story.php' );
 
 
-add_action( 'init', 'ds_npr_create_post_type' );
+add_action( 'init', 'nprstory_create_post_type' );
 
-function ds_npr_create_post_type() {
+function nprstory_create_post_type() {
 	register_post_type( NPR_POST_TYPE,
 		array(
 			'labels' => array(

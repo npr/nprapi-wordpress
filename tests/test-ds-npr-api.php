@@ -51,8 +51,8 @@ class Test_DsNprApi extends WP_UnitTestCase {
 		$this->assertTrue( (bool) strstr( $result, 'class="error"' ) );
 	}
 
-	function test_ds_npr_create_post_type() {
-		ds_npr_create_post_type();
+	function test_nprstory_create_post_type() {
+		nprstory_create_post_type();
 		$post_types = get_post_types();
 		$this->assertTrue( in_array( NPR_POST_TYPE, $post_types ) );
 	}
