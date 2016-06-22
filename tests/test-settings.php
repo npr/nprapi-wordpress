@@ -10,7 +10,7 @@ class Test_Settings extends WP_UnitTestCase {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
-	function test_ds_npr_settings_init() {
+	function test_nprstory_settings_init() {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 

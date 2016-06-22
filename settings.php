@@ -38,7 +38,7 @@ function nprstory_add_query_page() {
 }
 add_action( 'admin_menu', 'nprstory_add_query_page' );
 
-function ds_npr_settings_init() {
+function nprstory_settings_init() {
     add_settings_section( 'ds_npr_api_settings', 'NPR API settings', 'ds_npr_api_settings_callback', 'ds_npr_api' );
 
     add_settings_field( 'ds_npr_api_key', 'API KEY', 'ds_npr_api_key_callback', 'ds_npr_api', 'ds_npr_api_settings' );
@@ -86,7 +86,7 @@ function ds_npr_settings_init() {
     register_setting( 'ds_npr_api', 'ds_npr_story_default_permission' );
 
 }
-add_action( 'admin_init', 'ds_npr_settings_init' );
+add_action( 'admin_init', 'nprstory_settings_init' );
 
 function ds_npr_api_settings_callback() { }
 
