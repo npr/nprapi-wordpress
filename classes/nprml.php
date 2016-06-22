@@ -10,7 +10,7 @@ function nprstory_to_nprml( $post ) {
         'tag' => 'list',
         'children' => array( array( 'tag' => 'story', 'children' => $story ), ),
     );
-    $ret_xml = array_to_xml( 'nprml', array( 'version' => '0.93' ), $doc );
+    $ret_xml = nprstory_nprml_array_to_xml( 'nprml', array( 'version' => '0.93' ), $doc );
     return $ret_xml;
 }
 
@@ -361,9 +361,9 @@ function nprstory_nprml_split_paragraphs( $html ) {
 
 
 /**
- * 
+ * convert a PHP array to XML
  */
-function array_to_xml( $tag, $attrs, $data ) {
+function nprstory_nprml_array_to_xml( $tag, $attrs, $data ) {
     $xml = new DOMDocument();
     $xml->formatOutput = true;
     $root = $xml->createElement( $tag );
@@ -378,7 +378,9 @@ function array_to_xml( $tag, $attrs, $data ) {
     return $xml->saveXML();
 }
 
-
+/**
+ * convert a story item to XML
+ */
 function item_to_xml( $item, $xml ) {
     if ( ! array_key_exists( 'tag', $item ) ) {
         error_log( "no tag for: " . print_r( $item, true ) );
