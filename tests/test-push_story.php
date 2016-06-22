@@ -2,16 +2,16 @@
 
 class Test_PushStory extends WP_UnitTestCase {
 
-	function test_npr_push() {
+	function test_nprstory_api_push() {
 		# TODO: figure out how to verify a post has been
-		# pushed to the API in order to test npr_push.
+		# pushed to the API in order to test nprstory_api_push.
 		# NOTE: This requires API credentials and API access
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
-	function test_npr_delete() {
+	function test_nprstory_api_delete() {
 		# TODO: figure out how to verify a post has been
-		# pushed to the API so we can attempt deleting with npr_delete
+		# pushed to the API so we can attempt deleting with nprstory_api_delete
 		# NOTE: This requires API credentials and API access
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}

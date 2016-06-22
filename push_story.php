@@ -8,7 +8,7 @@ require_once ( 'classes/NPRAPIWordpress.php' );
  * @param unknown_type $post_ID
  * @param unknown_type $post
  */
-function npr_push ( $post_ID, $post ) {
+function nprstory_api_push ( $post_ID, $post ) {
 	// @todo this needs to check that the current user is permitted to push to the API
 	//
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
@@ -65,7 +65,7 @@ function npr_push ( $post_ID, $post ) {
  * Inform the NPR API that a post needs to be deleted.
  * @param unknown_type $post_ID
  */
-function npr_delete ( $post_ID ) {
+function nprstory_api_delete ( $post_ID ) {
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
 	if ( empty( $push_post_type ) ) {
 		$push_post_type = 'post';
@@ -94,15 +94,15 @@ function npr_delete ( $post_ID ) {
 }
 
 /**
- * Register npr_push and npr_delete on appropriate hooks
+ * Register nprstory_npr_push and nprstory_npr_delete on appropriate hooks
  * this is where the magic happens
  */
 if ( isset( $_POST['ds_npr_update_push'] ) ) {
-	add_action( 'save_post', 'npr_push', 10, 2 );
+	add_action( 'save_post', 'nprstory_api_push', 10, 2 );
 }
-add_action( 'trash_post', 'npr_delete', 10, 2 );
+add_action( 'trash_post', 'nprstory_api_delete', 10, 2 );
 //this may need to check version and use 'wp_trash_post'
-add_action( 'wp_trash_post', 'npr_delete', 10, 2 );
+add_action( 'wp_trash_post', 'nprstory_api_delete', 10, 2 );
 
 /**
  *
@@ -396,7 +396,7 @@ function ds_npr_bulk_action_push_action() {
                 //if this story doesn't have an API ID, push it to the API.
                 if ( empty( $api_id ) && $exported < 20 ) {
                     $post = get_post( $post_id );
-                    npr_push( $post_id, $post );
+                    nprstory_api_push( $post_id, $post );
                     $exported ++;
                 }
             }
