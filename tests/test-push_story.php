@@ -55,7 +55,7 @@ class Test_PushStory extends WP_UnitTestCase {
 		nprstory_api_use_custom_mapping_callback();
 	}
 
-	function test_ds_npr_api_mapping_title_callback() {
+	function test_nprstory_api_mapping_title_callback() {
 		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 

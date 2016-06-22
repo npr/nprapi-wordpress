@@ -179,7 +179,7 @@ function nprstory_push_settings_init() {
     add_settings_field( 'dp_npr_push_use_custom_map', 'Use Custom Settings', 'nprstory_api_use_custom_mapping_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'dp_npr_push_use_custom_map' );
 
-    add_settings_field( 'ds_npr_api_mapping_title', 'Story Title', 'ds_npr_api_mapping_title_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
+    add_settings_field( 'ds_npr_api_mapping_title', 'Story Title', 'nprstory_api_mapping_title_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_title' );
 
     add_settings_field( 'ds_npr_api_mapping_body', 'Story Body', 'ds_npr_api_mapping_body_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
@@ -229,7 +229,7 @@ function nprstory_api_use_custom_mapping_callback(){
 /**
  * callback for title mapping
  */
-function ds_npr_api_mapping_title_callback() {
+function nprstory_api_mapping_title_callback() {
 	$push_post_type = ds_npr_get_push_post_type();
 	$keys = nprstory_get_post_meta_keys( $push_post_type );
 	ds_npr_show_keys_select( 'ds_npr_api_mapping_title', $keys );
