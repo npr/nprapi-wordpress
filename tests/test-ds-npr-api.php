@@ -33,9 +33,9 @@ class Test_DsNprApi extends WP_UnitTestCase {
 		$this->assertFalse( $option );
 	}
 
-	function test__ds_npr_deactivate() {
+	function test_nprstory_deactivate() {
 		$this->markTestSkipped(
-			'Functional test of __ds_npr_deactivate performed by Test_DsNprApi::test_ds_npr_story_deactivation');
+			'Functional test of nprstory_deactivate performed by Test_DsNprApi::test_ds_npr_story_deactivation');
 	}
 
 	function test_ds_npr_show_message() {

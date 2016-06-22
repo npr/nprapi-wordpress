@@ -108,15 +108,15 @@ function ds_npr_story_deactivation() {
 		$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM $wpdb->blogs" ) );
 		foreach ( $blogids as $blog_id ) {
 			switch_to_blog( $blog_id );
-			_ds_npr_deactivate();
+			nprstory_deactivate();
 		}
-		switch_to_blog( $old_blog );  
+		switch_to_blog( $old_blog );
 	} else {
-		_ds_npr_deactivate();
+		nprstory_deactivate();
 	}
 }
 
-function _ds_npr_deactivate() {
+function nprstory_deactivate() {
 	wp_clear_scheduled_hook( 'npr_ds_hourly_cron' );
 	$num =  get_option( 'ds_npr_num' );
 	if ( ! empty($num) ) {
