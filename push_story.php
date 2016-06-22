@@ -414,8 +414,8 @@ function nprstory_bulk_action_push_action() {
     //exit();
 }
 
-add_action( 'post_submitbox_misc_actions', 'send_to_nprone' );
-function send_to_nprone() {
+add_action( 'post_submitbox_misc_actions', 'nprstory_submitbox_send_to_nprone' );
+function nprstory_submitbox_send_to_nprone() {
     global $post;
     if ( get_post_type( $post ) == get_option( 'ds_npr_push_post_type' ) ) {
         $value = get_post_meta( $post->ID, '_send_to_nprone', true );

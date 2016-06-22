@@ -117,7 +117,7 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
-	function test_send_to_nprone() {
+	function test_nprstory_submitbox_send_to_nprone() {
 		$post_id = $this->factory->post->create();
 		global $post;
 		$tmp = $post;
@@ -126,7 +126,7 @@ class Test_PushStory extends WP_UnitTestCase {
 		update_option( 'ds_npr_push_post_type', 'post' );
 		# Simple test of output to verify some part of the expected markup is present
 		$this->expectOutputRegex('/<div class\="misc-pub-section misc-pub-section-last"/');
-		send_to_nprone();
+		nprstory_submitbox_send_to_nprone();
 		$post = $tmp;
 		wp_reset_postdata();
 	}
