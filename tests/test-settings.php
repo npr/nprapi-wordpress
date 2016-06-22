@@ -14,9 +14,9 @@ class Test_Settings extends WP_UnitTestCase {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
-	function test_ds_npr_api_settings_callback() {
-		# TODO: do we need ds_npr_api_settings_callback if it does nothing?
-		$ret = ds_npr_api_settings_callback();
+	function test_nprstory_api_settings_callback() {
+		# TODO: do we need nprstory_api_settings_callback if it does nothing?
+		$ret = nprstory_api_settings_callback();
 		$this->assertTrue( is_null( $ret ) );
 	}
 

@@ -39,7 +39,7 @@ function nprstory_add_query_page() {
 add_action( 'admin_menu', 'nprstory_add_query_page' );
 
 function nprstory_settings_init() {
-    add_settings_section( 'ds_npr_api_settings', 'NPR API settings', 'ds_npr_api_settings_callback', 'ds_npr_api' );
+    add_settings_section( 'ds_npr_api_settings', 'NPR API settings', 'nprstory_api_settings_callback', 'ds_npr_api' );
 
     add_settings_field( 'ds_npr_api_key', 'API KEY', 'ds_npr_api_key_callback', 'ds_npr_api', 'ds_npr_api_settings' );
     register_setting( 'ds_npr_api', 'ds_npr_api_key' );
@@ -88,7 +88,7 @@ function nprstory_settings_init() {
 }
 add_action( 'admin_init', 'nprstory_settings_init' );
 
-function ds_npr_api_settings_callback() { }
+function nprstory_api_settings_callback() { }
 
 function cron_add_ds_interval( $schedules ) {
     $ds_interval = get_option( 'dp_npr_query_multi_cron_interval' );
