@@ -89,13 +89,13 @@ class Test_PushStory extends WP_UnitTestCase {
 		nprstory_show_keys_select( 'test_field_name', array( 'test_key' ) );
 	}
 
-	function test_ds_npr_get_push_post_type() {
-		$ret = ds_npr_get_push_post_type();
+	function test_nprstory_get_push_post_type() {
+		$ret = nprstory_get_push_post_type();
 		$this->assertEquals( 'post', $ret );
 
 		# Should return the value of ds_npr_push_post_type option if it is set
 		update_option( 'ds_npr_push_post_type', 'test_post' );
-		$ret = ds_npr_get_push_post_type();
+		$ret = nprstory_get_push_post_type();
 		$this->assertEquals( $ret, 'test_post' );
 	}
 

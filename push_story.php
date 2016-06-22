@@ -230,7 +230,7 @@ function nprstory_api_use_custom_mapping_callback(){
  * callback for title mapping
  */
 function nprstory_api_mapping_title_callback() {
-	$push_post_type = ds_npr_get_push_post_type();
+	$push_post_type = nprstory_get_push_post_type();
 	$keys = nprstory_get_post_meta_keys( $push_post_type );
 	nprstory_show_keys_select( 'ds_npr_api_mapping_title', $keys );
 }
@@ -239,7 +239,7 @@ function nprstory_api_mapping_title_callback() {
  * callback for body mapping
  */
 function nprstory_api_mapping_body_callback() {
-	$push_post_type = ds_npr_get_push_post_type();
+	$push_post_type = nprstory_get_push_post_type();
 	$keys = nprstory_get_post_meta_keys( $push_post_type );
 	nprstory_show_keys_select( 'ds_npr_api_mapping_body', $keys );
 }
@@ -248,7 +248,7 @@ function nprstory_api_mapping_body_callback() {
  * callback for byline mapping
  */
 function nprstory_api_mapping_byline_callback() {
-	$push_post_type = ds_npr_get_push_post_type();
+	$push_post_type = nprstory_get_push_post_type();
 	$keys = nprstory_get_post_meta_keys( $push_post_type );
 	nprstory_show_keys_select( 'ds_npr_api_mapping_byline', $keys );
 }
@@ -318,7 +318,7 @@ function nprstory_show_keys_select( $field_name, $keys ) {
 
 }
 
-function ds_npr_get_push_post_type() {
+function nprstory_get_push_post_type() {
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
 	if ( empty($push_post_type) ) {
 		$push_post_type = 'post';
