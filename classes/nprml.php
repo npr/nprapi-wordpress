@@ -310,7 +310,7 @@ function nprstory_post_to_nprml_story( $post ) {
             $pieces = explode( "\n", $enclosure );
 		    if ( !empty( $pieces[3] ) ) {
                 $metadata = unserialize( $pieces[3] );
-                $duration = ( ! empty($metadata['duration'] ) ) ? nprapi_convert_duration( $metadata['duration'] ) : NULL;
+                $duration = ( ! empty($metadata['duration'] ) ) ? nprstory_convert_duration_to_seconds( $metadata['duration'] ) : NULL;
 		    }
 		    $story[] = array(
                 'tag' => 'audio',
@@ -336,7 +336,7 @@ function nprstory_post_to_nprml_story( $post ) {
 }
 
 // Convert "HH:MM:SS" duration (not time) into seconds
-function nprapi_convert_duration( $duration ) {
+function nprstory_convert_duration_to_seconds( $duration ) {
   $pieces = explode( ':', $duration );
   $duration_in_seconds = ( $pieces[0] * 60 * 60 + $pieces[1] * 60 + $pieces[2] );
   return $duration_in_seconds;
