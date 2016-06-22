@@ -20,8 +20,8 @@ class Test_DsNprApi extends WP_UnitTestCase {
 			'Functional test of nprstory_activate performed by Test_DsNprApi::test_nprstory_activation');
 	}
 
-	function test_ds_npr_story_deactivation() {
-		ds_npr_story_deactivation();
+	function test_nprstory_deactivation() {
+		nprstory_deactivation();
 
 		$result = wp_next_scheduled( 'npr_ds_hourly_cron' );
 		$this->assertTrue( empty( $result ) );
@@ -35,18 +35,18 @@ class Test_DsNprApi extends WP_UnitTestCase {
 
 	function test_nprstory_deactivate() {
 		$this->markTestSkipped(
-			'Functional test of nprstory_deactivate performed by Test_DsNprApi::test_ds_npr_story_deactivation');
+			'Functional test of nprstory_deactivate performed by Test_DsNprApi::test_nprstory_deactivation');
 	}
 
-	function test_ds_npr_show_message() {
+	function test_nprstory_show_message() {
 		$test_message = 'Test message';
 		ob_start();
-		ds_npr_show_message( $test_message, false );
+		nprstory_show_message( $test_message, false );
 		$result = ob_get_clean();
 		$this->assertTrue( (bool) strstr( $result, $test_message ) );
 
 		ob_start();
-		ds_npr_show_message( $test_message, true );
+		nprstory_show_message( $test_message, true );
 		$result = ob_get_clean();
 		$this->assertTrue( (bool) strstr( $result, 'class="error"' ) );
 	}

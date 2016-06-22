@@ -113,7 +113,7 @@ class DS_NPR_API {
             } else {
                 if ( empty($story) ) {
                     $xml = simplexml_load_string( $api->xml );
-                    ds_npr_show_message('Error retrieving story for id = ' . $story_id . '<br> API error ='.$api->message->id . '<br> API Message ='. $xml->message->text , TRUE);
+                    nprstory_show_message('Error retrieving story for id = ' . $story_id . '<br> API error ='.$api->message->id . '<br> API Message ='. $xml->message->text , TRUE);
                     error_log('Not going to save the return from query for story_id='. $story_id .', we got an error='.$api->message->id. ' from the API');
                     return;
 	            }

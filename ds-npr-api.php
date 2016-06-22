@@ -59,7 +59,7 @@ require_once( DS_NPR_PLUGIN_DIR . '/meta-boxes.php');
 //add the cron to get stories
 register_activation_hook( DS_NPR_PLUGIN_DIR . '/ds-npr-api.php', 'nprstory_activation' );
 add_action( 'npr_ds_hourly_cron', array ( 'DS_NPR_API','ds_npr_story_cron_pull' ) );
-register_deactivation_hook( DS_NPR_PLUGIN_DIR . '/ds-npr-api.php', 'ds_npr_story_deactivation' );
+register_deactivation_hook( DS_NPR_PLUGIN_DIR . '/ds-npr-api.php', 'nprstory_deactivation' );
 
 
 function nprstory_activation() {
@@ -98,8 +98,8 @@ function nprstory_activate() {
 	}
 	
 }
-	
-function ds_npr_story_deactivation() {
+
+function nprstory_deactivation() {
 	global $wpdb;
 	if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 	  // check if it is a network activation - if so, run the activation function for each blog id
@@ -130,7 +130,7 @@ function nprstory_deactivate() {
 }
 
 
-function ds_npr_show_message( $message, $errormsg = false ) {
+function nprstory_show_message( $message, $errormsg = false ) {
 	if ( $errormsg ) {
 		echo '<div id="message" class="error">';
 	} else {

@@ -74,14 +74,14 @@ class NPRAPIWordpress extends NPRAPI {
                     $this->notice[] = t( 'No data available.' );
                 }
             } else {
-                ds_npr_show_message( 'An error occurred pulling your story from the NPR API.  The API responded with message =' . $response['response']['message'], TRUE );
+                nprstory_show_message( 'An error occurred pulling your story from the NPR API.  The API responded with message =' . $response['response']['message'], TRUE );
 	       }
         } else {
             $error_text = '';
             if ( ! empty( $response->errors['http_request_failed'][0] ) ) {
                 $error_text = '<br> HTTP Error response =  '. $response->errors['http_request_failed'][0];
             }
-            ds_npr_show_message( 'Error pulling story for url='.$url . $error_text, TRUE );
+            nprstory_show_message( 'Error pulling story for url='.$url . $error_text, TRUE );
             error_log( 'Error retrieving story for url='.$url );
         }
     }
