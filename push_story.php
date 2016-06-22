@@ -182,24 +182,24 @@ function nprstory_push_settings_init() {
     add_settings_field( 'ds_npr_api_mapping_title', 'Story Title', 'nprstory_api_mapping_title_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_title' );
 
-    add_settings_field( 'ds_npr_api_mapping_body', 'Story Body', 'ds_npr_api_mapping_body_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
+    add_settings_field( 'ds_npr_api_mapping_body', 'Story Body', 'nprstory_api_mapping_body_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_body' );
 
-    add_settings_field( 'ds_npr_api_mapping_byline', 'Story Byline', 'ds_npr_api_mapping_byline_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
+    add_settings_field( 'ds_npr_api_mapping_byline', 'Story Byline', 'nprstory_api_mapping_byline_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_byline' );
 
-    add_settings_field( 'ds_npr_api_mapping_media_credit', 'Media Credit Field', 'ds_npr_api_mapping_media_credit_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
+    add_settings_field( 'ds_npr_api_mapping_media_credit', 'Media Credit Field', 'nprstory_api_mapping_media_credit_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_media_credit' );
 
-    add_settings_field( 'ds_npr_api_mapping_media_agency', 'Media Agency Field', 'ds_npr_api_mapping_media_agency_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
+    add_settings_field( 'ds_npr_api_mapping_media_agency', 'Media Agency Field', 'nprstory_api_mapping_media_agency_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_media_agency' );
     /**  This will add the mapping for media distribution.  But for now, hold off.
-    add_settings_field( 'ds_npr_api_mapping_distribute_media', 'Distribute Media Field', 'ds_npr_api_mapping_distribute_media_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
+    add_settings_field( 'ds_npr_api_mapping_distribute_media', 'Distribute Media Field', 'nprstory_api_mapping_distribute_media_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_distribute_media' );
 
-    add_settings_field( 'ds_npr_api_mapping_distribute_media_polarity', 'Distribute Media Field Polarity', 'ds_npr_api_mapping_distribute_media_polarity_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
+    add_settings_field( 'ds_npr_api_mapping_distribute_media_polarity', 'Distribute Media Field Polarity', 'nprstory_api_mapping_distribute_media_polarity_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
     register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_distribute_media_polarity' );
-    //ds_npr_api_mapping_distribute_media_polarity_callback
+    //nprstory_api_mapping_distribute_media_polarity_callback
      *
      */
 }
@@ -238,7 +238,7 @@ function nprstory_api_mapping_title_callback() {
 /**
  * callback for body mapping
  */
-function ds_npr_api_mapping_body_callback() {
+function nprstory_api_mapping_body_callback() {
 	$push_post_type = ds_npr_get_push_post_type();
 	$keys = nprstory_get_post_meta_keys( $push_post_type );
 	ds_npr_show_keys_select( 'ds_npr_api_mapping_body', $keys );
@@ -247,7 +247,7 @@ function ds_npr_api_mapping_body_callback() {
 /**
  * callback for byline mapping
  */
-function ds_npr_api_mapping_byline_callback() {
+function nprstory_api_mapping_byline_callback() {
 	$push_post_type = ds_npr_get_push_post_type();
 	$keys = nprstory_get_post_meta_keys( $push_post_type );
 	ds_npr_show_keys_select( 'ds_npr_api_mapping_byline', $keys );
@@ -256,7 +256,7 @@ function ds_npr_api_mapping_byline_callback() {
 /**
  * callback for  media credit setting
  */
-function ds_npr_api_mapping_media_credit_callback() {
+function nprstory_api_mapping_media_credit_callback() {
 	$keys = nprstory_get_post_meta_keys( 'attachment' );
 	ds_npr_show_keys_select( 'ds_npr_api_mapping_media_credit', $keys );
 }
@@ -264,7 +264,7 @@ function ds_npr_api_mapping_media_credit_callback() {
 /**
  * callback for  media agency setting
  */
-function ds_npr_api_mapping_media_agency_callback() {
+function nprstory_api_mapping_media_agency_callback() {
 	$keys = nprstory_get_post_meta_keys( 'attachment' );
 	ds_npr_show_keys_select( 'ds_npr_api_mapping_media_agency', $keys );
 }
@@ -272,12 +272,12 @@ function ds_npr_api_mapping_media_agency_callback() {
 /**
  * callback for distribut media setting
  */
-function ds_npr_api_mapping_distribute_media_callback() {
+function nprstory_api_mapping_distribute_media_callback() {
 	$keys = nprstory_get_post_meta_keys( 'attachment' );
 	ds_npr_show_keys_select( 'ds_npr_api_mapping_distribute_media', $keys );
 }
 
-function ds_npr_api_mapping_distribute_media_polarity_callback() {
+function nprstory_api_mapping_distribute_media_polarity_callback() {
 	echo "<div>Do Distribute or Do Not Distribute? <select id=ds_npr_api_mapping_distribute_media_polarity name=ds_npr_api_mapping_distribute_media_polarity>";
 
 	$selected = get_option( 'ds_npr_api_mapping_distribute_media_polarity' );

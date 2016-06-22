@@ -59,11 +59,11 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
-	function test_ds_npr_api_mapping_body_callback() {
+	function test_nprstory_api_mapping_body_callback() {
 		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
-	function test_ds_npr_api_mapping_byline_callback() {
+	function test_nprstory_api_mapping_byline_callback() {
 		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
@@ -71,15 +71,15 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
-	function test_ds_npr_api_mapping_media_agency_callback() {
+	function test_nprstory_api_mapping_media_agency_callback() {
 		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
-	function test_ds_npr_api_mapping_distribute_media_callback() {
+	function test_nprstory_api_mapping_distribute_media_callback() {
 		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
-	function test_ds_npr_api_mapping_distribute_media_polarity_callback() {
+	function test_nprstory_api_mapping_distribute_media_polarity_callback() {
 		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
