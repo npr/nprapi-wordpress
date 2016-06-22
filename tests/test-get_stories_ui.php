@@ -12,12 +12,12 @@ class Test_GetStoriesUi extends WP_UnitTestCase {
 		$this->assertTrue( isset( $ret['update_story'] ) );
 	}
 
-	function test_ds_npr_update_column_content() {
-		$ret = ds_npr_update_column_content( 'update_story', $this->post_id );
+	function test_nprstory_update_column_content() {
+		$ret = nprstory_update_column_content( 'update_story', $this->post_id );
 		$this->assertTrue( is_null( $ret ) );
 
 		update_post_meta( $this->post_id, NPR_RETRIEVED_STORY_META_KEY, true );
-		ds_npr_update_column_content( 'update_story', $this->post_id );
+		nprstory_update_column_content( 'update_story', $this->post_id );
 		$this->expectOutputRegex('/<a href\=".*">.*/');
 	}
 

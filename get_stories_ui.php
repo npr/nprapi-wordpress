@@ -1,9 +1,12 @@
 <?php
 
-/**  This will turn on the update story column for all posts *
-add_filter('manage_posts_columns', 'ds_npr_update_column');
+/**
+ * This will turn on the update story column for all posts
+ * yes, this is intentionally commented out
+ *
+add_filter('manage_posts_columns', 'nprstory_update_column');
 
-function ds_npr_update_column($defaults){
+function nprstory_update_column($defaults){
 	$pull_post_type = DS_NPR_API::nprstory_get_pull_post_type();
   global $post_type;
   if($post_type == $pull_post_type) {
@@ -20,8 +23,8 @@ function add_new_story_columns( $cols ) {
 	return $cols;
 }
 
-add_action( 'manage_posts_custom_column', 'ds_npr_update_column_content', 10, 2 );
-function ds_npr_update_column_content ( $column_name, $post_ID ) {
+add_action( 'manage_posts_custom_column', 'nprstory_update_column_content', 10, 2 );
+function nprstory_update_column_content ( $column_name, $post_ID ) {
 	if ( $column_name == 'update_story' ) {
 		$retrieved = get_post_meta( $post_ID, NPR_RETRIEVED_STORY_META_KEY, true );
 		if ($retrieved) {
