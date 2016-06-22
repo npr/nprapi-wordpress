@@ -21,7 +21,7 @@ class Test_PushStory extends WP_UnitTestCase {
 	}
 
 	function test_nprstory_api_push_mapping_callback() {
-		# TODO: do we need ds_npr_get_post_meta_keys if it doesn't actually do anything?
+		# TODO: do we need nprstory_get_post_meta_keys if it doesn't actually do anything?
 		$ret = nprstory_api_push_mapping_callback();
 		$this->assertTrue( is_null( $ret ) );
 	}
@@ -32,8 +32,8 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->assertTrue( empty( $meta_keys ) );
 	}
 
-	function test_ds_npr_get_post_meta_keys() {
-		$meta_keys = ds_npr_get_post_meta_keys();
+	function test_nprstory_get_post_meta_keys() {
+		$meta_keys = nprstory_get_post_meta_keys();
 		$this->assertTrue( empty( $meta_keys ) );
 	}
 
@@ -55,31 +55,31 @@ class Test_PushStory extends WP_UnitTestCase {
 	}
 
 	function test_ds_npr_api_mapping_title_callback() {
-		$this->markTestSkipped('Relies on ds_npr_get_post_meta_keys which returns an empty array during tests');
+		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
 	function test_ds_npr_api_mapping_body_callback() {
-		$this->markTestSkipped('Relies on ds_npr_get_post_meta_keys which returns an empty array during tests');
+		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
 	function test_ds_npr_api_mapping_byline_callback() {
-		$this->markTestSkipped('Relies on ds_npr_get_post_meta_keys which returns an empty array during tests');
+		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
 	function test_ds_npr_api_mapping_credit_callback() {
-		$this->markTestSkipped('Relies on ds_npr_get_post_meta_keys which returns an empty array during tests');
+		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
 	function test_ds_npr_api_mapping_media_agency_callback() {
-		$this->markTestSkipped('Relies on ds_npr_get_post_meta_keys which returns an empty array during tests');
+		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
 	function test_ds_npr_api_mapping_distribute_media_callback() {
-		$this->markTestSkipped('Relies on ds_npr_get_post_meta_keys which returns an empty array during tests');
+		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
 	function test_ds_npr_api_mapping_distribute_media_polarity_callback() {
-		$this->markTestSkipped('Relies on ds_npr_get_post_meta_keys which returns an empty array during tests');
+		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
 	function test_ds_npr_show_keys_select() {

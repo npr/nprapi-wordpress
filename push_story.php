@@ -160,7 +160,7 @@ function nprstory_push_meta_keys( $post_type = 'post' ) {
  *
  * @param  $post_type default is 'post'
  */
-function ds_npr_get_post_meta_keys( $post_type = 'post' ) {
+function nprstory_get_post_meta_keys( $post_type = 'post' ) {
     //$cache = get_transient('ds_npr_' .  $post_type .'_meta_keys');
     if ( ! empty( $cache ) ) {
     	$meta_keys = $cache;
@@ -231,7 +231,7 @@ function ds_npr_api_use_custom_mapping_callback(){
  */
 function ds_npr_api_mapping_title_callback() {
 	$push_post_type = ds_npr_get_push_post_type();
-	$keys = ds_npr_get_post_meta_keys( $push_post_type );
+	$keys = nprstory_get_post_meta_keys( $push_post_type );
 	ds_npr_show_keys_select( 'ds_npr_api_mapping_title', $keys );
 }
 
@@ -240,7 +240,7 @@ function ds_npr_api_mapping_title_callback() {
  */
 function ds_npr_api_mapping_body_callback() {
 	$push_post_type = ds_npr_get_push_post_type();
-	$keys = ds_npr_get_post_meta_keys( $push_post_type );
+	$keys = nprstory_get_post_meta_keys( $push_post_type );
 	ds_npr_show_keys_select( 'ds_npr_api_mapping_body', $keys );
 }
 
@@ -249,7 +249,7 @@ function ds_npr_api_mapping_body_callback() {
  */
 function ds_npr_api_mapping_byline_callback() {
 	$push_post_type = ds_npr_get_push_post_type();
-	$keys = ds_npr_get_post_meta_keys( $push_post_type );
+	$keys = nprstory_get_post_meta_keys( $push_post_type );
 	ds_npr_show_keys_select( 'ds_npr_api_mapping_byline', $keys );
 }
 
@@ -257,7 +257,7 @@ function ds_npr_api_mapping_byline_callback() {
  * callback for  media credit setting
  */
 function ds_npr_api_mapping_media_credit_callback() {
-	$keys = ds_npr_get_post_meta_keys( 'attachment' );
+	$keys = nprstory_get_post_meta_keys( 'attachment' );
 	ds_npr_show_keys_select( 'ds_npr_api_mapping_media_credit', $keys );
 }
 
@@ -265,7 +265,7 @@ function ds_npr_api_mapping_media_credit_callback() {
  * callback for  media agency setting
  */
 function ds_npr_api_mapping_media_agency_callback() {
-	$keys = ds_npr_get_post_meta_keys( 'attachment' );
+	$keys = nprstory_get_post_meta_keys( 'attachment' );
 	ds_npr_show_keys_select( 'ds_npr_api_mapping_media_agency', $keys );
 }
 
@@ -273,7 +273,7 @@ function ds_npr_api_mapping_media_agency_callback() {
  * callback for distribut media setting
  */
 function ds_npr_api_mapping_distribute_media_callback() {
-	$keys = ds_npr_get_post_meta_keys( 'attachment' );
+	$keys = nprstory_get_post_meta_keys( 'attachment' );
 	ds_npr_show_keys_select( 'ds_npr_api_mapping_distribute_media', $keys );
 }
 
