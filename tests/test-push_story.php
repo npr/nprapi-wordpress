@@ -20,9 +20,9 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
-	function test_ds_npr_api_push_mapping_callback() {
+	function test_nprstory_api_push_mapping_callback() {
 		# TODO: do we need ds_npr_get_post_meta_keys if it doesn't actually do anything?
-		$ret = ds_npr_api_push_mapping_callback();
+		$ret = nprstory_api_push_mapping_callback();
 		$this->assertTrue( is_null( $ret ) );
 	}
 

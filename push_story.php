@@ -124,7 +124,7 @@ add_action( 'admin_menu', 'nprstory_push_add_field_mapping_page' );
  *
  * Callback for push mapping page
  */
-function ds_npr_api_push_mapping_callback() { }
+function nprstory_api_push_mapping_callback() { }
 
 /**
  *
