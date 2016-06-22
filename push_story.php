@@ -114,7 +114,7 @@ function nprstory_push_add_field_mapping_page() {
         'NPR API Field Mapping',
         'manage_options',
         'ds_npr_api_push_mapping',
-        'ds_npr_add_field_mapping_page'
+        'nprstory_add_field_mapping_page'
     );
 }
 

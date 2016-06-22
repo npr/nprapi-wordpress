@@ -14,10 +14,10 @@ class Test_SettingsUi extends WP_UnitTestCase {
 		nprstory_api_get_multi_options_page();
 	}
 
-	function test_ds_npr_add_field_mapping_page() {
+	function test_nprstory_add_field_mapping_page() {
 		# Basic test of output -- expect to see a form printed in the output
 		$this->expectOutputRegex('/<form action\="options\.php" method\="post">/');
-		ds_npr_add_field_mapping_page();
+		nprstory_add_field_mapping_page();
 	}
 
 }
