@@ -347,9 +347,9 @@ function nprstory_get_permission_groups(){
 }
 
 //add the bulk action to the dropdown on the post admin page
-add_action('admin_footer-edit.php', 'ds_npr_bulk_action_push_dropdown');
+add_action('admin_footer-edit.php', 'nprstory_bulk_action_push_dropdown');
 
-function ds_npr_bulk_action_push_dropdown() {
+function nprstory_bulk_action_push_dropdown() {
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
 	if ( empty( $push_post_type ) ) {
 		$push_post_type = 'post';

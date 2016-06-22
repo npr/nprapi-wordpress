@@ -104,12 +104,12 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
-	function test_ds_npr_bulk_action_push_dropdown() {
+	function test_nprstory_bulk_action_push_dropdown() {
 		global $post_type;
 		$post_type = 'post';
 		update_option( 'ds_npr_api_push_url', 'test' );
 		$this->expectOutputRegex('/<script type\="text\/javascript">.*/');
-		ds_npr_bulk_action_push_dropdown();
+		nprstory_bulk_action_push_dropdown();
 	}
 
 	function test_ds_npr_bulk_action_push_action() {
