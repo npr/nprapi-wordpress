@@ -38,10 +38,10 @@ class Test_Settings extends WP_UnitTestCase {
 		nprstory_query_run_multi_callback();
 	}
 
-	function test_ds_npr_query_multi_cron_interval_callback() {
+	function test_nprstory_query_multi_cron_interval_callback() {
 		# Simple test of outut -- should output an input element with a label matching below
 		$this->expectOutputRegex('/<input.*How often, in minutes, should the Get Multi function run\?  \(default \= 60\)/');
-		dp_npr_query_multi_cron_interval_callback();
+		nprstory_query_multi_cron_interval_callback();
 	}
 
 	function test_nprstory_api_query_publish_callback() {
