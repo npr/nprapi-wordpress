@@ -44,12 +44,12 @@ function nprstory_post_to_nprml_story( $post ) {
     	$post_for_teaser = $post;
     	$post_for_teaser->post_content = $content;
         if ( empty( $teaser_text ) ){
-	    	$teaser_text = nai_get_excerpt( $post_for_teaser );
+	    	$teaser_text = nprstory_nai_get_excerpt( $post_for_teaser );
     	}
     } else {
 	    $content = $post->post_content;
 	    if ( empty( $teaser_text ) ) {
-		    $teaser_text = nai_get_excerpt( $post );
+		    $teaser_text = nprstory_nai_get_excerpt( $post );
 	    }
     }
     //lets see if there are any plugins that need to fix their shortcodes before we run do_shortcode
@@ -417,17 +417,20 @@ function nprstory_nprml_item_to_xml( $item, $xml ) {
 /**
  * Retrieves the excerpt of any post.
  *
+ * HACK: This is ripped from wp_trim_excerpt() in
+ * wp-includes/formatting.php because there's seemingly no way to
+ * use it outside of The Loop
+ * Filed as ticket #16372 in WP Trac
+ *
+ * @todo replace this with wp_trim_words, see https://github.com/nprds/nprapi-wordpress/issues/20
+ *
  * @param   object  $post       Post object
  * @param   int     $word_count Number of words (default 30)
  * @return  String
  */
-function nai_get_excerpt( $post, $word_count = 30 ) {
+function nprstory_nai_get_excerpt( $post, $word_count = 30 ) {
     $text = $post->post_content;
 
-    // HACK: This is ripped from wp_trim_excerpt() in 
-    // wp-includes/formatting.php because there's seemingly no way to 
-    // use it outside of The Loop
-    // Filed as ticket #16372 in WP Trac.
     $text = strip_shortcodes( $text );
 
     $text = apply_filters( 'the_content', $text );
