@@ -159,7 +159,7 @@ function nprstory_create_post_type() {
 	);
 }
 
-function ds_npr_add_meta_boxes() {
+function nprstory_add_meta_boxes() {
 	$screen = get_current_screen();
 	$push_url = get_option( 'ds_npr_api_push_url' );
 	if ( $screen->id == 'post' && ! empty( $push_url ) ) {
@@ -172,4 +172,4 @@ function ds_npr_add_meta_boxes() {
 		);
 	}
 }
-add_action('add_meta_boxes', 'ds_npr_add_meta_boxes');
+add_action('add_meta_boxes', 'nprstory_add_meta_boxes');
