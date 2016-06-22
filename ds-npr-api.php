@@ -47,14 +47,15 @@ define( 'NPR_PUSH_STORY_ERROR', 'npr_push_story_error');
 
 define( 'NPR_MAX_QUERIES', 10 );
 
-define( 'NPRSTORY_PLUGIN_DIR', plugin_dir_path(__FILE__) );
-
 define( 'NPR_POST_TYPE', 'npr_story_post' );
+
+// Load files
+define( 'NPRSTORY_PLUGIN_DIR', plugin_dir_path(__FILE__) );
 require_once( NPRSTORY_PLUGIN_DIR . '/settings.php' );
 require_once( NPRSTORY_PLUGIN_DIR . '/classes/NPRAPIWordpress.php');
-
 require_once( NPRSTORY_PLUGIN_DIR . '/get_stories.php');
 require_once( NPRSTORY_PLUGIN_DIR . '/meta-boxes.php');
+require_once( NPRSTORY_PLUGIN_DIR . '/push_story.php');
 
 //add the cron to get stories
 register_activation_hook( NPRSTORY_PLUGIN_DIR . '/ds-npr-api.php', 'nprstory_activation' );
@@ -82,7 +83,7 @@ function nprstory_activation() {
 function nprstory_activate() {
 	update_option( 'dp_npr_query_multi_cron_interval', 60 );
 	if ( ! wp_next_scheduled( 'npr_ds_hourly_cron' ) ) {
-		error_log( 'turning on cron event' );
+		error_log( 'turning on cron event for NPR Story API plugin' );
 		wp_schedule_event( time(), 'hourly', 'npr_ds_hourly_cron' );
 	}
 
@@ -138,9 +139,6 @@ function nprstory_show_message( $message, $errormsg = false ) {
 	}
 	echo "<p><strong>$message</strong></p></div>";
 }
-
-require_once( 'push_story.php' );
-
 
 add_action( 'init', 'nprstory_create_post_type' );
 

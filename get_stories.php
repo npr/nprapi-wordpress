@@ -16,11 +16,11 @@ class DS_NPR_API {
 	public static function nprstory_cron_pull() {
 		// here we should get the list of IDs/full urls that need to be checked hourly
 		//because this is run on cron, and may be fired off by an non-admin, we need to load a bunch of stuff
-		require_once (WP_PLUGIN_DIR . '/../../wp-admin/includes/file.php');
-		require_once (WP_PLUGIN_DIR . '/../../wp-admin/includes/media.php');
-		require_once (WP_PLUGIN_DIR . '/../../wp-admin/includes/admin.php');
-		require_once (WP_PLUGIN_DIR . '/../../wp-load.php');
-		require_once (WP_PLUGIN_DIR . '/../../wp-includes/class-wp-error.php');
+		require_once (ABSPATH . '/wp-admin/includes/file.php');
+		require_once (ABSPATH . '/wp-admin/includes/media.php');
+		require_once (ABSPATH . '/wp-admin/includes/admin.php');
+		require_once (ABSPATH . '/wp-load.php');
+		require_once (ABSPATH . '/wp-includes/class-wp-error.php');
 
 		//this was debug code it may be good keep it around for a bit
 		//$now = gmDate("D, d M Y G:i:s O ");

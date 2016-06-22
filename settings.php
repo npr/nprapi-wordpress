@@ -1,5 +1,5 @@
 <?php
-require_once( 'settings_ui.php' );
+require_once( NPRSTORY_PLUGIN_DIR . '/settings_ui.php' );
 
 /*
  * NPR API Settings Page and related control methods.

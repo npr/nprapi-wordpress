@@ -1,6 +1,6 @@
 <?php
 
-require_once ( 'classes/NPRAPIWordpress.php' );
+require_once ( NPRSTORY_PLUGIN_DIR . '/classes/NPRAPIWordpress.php' );
 
 /**
  *
