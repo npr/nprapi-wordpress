@@ -4,7 +4,7 @@
  * nprstory_to_nprml(): Translates a post to NPRML.  Returns an XML string.
  */
 function nprstory_to_nprml( $post ) {
-    $story = post_to_nprml_story( $post );
+    $story = nprstory_post_to_nprml_story( $post );
     $doc = array();
     $doc[] = array(
         'tag' => 'list',
@@ -21,7 +21,7 @@ function nprstory_to_nprml( $post ) {
  * If a mapped custom field does not exist in a certain post, just send the default field.
  * @param  $post
  */
-function post_to_nprml_story( $post ) {
+function nprstory_post_to_nprml_story( $post ) {
     $story = array();
     $story[] = array( 
         'tag' => 'link',
