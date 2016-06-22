@@ -21,7 +21,7 @@ class Test_DS_NPR_API_Class extends WP_UnitTestCase {
 		$this->assertEquals( 'test_post_type', $post_type );
 	}
 
-	function test_ds_npr_story_cron_pull() {
+	function test_nprstory_cron_pull() {
 		# TODO: we'll need to set up some test queries for this test.
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}

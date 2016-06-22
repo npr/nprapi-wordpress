@@ -58,7 +58,7 @@ require_once( DS_NPR_PLUGIN_DIR . '/meta-boxes.php');
 
 //add the cron to get stories
 register_activation_hook( DS_NPR_PLUGIN_DIR . '/ds-npr-api.php', 'nprstory_activation' );
-add_action( 'npr_ds_hourly_cron', array ( 'DS_NPR_API','ds_npr_story_cron_pull' ) );
+add_action( 'npr_ds_hourly_cron', array ( 'DS_NPR_API','nprstory_cron_pull' ) );
 register_deactivation_hook( DS_NPR_PLUGIN_DIR . '/ds-npr-api.php', 'nprstory_deactivation' );
 
 

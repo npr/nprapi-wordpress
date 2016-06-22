@@ -109,7 +109,7 @@ add_filter( 'cron_schedules', 'cron_add_ds_interval' );
 function ds_npr_api_get_multi_settings_callback() {
 	$run_multi = get_option( 'dp_npr_query_run_multi' );
 	if ( $run_multi ) {
-	 	DS_NPR_API::ds_npr_story_cron_pull();
+		DS_NPR_API::nprstory_cron_pull();
 	}
 
 	//change the cron timer
