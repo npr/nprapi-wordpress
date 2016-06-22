@@ -273,7 +273,7 @@ class NPRAPIWordpress extends NPRAPI {
                             if ( empty( $image_url ) ) {
                                 $image_url = $image->src;
                             }
-                            error_log('Got image from :' . $image_url);
+                            error_log('Got image from: ' . $image_url);
                             // Download file to temp location
                             $tmp = download_url( $image_url );
 
