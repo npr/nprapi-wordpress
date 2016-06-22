@@ -110,17 +110,17 @@ class Test_Settings extends WP_UnitTestCase {
 		nprstory_push_story_permissions_callback();
 	}
 
-	function test_ds_npr_show_post_types_select() {
+	function test_nprstory_show_post_types_select() {
 		$field_name = 'test_field';
 		update_option( $field_name, 'test_value' );
 		$this->expectOutputRegex('/<div><select id\=' . $field_name . '.*/');
-		ds_npr_show_post_types_select( $field_name, array() );
+		nprstory_show_post_types_select( $field_name, array() );
 	}
 
-	function test_ds_npr_show_perms_select() {
+	function test_nprstory_show_perms_select() {
 		$field_name = 'test_field';
 		$this->expectOutputRegex('/<div><select id\=' . $field_name . '.*/');
-		ds_npr_show_perms_select( $field_name, array() );
+		nprstory_show_perms_select( $field_name, array() );
 	}
 
 }

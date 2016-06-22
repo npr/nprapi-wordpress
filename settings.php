@@ -188,12 +188,12 @@ function nprstory_api_org_id_callback() {
 
 function nprstory_pull_post_type_callback() {
 	$post_types = get_post_types();
-	ds_npr_show_post_types_select( 'ds_npr_pull_post_type', $post_types );
+	nprstory_show_post_types_select( 'ds_npr_pull_post_type', $post_types );
 }
 
 function nprstory_push_post_type_callback() {
 	$post_types = get_post_types();
-	ds_npr_show_post_types_select( 'ds_npr_push_post_type', $post_types );
+	nprstory_show_post_types_select( 'ds_npr_push_post_type', $post_types );
     echo ('<div> If you change the Push Post Type setting remember to update the mappings for API Fields at <a href="' . admin_url('options-general.php?page=ds_npr_api_push_mapping') . '">NPR API Field Mapping </a> page.</div>');
 }
 
@@ -201,7 +201,7 @@ function nprstory_push_story_permissions_callback() {
     $permissions_groups = nprstory_get_permission_groups();
 
 	if (!empty($permissions_groups)){
-		ds_npr_show_perms_select( 'ds_npr_story_default_permission', $permissions_groups );
+		nprstory_show_perms_select( 'ds_npr_story_default_permission', $permissions_groups );
 		echo ('<div> This is where you select the default permissions group to use when pushing stories to the NPR API.</div>');
 	} else {
 		echo ('<div> You have no Permission Groups defined with the NPR API. </div>');
@@ -213,7 +213,7 @@ function nprstory_push_story_permissions_callback() {
 * @param  $field_name
 * @param  $keys - an array like (1=>'Value1', 2=>'Value2', 3=>'Value3');
 */
-function ds_npr_show_post_types_select( $field_name, $keys ){
+function nprstory_show_post_types_select( $field_name, $keys ){
 	$selected = get_option( $field_name );
 
 	echo "<div><select id=" . $field_name . " name=" . $field_name . ">";
@@ -235,7 +235,7 @@ function ds_npr_show_post_types_select( $field_name, $keys ){
  * @param  $field_name
  * @param  $keys an array like (id1=>'Value1', id2=>'Value2', id3=>'Value3');
  */
-function ds_npr_show_perms_select( $field_name, $keys ){
+function nprstory_show_perms_select( $field_name, $keys ){
 	$selected = get_option( $field_name );
 	echo "<div><select id=" . $field_name . " name=" . $field_name . ">";
 
