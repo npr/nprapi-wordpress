@@ -19,7 +19,6 @@ class DS_NPR_API {
 		require_once (ABSPATH . '/wp-admin/includes/file.php');
 		require_once (ABSPATH . '/wp-admin/includes/media.php');
 		require_once (ABSPATH . '/wp-admin/includes/admin.php');
-		require_once (ABSPATH . '/wp-load.php');
 		require_once (ABSPATH . '/wp-includes/class-wp-error.php');
 
 		//this was debug code it may be good keep it around for a bit
