@@ -15,9 +15,9 @@ class Test_DsNprApi extends WP_UnitTestCase {
 		$this->assertEquals( $option, 'http://api.npr.org' );
 	}
 
-	function test__ds_npr_activate() {
+	function test_nprstory_activate() {
 		$this->markTestSkipped(
-			'Functional test of __ds_npr_activate performed by Test_DsNprApi::test_ds_npr_story_activation');
+			'Functional test of nprstory_activate performed by Test_DsNprApi::test_ds_npr_story_activation');
 	}
 
 	function test_ds_npr_story_deactivation() {

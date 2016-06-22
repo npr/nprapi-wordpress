@@ -71,15 +71,15 @@ function ds_npr_story_activation() {
 		$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM $wpdb->blogs" ) );
 		foreach ( $blogids as $blog_id ) {
             switch_to_blog( $blog_id );
-            _ds_npr_activate();
+            nprstory_activate();
 		}
 		switch_to_blog( $old_blog );
 	} else {
-        _ds_npr_activate();
+        nprstory_activate();
 	}
 }
 
-function _ds_npr_activate() {
+function nprstory_activate() {
 	update_option( 'dp_npr_query_multi_cron_interval', 60 );
 	if ( ! wp_next_scheduled( 'npr_ds_hourly_cron' ) ) {
 		error_log( 'turning on cron event' );
