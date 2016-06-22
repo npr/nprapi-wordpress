@@ -37,8 +37,9 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->assertTrue( empty( $meta_keys ) );
 	}
 
-	function test_ds_npr_push_settings_init() {
+	function test_nprstory_push_settings_init() {
 		# TODO: not sure how to test this
+		# perhaps checking the globals used by add_settings_field and register_setting and add_settings_section
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 

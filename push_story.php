@@ -173,7 +173,7 @@ function nprstory_get_post_meta_keys( $post_type = 'post' ) {
 /**
   Set up the fields for mapping custom meta fields to NRPML fields that we push to the API
 */
-function ds_npr_push_settings_init() {
+function nprstory_push_settings_init() {
     add_settings_section( 'ds_npr_push_settings', 'NPR API PUSH settings', 'ds_npr_api_push_settings_callback', 'ds_npr_api_push_mapping' );
 
     add_settings_field( 'dp_npr_push_use_custom_map', 'Use Custom Settings', 'ds_npr_api_use_custom_mapping_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
@@ -204,7 +204,7 @@ function ds_npr_push_settings_init() {
      */
 }
 
-add_action( 'admin_init', 'ds_npr_push_settings_init' );
+add_action( 'admin_init', 'nprstory_push_settings_init' );
 
 /**
  * call back for push settings
