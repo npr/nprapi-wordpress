@@ -133,7 +133,7 @@ function nprstory_api_push_mapping_callback() { }
  * To clear this cache, after adding meta keys, you need to run delete_transient('ds_npr_' .  $post_type.'_meta_keys')
  * @param  $post_type
  */
-function ds_npr_push_meta_keys( $post_type = 'post' ) {
+function nprstory_push_meta_keys( $post_type = 'post' ) {
     global $wpdb;
     $limit = (int) apply_filters( 'postmeta_form_limit', 30 );
     $query = "
@@ -165,7 +165,7 @@ function ds_npr_get_post_meta_keys( $post_type = 'post' ) {
     if ( ! empty( $cache ) ) {
     	$meta_keys = $cache;
     } else {
-        $meta_keys = ds_npr_push_meta_keys( $post_type );
+        $meta_keys = nprstory_push_meta_keys( $post_type );
     }
     return $meta_keys;
 }

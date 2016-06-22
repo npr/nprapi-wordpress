@@ -26,9 +26,9 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->assertTrue( is_null( $ret ) );
 	}
 
-	function test_ds_npr_push_meta_keys() {
+	function test_nprstory_push_meta_keys() {
 		# Should be empty since our test database contains nothing
-		$meta_keys = ds_npr_push_meta_keys();
+		$meta_keys = nprstory_push_meta_keys();
 		$this->assertTrue( empty( $meta_keys ) );
 	}
 
