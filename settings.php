@@ -198,7 +198,7 @@ function ds_npr_push_post_type_callback() {
 }
 
 function ds_npr_push_story_permissions_callback() {
-    $permissions_groups = ds_npr_get_permission_groups();
+    $permissions_groups = nprstory_get_permission_groups();
 
 	if (!empty($permissions_groups)){
 		ds_npr_show_perms_select( 'ds_npr_story_default_permission', $permissions_groups );

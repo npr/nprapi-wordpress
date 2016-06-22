@@ -99,7 +99,7 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->assertEquals( $ret, 'test_post' );
 	}
 
-	function test_ds_npr_get_permission_groups() {
+	function test_nprstory_get_permission_groups() {
 		# TODO: this requires API credentials and API access
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}

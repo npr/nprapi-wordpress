@@ -326,7 +326,7 @@ function nprstory_get_push_post_type() {
 	return $push_post_type;
 }
 
-function ds_npr_get_permission_groups(){
+function nprstory_get_permission_groups(){
     $perm_groups = '';
 	//query the API for the lists for this org.
 	$perm_url = get_option( 'ds_npr_api_push_url' ) . '/orgs/' . get_option( 'ds_npr_api_org_id' ) . '/groups' . '?apiKey=' . get_option('ds_npr_api_key');
