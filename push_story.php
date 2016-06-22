@@ -424,8 +424,8 @@ function nprstory_submitbox_send_to_nprone() {
     }
 }
 
-add_action( 'save_post', 'save_send_to_nprone');
-function save_send_to_nprone( $post_ID ) {
+add_action( 'save_post', 'nprstory_save_send_to_nprone');
+function nprstory_save_send_to_nprone( $post_ID ) {
     global $post;
     if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
