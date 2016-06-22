@@ -38,7 +38,7 @@ class NPRAPIWordpress extends NPRAPI {
     $this->request->request_url = $request_url;
     $this->query_by_url($request_url);
   }
-  
+
   /**
    * 
    * Query a single url.  If there is not an API Key in the query string, append one, but otherwise just do a straight query
@@ -50,9 +50,9 @@ class NPRAPIWordpress extends NPRAPI {
         if ( ! stristr( $url, 'apiKey=' ) ) {
             $url .= '&apiKey='. get_option( 'ds_npr_api_key' );
         }
-  	
+
         $this->request->request_url = $url;
-  	
+
         //fill out the $this->request->param array so we can know what params were sent
         $parsed_url = parse_url( $url );
         if ( ! empty( $parsed_url['query'] ) ) {
@@ -85,12 +85,12 @@ class NPRAPIWordpress extends NPRAPI {
             error_log( 'Error retrieving story for url='.$url );
         }
     }
-  
+
   /**
-   * 
+   *
    * This function will go through the list of stories in the object and check to see if there are updates
    * available from the NPR API if the pubDate on the API is after the pubDate originally stored locally.
-   * 
+   *
    * @param unknown_type $publish
    */
     function update_posts_from_stories( $publish = TRUE ) {
@@ -414,7 +414,7 @@ class NPRAPIWordpress extends NPRAPI {
    */
     function create_NPRML( $post ) {
         //using some old helper code
-        return as_nprml( $post );
+        return nprstory_to_nprml( $post );
     }
 
   /**

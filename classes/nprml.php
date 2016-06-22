@@ -1,9 +1,9 @@
 <?php
 
 /**
- * as_nprml(): Translates a post to NPRML.  Returns an XML string.
+ * nprstory_to_nprml(): Translates a post to NPRML.  Returns an XML string.
  */
-function as_nprml( $post ) {
+function nprstory_to_nprml( $post ) {
     $story = post_to_nprml_story( $post );
     $doc = array();
     $doc[] = array(
