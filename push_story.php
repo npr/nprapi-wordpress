@@ -108,7 +108,7 @@ add_action( 'wp_trash_post', 'nprstory_api_delete', 10, 2 );
  *
  * define the option page for mapping fields
  */
-function ds_npr_push_add_field_mapping_page() {
+function nprstory_push_add_field_mapping_page() {
     add_options_page(
         'NPR API Push Field Mapping',
         'NPR API Field Mapping',
@@ -118,7 +118,7 @@ function ds_npr_push_add_field_mapping_page() {
     );
 }
 
-add_action( 'admin_menu', 'ds_npr_push_add_field_mapping_page' );
+add_action( 'admin_menu', 'nprstory_push_add_field_mapping_page' );
 
 /**
  *

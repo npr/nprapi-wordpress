@@ -16,7 +16,7 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
-	function test_ds_npr_push_add_field_mapping_page() {
+	function test_nprstory_push_add_field_mapping_page() {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
