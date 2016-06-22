@@ -2,7 +2,7 @@
 
 class Test_Settings extends WP_UnitTestCase {
 
-	function test_ds_npr_add_options_page() {
+	function test_nprstory_add_options_page() {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 

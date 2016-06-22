@@ -4,10 +4,10 @@ require_once( 'settings_ui.php' );
 /*
  * NPR API Settings Page and related control methods.
  */
-function ds_npr_add_options_page() {
+function nprstory_add_options_page() {
     add_options_page( 'NPR API', 'NPR API', 'manage_options', 'ds_npr_api', 'ds_npr_api_options_page' );
 }
-add_action( 'admin_menu', 'ds_npr_add_options_page' );
+add_action( 'admin_menu', 'nprstory_add_options_page' );
 
 function ds_npr_add_query_page() {
     $num = get_option( 'ds_npr_num' );
