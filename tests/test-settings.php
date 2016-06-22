@@ -32,10 +32,10 @@ class Test_Settings extends WP_UnitTestCase {
 		$this->assertTrue( ! empty( $schedules ) );
 	}
 
-	function test_dp_npr_query_run_multi_callback() {
+	function test_nprstory_query_run_multi_callback() {
 		# Simple test of output -- expect an input with id dp_npr_query_run_multi
 		$this->expectOutputRegex('/<input id\=\'dp_npr_query_run_multi\'.*/');
-		dp_npr_query_run_multi_callback();
+		nprstory_query_run_multi_callback();
 	}
 
 	function test_ds_npr_query_multi_cron_interval_callback() {

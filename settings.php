@@ -70,7 +70,7 @@ function nprstory_settings_init() {
         register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_publish_' . $i );
     }
 
-    add_settings_field( 'dp_npr_query_run_multi', 'Run the queries on saving changes', 'dp_npr_query_run_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
+    add_settings_field( 'dp_npr_query_run_multi', 'Run the queries on saving changes', 'nprstory_query_run_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
     register_setting( 'ds_npr_api_get_multi_settings', 'dp_npr_query_run_multi' );
 
     add_settings_field( 'dp_npr_query_multi_cron_interval', 'Interval to run Get Multi cron', 'dp_npr_query_multi_cron_interval_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
@@ -120,7 +120,7 @@ function nprstory_api_get_multi_settings_callback() {
 	wp_schedule_event( time(), 'ds_interval', 'npr_ds_hourly_cron');
 }
 
-function dp_npr_query_run_multi_callback() {
+function nprstory_query_run_multi_callback() {
 	$run_multi = get_option('dp_npr_query_run_multi');
 	$check_box_string = "<input id='dp_npr_query_run_multi' name='dp_npr_query_run_multi' type='checkbox' value='true'";
 
