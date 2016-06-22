@@ -90,7 +90,7 @@ add_action( 'admin_init', 'nprstory_settings_init' );
 
 function nprstory_api_settings_callback() { }
 
-function cron_add_ds_interval( $schedules ) {
+function nprstory_add_cron_interval( $schedules ) {
     $ds_interval = get_option( 'dp_npr_query_multi_cron_interval' );
 	//if for some reason we don't get a number in the option, use 60 minutes as the default.
 	if ( ! is_numeric($ds_interval) || $ds_interval < 1 ) {
@@ -104,7 +104,7 @@ function cron_add_ds_interval( $schedules ) {
     );
     return $schedules;
 }
-add_filter( 'cron_schedules', 'cron_add_ds_interval' );
+add_filter( 'cron_schedules', 'nprstory_add_cron_interval' );
 
 function nprstory_api_get_multi_settings_callback() {
 	$run_multi = get_option( 'dp_npr_query_run_multi' );

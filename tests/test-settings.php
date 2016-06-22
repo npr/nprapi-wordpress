@@ -20,9 +20,9 @@ class Test_Settings extends WP_UnitTestCase {
 		$this->assertTrue( is_null( $ret ) );
 	}
 
-	function test_cron_add_ds_interval() {
+	function test_nprstory_add_cron_interval() {
 		$test_schedules = array();
-		$ret = cron_add_ds_interval( $test_schedules );
+		$ret = nprstory_add_cron_interval( $test_schedules );
 		$this->assertTrue( isset( $ret['ds_interval'] ) );
 	}
 
