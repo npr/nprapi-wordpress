@@ -470,7 +470,7 @@ add_action( 'admin_notices', 'nprstory_post_admin_message_error' );
 /**
  * Edit the post admin notices to include the post's id when it has been pushed successfully
  */
-function ds_npr_post_updated_messages_success( $messages ) {
+function nprstory_post_updated_messages_success( $messages ) {
 	$id = get_post_meta(get_the_ID(), NPR_STORY_ID_META_KEY, true); // single
 
 	if ( !empty($id) ) {
@@ -487,4 +487,4 @@ function ds_npr_post_updated_messages_success( $messages ) {
 	}
 	return $messages;
 }
-add_filter( 'post_updated_messages', 'ds_npr_post_updated_messages_success' );
+add_filter( 'post_updated_messages', 'nprstory_post_updated_messages_success' );
