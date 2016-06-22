@@ -5,7 +5,7 @@ class Test_SettingsUi extends WP_UnitTestCase {
 	function test_ds_npr_api_options_age() {
 		# Basic test of output -- expect to see the title of the page in the output
 		$this->expectOutputRegex('/NPR API settings/');
-		ds_npr_api_options_page();
+		nprstory_api_options_page();
 	}
 
 	function test_ds_npr_api_get_multi_options_page() {

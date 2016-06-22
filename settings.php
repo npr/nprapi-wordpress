@@ -5,7 +5,7 @@ require_once( 'settings_ui.php' );
  * NPR API Settings Page and related control methods.
  */
 function nprstory_add_options_page() {
-    add_options_page( 'NPR API', 'NPR API', 'manage_options', 'ds_npr_api', 'ds_npr_api_options_page' );
+    add_options_page( 'NPR API', 'NPR API', 'manage_options', 'ds_npr_api', 'nprstory_api_options_page' );
 }
 add_action( 'admin_menu', 'nprstory_add_options_page' );
 

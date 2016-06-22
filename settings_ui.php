@@ -2,7 +2,7 @@
 /**
  * Build the options page for the bass NPR API settings
  */
-function ds_npr_api_options_page() {
+function nprstory_api_options_page() {
 ?>
     <div>
         <h2>NPR API settings</h2>
