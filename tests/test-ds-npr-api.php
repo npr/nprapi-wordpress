@@ -2,8 +2,8 @@
 
 class Test_DsNprApi extends WP_UnitTestCase {
 
-	function test_ds_npr_story_activation() {
-		ds_npr_story_activation();
+	function test_nprstory_activation() {
+		nprstory_activation();
 
 		$result = wp_next_scheduled( 'npr_ds_hourly_cron' );
 		$this->assertTrue( ! empty( $result ) );
@@ -17,7 +17,7 @@ class Test_DsNprApi extends WP_UnitTestCase {
 
 	function test_nprstory_activate() {
 		$this->markTestSkipped(
-			'Functional test of nprstory_activate performed by Test_DsNprApi::test_ds_npr_story_activation');
+			'Functional test of nprstory_activate performed by Test_DsNprApi::test_nprstory_activation');
 	}
 
 	function test_ds_npr_story_deactivation() {
