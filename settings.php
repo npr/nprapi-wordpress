@@ -34,7 +34,7 @@ function nprstory_add_query_page() {
     add_options_page( 'Auto Fetch from the NPR API settings',
         'NPR API Get Multi', 'manage_options',
         'ds_npr_api_get_multi_settings',
-        'ds_npr_api_get_multi_options_page' );
+        'nprstory_api_get_multi_options_page' );
 }
 add_action( 'admin_menu', 'nprstory_add_query_page' );
 
