@@ -5,7 +5,7 @@ require_once ( DS_NPR_PLUGIN_DIR .'classes/NPRAPIWordpress.php');
 class DS_NPR_API {
 	var $created_message = '';
 
-	public static function ds_npr_get_pull_post_type () {
+	public static function nprstory_get_pull_post_type() {
 		$pull_post_type = get_option( 'ds_npr_pull_post_type' );
 		if ( empty( $pull_post_type ) ) {
 			$pull_post_type = 'post';

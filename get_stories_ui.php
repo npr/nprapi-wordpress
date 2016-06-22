@@ -4,7 +4,7 @@
 add_filter('manage_posts_columns', 'ds_npr_update_column');
 
 function ds_npr_update_column($defaults){
-	$pull_post_type = DS_NPR_API::ds_npr_get_pull_post_type();
+	$pull_post_type = DS_NPR_API::nprstory_get_pull_post_type();
   global $post_type;
   if($post_type == $pull_post_type) {
 		$defaults['update_story'] = 'Update Story';
@@ -14,7 +14,7 @@ function ds_npr_update_column($defaults){
 /**/
 
 // Add the update story column to the page listing the posts for the pull-type
-add_filter( 'manage_edit-' . DS_NPR_API::ds_npr_get_pull_post_type() . '_columns', 'add_new_story_columns');
+add_filter( 'manage_edit-' . DS_NPR_API::nprstory_get_pull_post_type() . '_columns', 'add_new_story_columns');
 function add_new_story_columns( $cols ) {
 	$cols['update_story'] = 'Update Story';
 	return $cols;
@@ -34,7 +34,7 @@ function ds_npr_update_column_content ( $column_name, $post_ID ) {
 //add the bulk action to the dropdown on the post admin page
 add_action( 'admin_footer-edit.php', 'ds_npr_bulk_action_update_dropdown' );
 function ds_npr_bulk_action_update_dropdown() {
-	$pull_post_type = DS_NPR_API::ds_npr_get_pull_post_type();
+	$pull_post_type = DS_NPR_API::nprstory_get_pull_post_type();
     global $post_type;
     if( $post_type == $pull_post_type ) {
     ?>

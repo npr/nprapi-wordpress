@@ -12,12 +12,12 @@ class FakeAdmin {
 
 class Test_DS_NPR_API_Class extends WP_UnitTestCase {
 
-	function test_ds_npr_get_pull_post_type() {
-		$post_type = DS_NPR_API::ds_npr_get_pull_post_type();
+	function test_nprstory_get_pull_post_type() {
+		$post_type = DS_NPR_API::nprstory_get_pull_post_type();
 		$this->assertEquals( 'post', $post_type );
 
 		update_option( 'ds_npr_pull_post_type', 'test_post_type' );
-		$post_type = DS_NPR_API::ds_npr_get_pull_post_type();
+		$post_type = DS_NPR_API::nprstory_get_pull_post_type();
 		$this->assertEquals( 'test_post_type', $post_type );
 	}
 
