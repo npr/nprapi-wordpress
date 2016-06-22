@@ -167,7 +167,7 @@ function nprstory_add_meta_boxes() {
 		add_meta_box(
 			'ds_npr_document_meta',
 			'NPR Story API',
-			'ds_npr_publish_meta_box',
+			'nprstory_publish_meta_box',
 			'post', 'side'
 		);
 	}

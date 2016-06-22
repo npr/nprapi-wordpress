@@ -1,6 +1,6 @@
 <?php
 
-function ds_npr_publish_meta_box($post) {
+function nprstory_publish_meta_box($post) {
 	$helper_text = 'Push this story to NPR:';
 	$is_disabled = ($post->post_status != 'publish');
 	if ($is_disabled) {
