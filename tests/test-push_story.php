@@ -83,10 +83,10 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->markTestSkipped('Relies on nprstory_get_post_meta_keys which returns an empty array during tests');
 	}
 
-	function test_ds_npr_show_keys_select() {
+	function test_nprstory_show_keys_select() {
 		$this->expectOutputRegex('/test_field_name/');
 		$this->expectOutputRegex('/test_key/');
-		ds_npr_show_keys_select( 'test_field_name', array( 'test_key' ) );
+		nprstory_show_keys_select( 'test_field_name', array( 'test_key' ) );
 	}
 
 	function test_ds_npr_get_push_post_type() {

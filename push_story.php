@@ -232,7 +232,7 @@ function nprstory_api_use_custom_mapping_callback(){
 function nprstory_api_mapping_title_callback() {
 	$push_post_type = ds_npr_get_push_post_type();
 	$keys = nprstory_get_post_meta_keys( $push_post_type );
-	ds_npr_show_keys_select( 'ds_npr_api_mapping_title', $keys );
+	nprstory_show_keys_select( 'ds_npr_api_mapping_title', $keys );
 }
 
 /**
@@ -241,7 +241,7 @@ function nprstory_api_mapping_title_callback() {
 function nprstory_api_mapping_body_callback() {
 	$push_post_type = ds_npr_get_push_post_type();
 	$keys = nprstory_get_post_meta_keys( $push_post_type );
-	ds_npr_show_keys_select( 'ds_npr_api_mapping_body', $keys );
+	nprstory_show_keys_select( 'ds_npr_api_mapping_body', $keys );
 }
 
 /**
@@ -250,7 +250,7 @@ function nprstory_api_mapping_body_callback() {
 function nprstory_api_mapping_byline_callback() {
 	$push_post_type = ds_npr_get_push_post_type();
 	$keys = nprstory_get_post_meta_keys( $push_post_type );
-	ds_npr_show_keys_select( 'ds_npr_api_mapping_byline', $keys );
+	nprstory_show_keys_select( 'ds_npr_api_mapping_byline', $keys );
 }
 
 /**
@@ -258,7 +258,7 @@ function nprstory_api_mapping_byline_callback() {
  */
 function nprstory_api_mapping_media_credit_callback() {
 	$keys = nprstory_get_post_meta_keys( 'attachment' );
-	ds_npr_show_keys_select( 'ds_npr_api_mapping_media_credit', $keys );
+	nprstory_show_keys_select( 'ds_npr_api_mapping_media_credit', $keys );
 }
 
 /**
@@ -266,7 +266,7 @@ function nprstory_api_mapping_media_credit_callback() {
  */
 function nprstory_api_mapping_media_agency_callback() {
 	$keys = nprstory_get_post_meta_keys( 'attachment' );
-	ds_npr_show_keys_select( 'ds_npr_api_mapping_media_agency', $keys );
+	nprstory_show_keys_select( 'ds_npr_api_mapping_media_agency', $keys );
 }
 
 /**
@@ -274,7 +274,7 @@ function nprstory_api_mapping_media_agency_callback() {
  */
 function nprstory_api_mapping_distribute_media_callback() {
 	$keys = nprstory_get_post_meta_keys( 'attachment' );
-	ds_npr_show_keys_select( 'ds_npr_api_mapping_distribute_media', $keys );
+	nprstory_show_keys_select( 'ds_npr_api_mapping_distribute_media', $keys );
 }
 
 function nprstory_api_mapping_distribute_media_polarity_callback() {
@@ -299,7 +299,7 @@ function nprstory_api_mapping_distribute_media_polarity_callback() {
  * @param  $field_name
  * @param  $keys
  */
-function ds_npr_show_keys_select( $field_name, $keys ) {
+function nprstory_show_keys_select( $field_name, $keys ) {
 
 	$selected = get_option( $field_name );
 
