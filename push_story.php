@@ -438,7 +438,7 @@ function save_send_to_nprone( $post_ID ) {
 /**
  * Add an admin notice to the post editor with the post's error message if it exists
  */
-function ds_npr_post_admin_message_error() {
+function nprstory_post_admin_message_error() {
 	// only run on a post edit page
 	$screen = get_current_screen();
 	if ($screen->id !== 'post' ) {
@@ -465,7 +465,7 @@ function ds_npr_post_admin_message_error() {
 		);
 	}
 }
-add_action( 'admin_notices', 'ds_npr_post_admin_message_error' );
+add_action( 'admin_notices', 'nprstory_post_admin_message_error' );
 
 /**
  * Edit the post admin notices to include the post's id when it has been pushed successfully
