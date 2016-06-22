@@ -26,8 +26,8 @@ class Test_Settings extends WP_UnitTestCase {
 		$this->assertTrue( isset( $ret['ds_interval'] ) );
 	}
 
-	function test_ds_npr_api_get_multi_settings_callback() {
-		ds_npr_api_get_multi_settings_callback();
+	function test_nprstory_api_get_multi_settings_callback() {
+		nprstory_api_get_multi_settings_callback();
 		$schedules = wp_get_schedule( 'npr_ds_hourly_cron' );
 		$this->assertTrue( ! empty( $schedules ) );
 	}

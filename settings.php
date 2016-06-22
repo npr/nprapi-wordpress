@@ -53,7 +53,7 @@ function nprstory_settings_init() {
     add_settings_field( 'ds_npr_api_org_id', 'Org ID', 'ds_npr_api_org_id_callback', 'ds_npr_api', 'ds_npr_api_settings' );
     register_setting( 'ds_npr_api', 'ds_npr_api_org_id' );
 
-    add_settings_section( 'ds_npr_api_get_multi_settings', 'NPR API multiple get settings', 'ds_npr_api_get_multi_settings_callback', 'ds_npr_api_get_multi_settings' );
+    add_settings_section( 'ds_npr_api_get_multi_settings', 'NPR API multiple get settings', 'nprstory_api_get_multi_settings_callback', 'ds_npr_api_get_multi_settings' );
 
     add_settings_field( 'ds_npr_num', 'Number of things to get', 'ds_npr_api_num_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
     register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_num' );
@@ -106,7 +106,7 @@ function cron_add_ds_interval( $schedules ) {
 }
 add_filter( 'cron_schedules', 'cron_add_ds_interval' );
 
-function ds_npr_api_get_multi_settings_callback() {
+function nprstory_api_get_multi_settings_callback() {
 	$run_multi = get_option( 'dp_npr_query_run_multi' );
 	if ( $run_multi ) {
 		DS_NPR_API::nprstory_cron_pull();
