@@ -1,6 +1,6 @@
 <?php
-require_once( DS_NPR_PLUGIN_DIR .'get_stories_ui.php' );
-require_once ( DS_NPR_PLUGIN_DIR .'classes/NPRAPIWordpress.php');
+require_once( NPRSTORY_PLUGIN_DIR .'get_stories_ui.php' );
+require_once ( NPRSTORY_PLUGIN_DIR .'classes/NPRAPIWordpress.php');
 
 class DS_NPR_API {
 	var $created_message = '';
