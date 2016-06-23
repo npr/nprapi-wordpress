@@ -106,6 +106,8 @@ function nprstory_get_stories() {
             <?php endif;
 						if ( ! $pull_url ) : nprstory_show_message ('You do not currently have an API Pull URL set.  <a href="' . admin_url('options-general.php?page=ds_npr_api') . '">Set your API Pull URL here.</a>', TRUE);?>
             <?php endif;
+
+			// Get the story ID from the URL, then paste it into the input
             $story_id = '';
             if ( ( isset( $_POST ) and isset( $_POST[ 'story_id' ] ) ) || ( isset( $_GET) && isset( $_GET['story_id'] ) ) ): ?>
                 <div class="updated">
@@ -122,7 +124,7 @@ function nprstory_get_stories() {
 
             <div style="float: left;">
                 <form action="" method="POST">
-                    Enter an NPR Story ID or URL: <input type="text" name="story_id" value="<?php echo $story_id?>" />
+                    Enter an NPR Story ID or URL: <input type="text" name="story_id" value="<?php echo esc_attr($story_id)?>" />
                     <input type="submit" name='createDaft' value="Create Draft" />
                     <input type="submit" name='publishNow' value="Publish Now" />
                 </form>
