@@ -79,9 +79,25 @@ class DS_NPR_API {
             if ( isset($_POST['createDaft'] ) ){
             	$publish = false;
             }
+			if ( ! check_admin_referer('nprstory_nonce_story_id', 'nprstory_nonce_story_id_field') ) {
+				wp_die(
+					__('Nonce did not verify in DS_NPR_API::load_page_hook. Are you sure you should be doing this?'),
+					__('NPR Story API Error'),
+					403
+				);
+			}
         } else if ( isset( $_GET['story_id']) && isset( $_GET['create_draft'] ) ) {
             $story_id = $_GET['story_id'];
         }
+
+		// if the current user shouldn't be doing this, fail
+		if ( ! current_user_can('edit_posts') ) {
+			wp_die(
+				__('You do not have permission to edit posts, and therefore you do not have permission to pull posts from the NPR API'),
+				__('NPR Story API Error'),
+				403
+			);
+		}
 
 		// try to get the ID of the story from the URL
         if ( isset( $story_id ) ) {

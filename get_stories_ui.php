@@ -122,6 +122,7 @@ function nprstory_get_stories() {
             <div style="float: left;">
                 <form action="" method="POST">
                     Enter an NPR Story ID or URL: <input type="text" name="story_id" value="<?php echo esc_attr($story_id)?>" />
+					<?php wp_nonce_field('nprstory_nonce_story_id', 'nprstory_nonce_story_id_field'); ?>
                     <input type="submit" name='createDaft' value="Create Draft" />
                     <input type="submit" name='publishNow' value="Publish Now" />
                 </form>
