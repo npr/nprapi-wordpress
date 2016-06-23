@@ -1,5 +1,9 @@
 <?php
 /**
+ * These are the layouts for the three settings pages registered by the plugin
+ */
+
+/**
  * Build the options page for the bass NPR API settings
  */
 function nprstory_api_options_page() {
