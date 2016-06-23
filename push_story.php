@@ -3,14 +3,22 @@
 require_once ( NPRSTORY_PLUGIN_DIR . '/classes/NPRAPIWordpress.php' );
 
 /**
- *
  * push the contents and fields for a post to the NPR API
+ *
+ * Limited to users that can publish posts
+ *
  * @param unknown_type $post_ID
  * @param unknown_type $post
  */
 function nprstory_api_push ( $post_ID, $post ) {
-	// @todo this needs to check that the current user is permitted to push to the API
-	//
+	if ( ! current_user_can( 'publish_posts' ) ) {
+		wp_die(
+			__('You do not have permission to publish posts, and therefore you do not have permission to push posts to the NPR API.'),
+			__('NPR Story API Error'),
+			403
+		);
+	}
+
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
 	if ( empty( $push_post_type ) ) {
 		$push_post_type = 'post';
@@ -61,11 +69,21 @@ function nprstory_api_push ( $post_ID, $post ) {
 }
 
 /**
- *
  * Inform the NPR API that a post needs to be deleted.
+ *
+ * Limited to users that can delete other users' posts
+ *
  * @param unknown_type $post_ID
  */
 function nprstory_api_delete ( $post_ID ) {
+	if ( ! current_user_can( 'delete_others_posts' ) ) {
+		wp_die(
+			__('You do not have permission to delete posts in the NPR API. Users that can delete other users\' posts have that ability: administrators and editors.'),
+			__('NPR Story API Error'),
+			403
+		);
+	}
+
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
 	if ( empty( $push_post_type ) ) {
 		$push_post_type = 'post';
