@@ -27,7 +27,7 @@ function nprstory_api_push ( $post_ID, $post ) {
 	//if the push url isn't set, don't even try to push.
 	$push_url = get_option( 'ds_npr_api_push_url' );
 
-	if ( ! empty ($push_url) ) {
+	if ( ! empty ( $push_url ) ) {
 		// For now, only submit regular posts, and only on publish.
 		if ( $post->post_type != $push_post_type || $post->post_status != 'publish' ) {
 			return;
@@ -91,7 +91,7 @@ function nprstory_api_delete ( $post_ID ) {
 
 	$api_id_meta = get_post_meta( $post_ID, NPR_STORY_ID_META_KEY );
 	$api_id = $api_id_meta[0];
-	$post = get_post($post_ID);
+	$post = get_post( $post_ID );
 	//if the push url isn't set, don't even try to delete.
 	$push_url = get_option( 'ds_npr_api_push_url' );
 	if ( $post->post_type == $push_post_type && ! empty( $push_url ) && ! empty( $api_id ) ) {
@@ -157,7 +157,7 @@ function nprstory_push_meta_keys( $post_type = 'post' ) {
     global $wpdb;
     $limit = (int) apply_filters( 'postmeta_form_limit', 30 );
     $query = "
-        SELECT DISTINCT($wpdb->postmeta.meta_key)
+        SELECT DISTINCT( $wpdb->postmeta.meta_key )
         FROM $wpdb->posts
         LEFT JOIN $wpdb->postmeta
         ON $wpdb->posts.ID = $wpdb->postmeta.post_id
@@ -168,7 +168,7 @@ function nprstory_push_meta_keys( $post_type = 'post' ) {
     ";
     //AND $wpdb->postmeta.meta_key NOT RegExp '(^[_0-9].+$)'
     $keys = $wpdb->get_col( $wpdb->prepare( $query, $post_type ) );
-    if ( $keys ) natcasesort($keys);
+    if ( $keys ) natcasesort( $keys );
 
     //set_transient('ds_npr_' .  $post_type .'_meta_keys', $keys, 60*60*24); # 1 Day Expiration
     return $keys;
@@ -195,90 +195,90 @@ function nprstory_get_post_meta_keys( $post_type = 'post' ) {
  * @see nprstory_push_settings_init
  * @see nprstory_settings_init
  */
-function nprstory_validation_callback_checkbox($value) {
-	return ($value) ? true : false;
+function nprstory_validation_callback_checkbox( $value ) {
+	return ( $value ) ? true : false;
 }
 /**
  * Select validation callback
  * @see nprstory_push_settings_init
  * @see nprstory_settings_init
  */
-function nprstory_validation_callback_select($value) {
+function nprstory_validation_callback_select( $value ) {
 	// this value must be suitable for use as a form value
-	return esc_attr($value);
+	return esc_attr( $value );
 }
 /**
  * url validation callback
  * @see nprstory_settings_init
  */
-function nprstory_validation_callback_url($value) {
+function nprstory_validation_callback_url( $value ) {
 	// because of the generic nature of this callback , it's not going to log anything, just do some sanitization
 	// this value must be suitable for use as a form value
-	return esc_attr($value);
+	return esc_attr( $value );
 }
 /**
  * NPR API Key validation callback
  * @see nprstory_push_settings_init
  * @see nprstory_settings_init
  */
-function nprstory_validation_callback_api_key($value) {
-	return esc_attr($value);
+function nprstory_validation_callback_api_key( $value ) {
+	return esc_attr( $value );
 }
 /**
  * URL validation callbacks for the API URLs
  * @see nprstory_settings_init
  */
-function nprstory_validation_callback_pull_url($value) {
+function nprstory_validation_callback_pull_url( $value ) {
 	// Is this a URL? It better be a URL.
-	error_log(var_export( strpos( $value, 'http' ) !== 0 ), true);
+	error_log( var_export( strpos( $value, 'http' ) !== 0 ), true );
 	if ( strpos( $value, 'http' ) !== 0 ) {
 		add_settings_error(
 			'ds_npr_api_pull_url',
 			'not-http-url',
-			esc_html($value) . __(' is not a valid value for the NPR API Pull URL. It must be a URL starting with <code>http</code>.'),
+			esc_html( $value ) . __( ' is not a valid value for the NPR API Pull URL. It must be a URL starting with <code>http</code>.' ),
 			'error'
 		);
 		$value = '';
 	}
-	return esc_attr($value);
+	return esc_attr( $value );
 }
-function nprstory_validation_callback_push_url($value) {
+function nprstory_validation_callback_push_url( $value ) {
 	// Is this a URL? It better be a URL.
 	error_log(var_export( strpos( $value, 'http' ) !== 0 ), true);
 	if ( strpos( $value, 'http' ) !== 0 ) {
 		add_settings_error(
 			'ds_npr_api_push_url',
 			'not-http-url',
-			esc_html($value) . __(' is not a valid value for the NPR API Push URL. It must be a URL starting with <code>http</code>.'),
+			esc_html( $value ) . __( ' is not a valid value for the NPR API Push URL. It must be a URL starting with <code>http</code>.' ),
 			'error'
 		);
 		$value = '';
 	}
-	return esc_attr($value);
+	return esc_attr( $value );
 }
 /**
  * Org ID validation callbacks for the Org Id
  * @todo put this into use in nprstory_settings_init once we know for sure than an NPR Org ID is always a number
  * @see nprstory_settings_init
  */
-function nprstory_validation_callback_org_id($value) {
+function nprstory_validation_callback_org_id( $value ) {
 	// Is this a number? it should be a number
-	if ( ! is_numeric($value) ) {
+	if ( ! is_numeric( $value ) ) {
 		add_settings_error(
 			'ds_npr_api_org_id',
 			'not-http-url',
-			esc_html($value) . __(' is not a valid value for the NPR Organization ID. It must be a number.'),
+			esc_html( $value ) . __( ' is not a valid value for the NPR Organization ID. It must be a number.' ),
 			'error'
 		);
 		$value = '';
 	}
-	return esc_attr($value);
+	return esc_attr( $value );
 }
 /**
  * callback for debugging validation callbacks
  */
-function nprstory_validation_callback_debug($value) {
-	error_log(var_export($value, true));
+function nprstory_validation_callback_debug( $value ) {
+	error_log( var_export( $value, true ) );
 	return $value;
 }
 
