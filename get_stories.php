@@ -18,13 +18,14 @@ class DS_NPR_API {
 		//because this is run on cron, and may be fired off by an non-admin, we need to load a bunch of stuff
 		require_once (ABSPATH . '/wp-admin/includes/file.php');
 		require_once (ABSPATH . '/wp-admin/includes/media.php');
-		require_once (ABSPATH . '/wp-admin/includes/admin.php');
-		require_once (ABSPATH . '/wp-includes/class-wp-error.php');
 
-		//this was debug code it may be good keep it around for a bit
-		//$now = gmDate("D, d M Y G:i:s O ");
-		//error_log("right now the time is -- ".$now);
-		//here we go.
+		// This is debug code. It may be save future devs some time; please keep it around.
+		/*
+		$now = gmDate("D, d M Y G:i:s O ");
+		error_log("right now the time is -- ".$now);
+		*/
+
+		// here we go.
 		$num =  get_option( 'ds_npr_num' );
 		for ($i=0; $i<$num; $i++ ) {
 			$api = new NPRAPIWordpress();
