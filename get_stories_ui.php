@@ -17,8 +17,8 @@ function nprstory_update_column($defaults){
 /**/
 
 // Add the update story column to the page listing the posts for the pull-type
-add_filter( 'manage_edit-' . DS_NPR_API::nprstory_get_pull_post_type() . '_columns', 'add_new_story_columns');
-function add_new_story_columns( $cols ) {
+add_filter( 'manage_edit-' . DS_NPR_API::nprstory_get_pull_post_type() . '_columns', 'nprstory_add_new_story_columns');
+function nprstory_add_new_story_columns( $cols ) {
 	$cols['update_story'] = 'Update Story';
 	return $cols;
 }

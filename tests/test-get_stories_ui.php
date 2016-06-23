@@ -7,8 +7,8 @@ class Test_GetStoriesUi extends WP_UnitTestCase {
 		$this->post_id = $this->factory->post->create();
 	}
 
-	function test_add_new_story_columns() {
-		$ret = add_new_story_columns( array() );
+	function test_nprstory_add_new_story_columns() {
+		$ret = nprstory_add_new_story_columns( array() );
 		$this->assertTrue( isset( $ret['update_story'] ) );
 	}
 
