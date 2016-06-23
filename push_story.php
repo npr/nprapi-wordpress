@@ -116,6 +116,8 @@ function nprstory_api_delete ( $post_ID ) {
  * this is where the magic happens
  */
 if ( isset( $_POST['ds_npr_update_push'] ) ) {
+	// No need to validate the ds_npr_update_push contents; we're checking only for its existence
+	// permissions check is handled by nprstory_api_push
 	add_action( 'save_post', 'nprstory_api_push', 10, 2 );
 }
 add_action( 'trash_post', 'nprstory_api_delete', 10, 2 );
