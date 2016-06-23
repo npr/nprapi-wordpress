@@ -64,7 +64,8 @@ class Test_Settings extends WP_UnitTestCase {
 
 	function test_nprstory_api_num_multi_callback() {
 		update_option( 'ds_npr_num', 'test' );
-		$this->expectOutputRegex('/<input type\=\'text\' value=\'test\'.*/');
+		// this should really be a number
+		$this->expectOutputRegex('/<input type\=\'number\' value=\'test\'.*/');
 		nprstory_api_num_multi_callback();
 	}
 
