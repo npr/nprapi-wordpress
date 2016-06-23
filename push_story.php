@@ -191,34 +191,126 @@ function nprstory_get_post_meta_keys( $post_type = 'post' ) {
 }
 
 /**
+ * checkbox validation callback
+ * @see nprstory_push_settings_init
+ * @see nprstory_settings_init
+ */
+function nprstory_validation_callback_checkbox($value) {
+	return ($value) ? true : false;
+}
+/**
+ * Select validation callback
+ * @see nprstory_push_settings_init
+ * @see nprstory_settings_init
+ */
+function nprstory_validation_callback_select($value) {
+	// this value must be suitable for use as a form value
+	return esc_attr($value);
+}
+/**
+ * url validation callback
+ * @see nprstory_settings_init
+ */
+function nprstory_validation_callback_url($value) {
+	// because of the generic nature of this callback , it's not going to log anything, just do some sanitization
+	// this value must be suitable for use as a form value
+	return esc_attr($value);
+}
+/**
+ * NPR API Key validation callback
+ * @see nprstory_push_settings_init
+ * @see nprstory_settings_init
+ */
+function nprstory_validation_callback_api_key($value) {
+	return esc_attr($value);
+}
+/**
+ * URL validation callbacks for the API URLs
+ * @see nprstory_settings_init
+ */
+function nprstory_validation_callback_pull_url($value) {
+	// Is this a URL? It better be a URL.
+	error_log(var_export( strpos( $value, 'http' ) !== 0 ), true);
+	if ( strpos( $value, 'http' ) !== 0 ) {
+		add_settings_error(
+			'ds_npr_api_pull_url',
+			'not-http-url',
+			esc_html($value) . __(' is not a valid value for the NPR API Pull URL. It must be a URL starting with <code>http</code>.'),
+			'error'
+		);
+		$value = '';
+	}
+	return esc_attr($value);
+}
+function nprstory_validation_callback_push_url($value) {
+	// Is this a URL? It better be a URL.
+	error_log(var_export( strpos( $value, 'http' ) !== 0 ), true);
+	if ( strpos( $value, 'http' ) !== 0 ) {
+		add_settings_error(
+			'ds_npr_api_push_url',
+			'not-http-url',
+			esc_html($value) . __(' is not a valid value for the NPR API Push URL. It must be a URL starting with <code>http</code>.'),
+			'error'
+		);
+		$value = '';
+	}
+	return esc_attr($value);
+}
+/**
+ * Org ID validation callbacks for the Org Id
+ * @todo put this into use in nprstory_settings_init once we know for sure than an NPR Org ID is always a number
+ * @see nprstory_settings_init
+ */
+function nprstory_validation_callback_org_id($value) {
+	// Is this a number? it should be a number
+	if ( ! is_numeric($value) ) {
+		add_settings_error(
+			'ds_npr_api_org_id',
+			'not-http-url',
+			esc_html($value) . __(' is not a valid value for the NPR Organization ID. It must be a number.'),
+			'error'
+		);
+		$value = '';
+	}
+	return esc_attr($value);
+}
+/**
+ * callback for debugging validation callbacks
+ */
+function nprstory_validation_callback_debug($value) {
+	error_log(var_export($value, true));
+	return $value;
+}
+
+/**
   Set up the fields for mapping custom meta fields to NRPML fields that we push to the API
 */
 function nprstory_push_settings_init() {
     add_settings_section( 'ds_npr_push_settings', 'NPR API PUSH settings', 'nprstory_api_push_settings_callback', 'ds_npr_api_push_mapping' );
 
     add_settings_field( 'dp_npr_push_use_custom_map', 'Use Custom Settings', 'nprstory_api_use_custom_mapping_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
-    register_setting( 'ds_npr_api_push_mapping', 'dp_npr_push_use_custom_map' );
+    register_setting( 'ds_npr_api_push_mapping', 'dp_npr_push_use_custom_map', 'nprstory_validation_callback_checkbox' );
 
     add_settings_field( 'ds_npr_api_mapping_title', 'Story Title', 'nprstory_api_mapping_title_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
-    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_title' );
+    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_title', 'nprstory_validation_callback_select');
 
     add_settings_field( 'ds_npr_api_mapping_body', 'Story Body', 'nprstory_api_mapping_body_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
-    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_body' );
+    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_body' , 'nprstory_validation_callback_select');
 
     add_settings_field( 'ds_npr_api_mapping_byline', 'Story Byline', 'nprstory_api_mapping_byline_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
-    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_byline' );
+    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_byline' , 'nprstory_validation_callback_select');
 
     add_settings_field( 'ds_npr_api_mapping_media_credit', 'Media Credit Field', 'nprstory_api_mapping_media_credit_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
-    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_media_credit' );
+    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_media_credit' , 'nprstory_validation_callback_select');
 
     add_settings_field( 'ds_npr_api_mapping_media_agency', 'Media Agency Field', 'nprstory_api_mapping_media_agency_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
-    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_media_agency' );
+    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_media_agency' , 'nprstory_validation_callback_select');
     /**  This will add the mapping for media distribution.  But for now, hold off.
     add_settings_field( 'ds_npr_api_mapping_distribute_media', 'Distribute Media Field', 'nprstory_api_mapping_distribute_media_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
-    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_distribute_media' );
+    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_distribute_media' , 'nprstory_validation_callback_select');
 
     add_settings_field( 'ds_npr_api_mapping_distribute_media_polarity', 'Distribute Media Field Polarity', 'nprstory_api_mapping_distribute_media_polarity_callback', 'ds_npr_api_push_mapping', 'ds_npr_push_settings' );
-    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_distribute_media_polarity' );
+    register_setting( 'ds_npr_api_push_mapping', 'ds_npr_api_mapping_distribute_media_polarity' , 'nprstory_validation_callback_select');
     //nprstory_api_mapping_distribute_media_polarity_callback
      *
      */
