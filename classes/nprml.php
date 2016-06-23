@@ -136,6 +136,7 @@ function nprstory_post_to_nprml_story( $post ) {
     }
 
     // NPR One
+	// If the box is checked, the value here is '1'
     if ( ! empty( $_POST['send_to_nprone'] ) ) {
         $story[] = array(
             'tag' => 'parent',
