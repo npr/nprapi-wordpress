@@ -107,7 +107,7 @@ function nprstory_get_stories() {
 						if ( ! $pull_url ) : nprstory_show_message ('You do not currently have an API Pull URL set.  <a href="' . admin_url('options-general.php?page=ds_npr_api') . '">Set your API Pull URL here.</a>', TRUE);?>
             <?php endif;
 
-			// Get the story ID from the URL, then paste it into the input
+			// Get the story ID from the URL, then paste it into the input's value field with esc_attr
             $story_id = '';
             if ( ( isset( $_POST ) and isset( $_POST[ 'story_id' ] ) ) || ( isset( $_GET) && isset( $_GET['story_id'] ) ) ) {
                 if ( ! empty( $_POST['story_id'] ) ){

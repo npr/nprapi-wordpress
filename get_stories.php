@@ -71,6 +71,7 @@ class DS_NPR_API {
 
     function load_page_hook() {
 		// find the input that is allegedly a story id
+		// We validate these later
         if ( isset( $_POST ) && isset( $_POST[ 'story_id' ] ) ) {
             $story_id =  $_POST[ 'story_id' ] ;
             if ( isset( $_POST['publishNow'] ) ){
