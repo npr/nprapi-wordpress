@@ -85,9 +85,6 @@ class DS_NPR_API {
 
 		// try to get the ID of the story from the URL
         if ( isset( $story_id ) ) {
-            // todo: check that the API key is actually set
-            $api = new NPRAPIWordpress();
-				
             //check to see if we got an ID or a URL
             if ( is_numeric( $story_id ) ) {
                 if (strlen($story_id) >= 8) {
@@ -106,6 +103,10 @@ class DS_NPR_API {
 
 		// Don't do anything if $story_id isn't an ID
 		if ( is_numeric( $story_id ) ) {
+			// start the API class
+            // todo: check that the API key is actually set
+            $api = new NPRAPIWordpress();
+
             $params = array( 'id' => $story_id, 'apiKey' => get_option( 'ds_npr_api_key' ) );
             $api->request( $params, 'query', get_option( 'ds_npr_api_pull_url' ) );
             $api->parse();
