@@ -70,14 +70,21 @@ function nprstory_bulk_action_update_action() {
         $exported = 0;
         foreach( $post_ids as $post_id ) {
             $api_id = get_post_meta( $post_id, NPR_STORY_ID_META_KEY, TRUE );
-            $api = new NPRAPIWordpress();
-            $params = array( 'id' => $api_id, 'apiKey' => get_option( 'ds_npr_api_key' ) );
-            $api->request( $params, 'query', get_option( 'ds_npr_api_pull_url' ) );
-            $api->parse();
-            if ( empty( $api->message ) || $api->message->level != 'warning' ){
-                error_log( 'updating story for API ID='.$api_id );
-                $story = $api->update_posts_from_stories();
-            }
+			
+			// don't run API queries for posts that have no ID
+			// @todo: why do some posts have no ID
+			// @todo: oh, it's only imported drafts that don't have an ID
+			if ( !empty( $api_id ) ) {
+				$api = new NPRAPIWordpress();
+				$params = array( 'id' => $api_id, 'apiKey' => get_option( 'ds_npr_api_key' ) );
+				$api->request( $params, 'query', get_option( 'ds_npr_api_pull_url' ) );
+				$api->parse();
+				if ( empty( $api->message ) || $api->message->level != 'warning' ){
+					error_log( 'updating story for API ID='.$api_id );
+					$story = $api->update_posts_from_stories();
+				}
+			} else {
+			}
         }
 
       // build the redirect url
