@@ -51,16 +51,16 @@ define( 'NPR_POST_TYPE', 'npr_story_post' );
 
 // Load files
 define( 'NPRSTORY_PLUGIN_DIR', plugin_dir_path(__FILE__) );
-require_once( NPRSTORY_PLUGIN_DIR . '/settings.php' );
-require_once( NPRSTORY_PLUGIN_DIR . '/classes/NPRAPIWordpress.php');
-require_once( NPRSTORY_PLUGIN_DIR . '/get_stories.php');
-require_once( NPRSTORY_PLUGIN_DIR . '/meta-boxes.php');
-require_once( NPRSTORY_PLUGIN_DIR . '/push_story.php');
+require_once( NPRSTORY_PLUGIN_DIR . 'settings.php' );
+require_once( NPRSTORY_PLUGIN_DIR . 'classes/NPRAPIWordpress.php');
+require_once( NPRSTORY_PLUGIN_DIR . 'get_stories.php');
+require_once( NPRSTORY_PLUGIN_DIR . 'meta-boxes.php');
+require_once( NPRSTORY_PLUGIN_DIR . 'push_story.php');
 
 //add the cron to get stories
-register_activation_hook( NPRSTORY_PLUGIN_DIR . '/ds-npr-api.php', 'nprstory_activation' );
+register_activation_hook( NPRSTORY_PLUGIN_DIR . 'ds-npr-api.php', 'nprstory_activation' );
 add_action( 'npr_ds_hourly_cron', array ( 'DS_NPR_API','nprstory_cron_pull' ) );
-register_deactivation_hook( NPRSTORY_PLUGIN_DIR . '/ds-npr-api.php', 'nprstory_deactivation' );
+register_deactivation_hook( NPRSTORY_PLUGIN_DIR . 'ds-npr-api.php', 'nprstory_deactivation' );
 
 
 function nprstory_activation() {

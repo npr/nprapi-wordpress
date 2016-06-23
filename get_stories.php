@@ -1,6 +1,6 @@
 <?php
-require_once( NPRSTORY_PLUGIN_DIR .'get_stories_ui.php' );
-require_once ( NPRSTORY_PLUGIN_DIR .'classes/NPRAPIWordpress.php');
+require_once( NPRSTORY_PLUGIN_DIR . 'get_stories_ui.php' );
+require_once( NPRSTORY_PLUGIN_DIR . 'classes/NPRAPIWordpress.php');
 
 class DS_NPR_API {
 	var $created_message = '';
@@ -16,8 +16,8 @@ class DS_NPR_API {
 	public static function nprstory_cron_pull() {
 		// here we should get the list of IDs/full urls that need to be checked hourly
 		//because this is run on cron, and may be fired off by an non-admin, we need to load a bunch of stuff
-		require_once (ABSPATH . '/wp-admin/includes/file.php');
-		require_once (ABSPATH . '/wp-admin/includes/media.php');
+		require_once( ABSPATH . 'wp-admin/includes/file.php');
+		require_once( ABSPATH . 'wp-admin/includes/media.php');
 
 		// This is debug code. It may be save future devs some time; please keep it around.
 		/*

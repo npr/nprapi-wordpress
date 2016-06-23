@@ -1,6 +1,6 @@
 <?php
 
-require_once ( NPRSTORY_PLUGIN_DIR . '/classes/NPRAPIWordpress.php' );
+require_once ( NPRSTORY_PLUGIN_DIR . 'classes/NPRAPIWordpress.php' );
 
 /**
  * push the contents and fields for a post to the NPR API
