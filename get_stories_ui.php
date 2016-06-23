@@ -109,18 +109,15 @@ function nprstory_get_stories() {
 
 			// Get the story ID from the URL, then paste it into the input
             $story_id = '';
-            if ( ( isset( $_POST ) and isset( $_POST[ 'story_id' ] ) ) || ( isset( $_GET) && isset( $_GET['story_id'] ) ) ): ?>
-                <div class="updated">
-                <?php
+            if ( ( isset( $_POST ) and isset( $_POST[ 'story_id' ] ) ) || ( isset( $_GET) && isset( $_GET['story_id'] ) ) ) {
                 if ( ! empty( $_POST['story_id'] ) ){
                 	$story_id = $_POST['story_id'];
                 }
                 if ( ! empty($_GET['story_id'] ) ){
                 	$story_id = $_GET['story_id'];
                 }
-                ?>
-                </div>
-            <?php endif; ?>
+            }
+			?>
 
             <div style="float: left;">
                 <form action="" method="POST">
