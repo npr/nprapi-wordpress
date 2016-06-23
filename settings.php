@@ -130,11 +130,13 @@ function nprstory_query_run_multi_callback() {
 	$check_box_string .= "/>";
 
 	echo $check_box_string;
+	wp_nonce_field( 'nprstory_nonce_ds_npr_query_run_multi', 'nprstory_nonce_ds_npr_query_run_multi', true, true );
 }
 
 function nprstory_query_multi_cron_interval_callback() {
 	$option = get_option( 'dp_npr_query_multi_cron_interval' );
 	echo "<input type='text' value='$option' name='dp_npr_query_multi_cron_interval' id='dp_npr_query_multi_cron_interval' style='width: 30px;' /> <p> How often, in minutes, should the Get Multi function run?  (default = 60)";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_query_multi_cron_interval', 'nprstory_nonce_ds_npr_query_multi_cron_interval', true, true );
 }
 
 function nprstory_api_query_publish_callback($i) {
@@ -152,6 +154,7 @@ function nprstory_api_query_publish_callback($i) {
 		$option_string .=   "value='" . esc_attr($key) . "'>" . esc_html($key) . " </option>";
 		echo $option_string;
 	}
+	$option_string .= wp_nonce_field( 'nprstory_nonce_ds_npr_query_publish_' . $i, 'nprstory_nonce_ds_npr_query_publish_' . $i, true, false );
     echo "</select> </div><p><hr></p>";
 }
 
@@ -159,31 +162,38 @@ function nprstory_api_query_callback( $i ) {
 	$option = get_option( 'ds_npr_query_' . $i );
 	$name = 'ds_npr_query_' . $i;
 	echo "<input type='text' value='$option' name='$name' style='width: 300px;' />";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_query_' . $i, 'nprstory_nonce_ds_npr_query_' . $i, true, true );
+
 }
 
 function nprstory_api_num_multi_callback() {
 	$option = get_option('ds_npr_num');
 	echo "<input type='text' value='$option' name='ds_npr_num' style='width: 30px;' /> <p> Increase the number of queries by changing the number in the field above.";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_num', 'nprstory_nonce_ds_npr_num', true, true );
 }
 
 function nprstory_api_key_callback() {
     $option = get_option( 'ds_npr_api_key' );
     echo "<input type='text' value='$option' name='ds_npr_api_key' style='width: 300px;' />";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_api_key', 'nprstory_nonce_ds_npr_api_key', true, true );
 }
 
 function nprstory_api_pull_url_callback() {
     $option = get_option( 'ds_npr_api_pull_url' );
     echo "<input type='text' value='$option' name='ds_npr_api_pull_url' style='width: 300px;' />";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_api_pull_url', 'nprstory_nonce_ds_npr_api_pull_url', true, true );
 }
 
 function nprstory_api_push_url_callback() {
     $option = get_option( 'ds_npr_api_push_url' );
     echo "<input type='text' value='$option' name='ds_npr_api_push_url' style='width: 300px;' />";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_api_push_url', 'nprstory_nonce_ds_npr_api_push_url', true, true );
 }
 
 function nprstory_api_org_id_callback() {
     $option = get_option( 'ds_npr_api_org_id' );
     echo "<input type='text' value='$option' name='ds_npr_api_org_id' style='width: 300px;' />";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_api_org_id', 'nprstory_nonce_ds_npr_api_org_id', true, true );
 }
 
 function nprstory_pull_post_type_callback() {
@@ -228,6 +238,7 @@ function nprstory_show_post_types_select( $field_name, $keys ){
 		echo $option_string;
 	}
 	echo "</select> </div>";
+	wp_nonce_field( 'nprstory_nonce_' . $field_name, 'nprstory_nonce_' . $field_name, true, true );
 }
 
 /**
@@ -249,4 +260,5 @@ function nprstory_show_perms_select( $field_name, $keys ){
 		echo $option_string;
 	}
 	echo "</select> </div>";
+	wp_nonce_field( 'nprstory_nonce_' . $field_name, 'nprstory_nonce_' . $field_name, true, true );
 }
