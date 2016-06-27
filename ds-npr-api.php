@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: WP DS NPR API
+ * Plugin Name: NPR Story API
  * Description: A collection of tools for reusing content from NPR.org supplied by Digital Services.
  * Version: 1.5.2
- * Author: Kevin Moylan
+ * Author: NPR Digital Services
  * License: GPLv2
 */
 /*
@@ -47,20 +47,23 @@ define( 'NPR_PUSH_STORY_ERROR', 'npr_push_story_error');
 
 define( 'NPR_MAX_QUERIES', 10 );
 
-define( 'DS_NPR_PLUGIN_DIR', plugin_dir_path(__FILE__) );
-
 define( 'NPR_POST_TYPE', 'npr_story_post' );
-require_once( DS_NPR_PLUGIN_DIR . '/settings.php' );
-require_once( DS_NPR_PLUGIN_DIR . '/classes/NPRAPIWordpress.php');
 
-require_once( DS_NPR_PLUGIN_DIR . '/get_stories.php');
+// Load files
+define( 'NPRSTORY_PLUGIN_DIR', plugin_dir_path(__FILE__) );
+require_once( NPRSTORY_PLUGIN_DIR . 'settings.php' );
+require_once( NPRSTORY_PLUGIN_DIR . 'classes/NPRAPIWordpress.php');
+require_once( NPRSTORY_PLUGIN_DIR . 'get_stories.php');
+require_once( NPRSTORY_PLUGIN_DIR . 'meta-boxes.php');
+require_once( NPRSTORY_PLUGIN_DIR . 'push_story.php');
+
 //add the cron to get stories
-register_activation_hook( DS_NPR_PLUGIN_DIR . '/ds-npr-api.php', 'ds_npr_story_activation' );
-add_action( 'npr_ds_hourly_cron', array ( 'DS_NPR_API','ds_npr_story_cron_pull' ) );
-register_deactivation_hook( DS_NPR_PLUGIN_DIR . '/ds-npr-api.php', 'ds_npr_story_deactivation' );
+register_activation_hook( NPRSTORY_PLUGIN_DIR . 'ds-npr-api.php', 'nprstory_activation' );
+add_action( 'npr_ds_hourly_cron', array ( 'DS_NPR_API','nprstory_cron_pull' ) );
+register_deactivation_hook( NPRSTORY_PLUGIN_DIR . 'ds-npr-api.php', 'nprstory_deactivation' );
 
 
-function ds_npr_story_activation() {
+function nprstory_activation() {
 	global $wpdb;
 	if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 	  // check if it is a network activation - if so, run the activation function for each blog id
@@ -69,18 +72,18 @@ function ds_npr_story_activation() {
 		$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM $wpdb->blogs" ) );
 		foreach ( $blogids as $blog_id ) {
             switch_to_blog( $blog_id );
-            _ds_npr_activate();
+            nprstory_activate();
 		}
 		switch_to_blog( $old_blog );
 	} else {
-        _ds_npr_activate();
+        nprstory_activate();
 	}
 }
 
-function _ds_npr_activate() {
+function nprstory_activate() {
 	update_option( 'dp_npr_query_multi_cron_interval', 60 );
 	if ( ! wp_next_scheduled( 'npr_ds_hourly_cron' ) ) {
-		error_log( 'turning on cron event' );
+		error_log( 'turning on cron event for NPR Story API plugin' );
 		wp_schedule_event( time(), 'hourly', 'npr_ds_hourly_cron' );
 	}
 
@@ -96,8 +99,8 @@ function _ds_npr_activate() {
 	}
 	
 }
-	
-function ds_npr_story_deactivation() {
+
+function nprstory_deactivation() {
 	global $wpdb;
 	if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 	  // check if it is a network activation - if so, run the activation function for each blog id
@@ -106,15 +109,15 @@ function ds_npr_story_deactivation() {
 		$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM $wpdb->blogs" ) );
 		foreach ( $blogids as $blog_id ) {
 			switch_to_blog( $blog_id );
-			_ds_npr_deactivate();
+			nprstory_deactivate();
 		}
-		switch_to_blog( $old_blog );  
+		switch_to_blog( $old_blog );
 	} else {
-		_ds_npr_deactivate();
+		nprstory_deactivate();
 	}
 }
 
-function _ds_npr_deactivate() {
+function nprstory_deactivate() {
 	wp_clear_scheduled_hook( 'npr_ds_hourly_cron' );
 	$num =  get_option( 'ds_npr_num' );
 	if ( ! empty($num) ) {
@@ -128,7 +131,7 @@ function _ds_npr_deactivate() {
 }
 
 
-function ds_npr_show_message( $message, $errormsg = false ) {
+function nprstory_show_message( $message, $errormsg = false ) {
 	if ( $errormsg ) {
 		echo '<div id="message" class="error">';
 	} else {
@@ -137,12 +140,9 @@ function ds_npr_show_message( $message, $errormsg = false ) {
 	echo "<p><strong>$message</strong></p></div>";
 }
 
-require_once( 'push_story.php' );
+add_action( 'init', 'nprstory_create_post_type' );
 
-
-add_action( 'init', 'ds_npr_create_post_type' );
-
-function ds_npr_create_post_type() {
+function nprstory_create_post_type() {
 	register_post_type( NPR_POST_TYPE,
 		array(
 			'labels' => array(
@@ -156,3 +156,18 @@ function ds_npr_create_post_type() {
 		)
 	);
 }
+
+function nprstory_add_meta_boxes() {
+	$screen = get_current_screen();
+	$push_url = get_option( 'ds_npr_api_push_url' );
+	if ( $screen->id == 'post' && ! empty( $push_url ) ) {
+		global $post;
+		add_meta_box(
+			'ds_npr_document_meta',
+			'NPR Story API',
+			'nprstory_publish_meta_box',
+			'post', 'side'
+		);
+	}
+}
+add_action('add_meta_boxes', 'nprstory_add_meta_boxes');

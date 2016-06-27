@@ -1,16 +1,16 @@
 <?php
 
 /**
- * as_nprml(): Translates a post to NPRML.  Returns an XML string.
+ * nprstory_to_nprml(): Translates a post to NPRML.  Returns an XML string.
  */
-function as_nprml( $post ) {
-    $story = post_to_nprml_story( $post );
+function nprstory_to_nprml( $post ) {
+    $story = nprstory_post_to_nprml_story( $post );
     $doc = array();
     $doc[] = array(
         'tag' => 'list',
         'children' => array( array( 'tag' => 'story', 'children' => $story ), ),
     );
-    $ret_xml = array_to_xml( 'nprml', array( 'version' => '0.93' ), $doc );
+    $ret_xml = nprstory_nprml_array_to_xml( 'nprml', array( 'version' => '0.93' ), $doc );
     return $ret_xml;
 }
 
@@ -21,7 +21,7 @@ function as_nprml( $post ) {
  * If a mapped custom field does not exist in a certain post, just send the default field.
  * @param  $post
  */
-function post_to_nprml_story( $post ) {
+function nprstory_post_to_nprml_story( $post ) {
     $story = array();
     $story[] = array( 
         'tag' => 'link',
@@ -44,12 +44,12 @@ function post_to_nprml_story( $post ) {
     	$post_for_teaser = $post;
     	$post_for_teaser->post_content = $content;
         if ( empty( $teaser_text ) ){
-	    	$teaser_text = nai_get_excerpt( $post_for_teaser );
+	    	$teaser_text = nprstory_nai_get_excerpt( $post_for_teaser );
     	}
     } else {
 	    $content = $post->post_content;
 	    if ( empty( $teaser_text ) ) {
-		    $teaser_text = nai_get_excerpt( $post );
+		    $teaser_text = nprstory_nai_get_excerpt( $post );
 	    }
     }
     //lets see if there are any plugins that need to fix their shortcodes before we run do_shortcode
@@ -136,6 +136,7 @@ function post_to_nprml_story( $post ) {
     }
 
     // NPR One
+	// If the box is checked, the value here is '1'
     if ( ! empty( $_POST['send_to_nprone'] ) ) {
         $story[] = array(
             'tag' => 'parent',
@@ -167,7 +168,7 @@ function post_to_nprml_story( $post ) {
     //and sending both will duplicate the data in the API
     $story[] = array(
         'tag' => 'textWithHtml',
-        'children' => split_paragraphs( $content ),
+        'children' => nprstory_nprml_split_paragraphs( $content ),
     );
 
     $perms_group = get_option( 'ds_npr_story_default_permission' );
@@ -310,7 +311,7 @@ function post_to_nprml_story( $post ) {
             $pieces = explode( "\n", $enclosure );
 		    if ( !empty( $pieces[3] ) ) {
                 $metadata = unserialize( $pieces[3] );
-                $duration = ( ! empty($metadata['duration'] ) ) ? nprapi_convert_duration( $metadata['duration'] ) : NULL;
+                $duration = ( ! empty($metadata['duration'] ) ) ? nprstory_convert_duration_to_seconds( $metadata['duration'] ) : NULL;
 		    }
 		    $story[] = array(
                 'tag' => 'audio',
@@ -336,13 +337,13 @@ function post_to_nprml_story( $post ) {
 }
 
 // Convert "HH:MM:SS" duration (not time) into seconds
-function nprapi_convert_duration( $duration ) {
+function nprstory_convert_duration_to_seconds( $duration ) {
   $pieces = explode( ':', $duration );
   $duration_in_seconds = ( $pieces[0] * 60 * 60 + $pieces[1] * 60 + $pieces[2] );
   return $duration_in_seconds;
 }
 
-function split_paragraphs( $html ) {
+function nprstory_nprml_split_paragraphs( $html ) {
     $parts = array_filter( 
         array_map( 'trim', preg_split( "/<\/?p>/", $html ) ) 
     );
@@ -361,32 +362,37 @@ function split_paragraphs( $html ) {
 
 
 /**
- * 
+ * convert a PHP array to XML
  */
-function array_to_xml( $tag, $attrs, $data ) {
+function nprstory_nprml_array_to_xml( $tag, $attrs, $data ) {
     $xml = new DOMDocument();
     $xml->formatOutput = true;
     $root = $xml->createElement( $tag );
     foreach ( $attrs as $k => $v ) {
         $root->setAttribute( $k, $v );
     }
-    foreach ( $data as $item ) { 
-        $elemxml = item_to_xml( $item, $xml );
+    foreach ( $data as $item ) {
+        $elemxml = nprstory_nprml_item_to_xml( $item, $xml );
         $root->appendChild( $elemxml );
     }
     $xml->appendChild( $root );
     return $xml->saveXML();
 }
 
-
-function item_to_xml( $item, $xml ) {
+/**
+ * convert a loosely-defined item to XML
+ *
+ * @param Array $item Must have a key 'tag'
+ * @param DOMDocument $xml
+ */
+function nprstory_nprml_item_to_xml( $item, $xml ) {
     if ( ! array_key_exists( 'tag', $item ) ) {
         error_log( "no tag for: " . print_r( $item, true ) );
     }
     $elem = $xml->createElement( $item[ 'tag' ] );
     if ( array_key_exists( 'children', $item ) ) {
         foreach ( $item[ 'children' ] as $child ) {
-            $childxml = item_to_xml( $child, $xml );
+            $childxml = nprstory_nprml_item_to_xml( $child, $xml );
             $elem->appendChild( $childxml );
         }
     }
@@ -412,17 +418,20 @@ function item_to_xml( $item, $xml ) {
 /**
  * Retrieves the excerpt of any post.
  *
+ * HACK: This is ripped from wp_trim_excerpt() in
+ * wp-includes/formatting.php because there's seemingly no way to
+ * use it outside of The Loop
+ * Filed as ticket #16372 in WP Trac
+ *
+ * @todo replace this with wp_trim_words, see https://github.com/nprds/nprapi-wordpress/issues/20
+ *
  * @param   object  $post       Post object
  * @param   int     $word_count Number of words (default 30)
  * @return  String
  */
-function nai_get_excerpt( $post, $word_count = 30 ) {
+function nprstory_nai_get_excerpt( $post, $word_count = 30 ) {
     $text = $post->post_content;
 
-    // HACK: This is ripped from wp_trim_excerpt() in 
-    // wp-includes/formatting.php because there's seemingly no way to 
-    // use it outside of The Loop
-    // Filed as ticket #16372 in WP Trac.
     $text = strip_shortcodes( $text );
 
     $text = apply_filters( 'the_content', $text );

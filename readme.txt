@@ -1,22 +1,18 @@
-# NPR Story API
+=== NPR Story API ===
+Contributors: nprds, David Moore, Jeremy Dunn, kgrantNPR, Kevin Moylan, inn_nerds
+Donate link: http://www.npr.org/series/750002/support-public-radio
+Tags: npr, news, public radio, api
+Requires at least: 3.8.14
+Tested up to: 4.5.2
+Stable tag: 1.5.2
+License: GPLv2
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 A collection of tools for reusing content from NPR.org supplied by Digital Services.
 
-Contributors: David Moore, Jeremy Dunn, kgrantNPR, Kevin Moylan, Ryan Nagle, Adam Schweigert, jackbrighton
-
-Requires at least: 3.8.14
-
-Tested up to: 4.5.2
-
-Stable tag: 1.5.2
-
-License: GPLv2
-
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
-
 == Description ==
 
-The NPR Story API Plugin provides push and pull functionality with the NPR API along with a user-friendly administrative interface.
+The NPR Story API Plugin provides push and pull functionality with the NPR API along with a user-friendly administrative interface. 
 
 NPR's API is a content API, which essentially provides a structured way for other computer applications to get NPR stories in a predictable, flexible and powerful way. The content that is available includes audio from most NPR programs dating back to 1995 as well as text, images and other web-only content from NPR and NPR member stations. This archive consists of over 250,000 stories that are grouped into more than 5,000 different aggregations.
 

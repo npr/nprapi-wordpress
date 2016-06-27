@@ -1,14 +1,15 @@
 <?php
-require_once( 'settings_ui.php' );
+require_once( NPRSTORY_PLUGIN_DIR . 'settings_ui.php' );
+
 /*
  * NPR API Settings Page and related control methods.
  */
-function ds_npr_add_options_page() {
-    add_options_page( 'NPR API', 'NPR API', 'manage_options',
-                      'ds_npr_api', 'ds_npr_api_options_page' );
-    
+function nprstory_add_options_page() {
+    add_options_page( 'NPR API', 'NPR API', 'manage_options', 'ds_npr_api', 'nprstory_api_options_page' );
 }
-function ds_npr_add_query_page() {
+add_action( 'admin_menu', 'nprstory_add_options_page' );
+
+function nprstory_add_query_page() {
     $num = get_option( 'ds_npr_num' );
     if ( empty($num) ) {
         $num = 1;
@@ -33,68 +34,67 @@ function ds_npr_add_query_page() {
     add_options_page( 'Auto Fetch from the NPR API settings',
         'NPR API Get Multi', 'manage_options',
         'ds_npr_api_get_multi_settings',
-        'ds_npr_api_get_multi_options_page' );
+        'nprstory_api_get_multi_options_page' );
 }
+add_action( 'admin_menu', 'nprstory_add_query_page' );
 
-add_action( 'admin_menu', 'ds_npr_add_options_page' );
-add_action( 'admin_menu', 'ds_npr_add_query_page' );
+function nprstory_settings_init() {
+    add_settings_section( 'ds_npr_api_settings', 'NPR API settings', 'nprstory_api_settings_callback', 'ds_npr_api' );
 
-function ds_npr_settings_init() {
-    add_settings_section( 'ds_npr_api_settings', 'NPR API settings', 'ds_npr_api_settings_callback', 'ds_npr_api' );
+    add_settings_field( 'ds_npr_api_key', 'API KEY', 'nprstory_api_key_callback', 'ds_npr_api', 'ds_npr_api_settings' );
+    register_setting( 'ds_npr_api', 'ds_npr_api_key', 'nprstory_validation_callback_api_key' );
 
-    add_settings_field( 'ds_npr_api_key', 'API KEY', 'ds_npr_api_key_callback', 'ds_npr_api', 'ds_npr_api_settings' );
-    register_setting( 'ds_npr_api', 'ds_npr_api_key' );
+    add_settings_field( 'ds_npr_api_pull_url', 'Pull URL', 'nprstory_api_pull_url_callback', 'ds_npr_api', 'ds_npr_api_settings' );
+    register_setting( 'ds_npr_api', 'ds_npr_api_pull_url', 'nprstory_validation_callback_pull_url' );
 
-    add_settings_field( 'ds_npr_api_pull_url', 'Pull URL', 'ds_npr_api_pull_url_callback', 'ds_npr_api', 'ds_npr_api_settings' );
-    register_setting( 'ds_npr_api', 'ds_npr_api_pull_url' );
-    
-    add_settings_field( 'ds_npr_api_push_url', 'Push URL', 'ds_npr_api_push_url_callback', 'ds_npr_api', 'ds_npr_api_settings' );
-    register_setting( 'ds_npr_api', 'ds_npr_api_push_url' );
-    
-    add_settings_field( 'ds_npr_api_org_id', 'Org ID', 'ds_npr_api_org_id_callback', 'ds_npr_api', 'ds_npr_api_settings' );
-    register_setting( 'ds_npr_api', 'ds_npr_api_org_id' );
+    add_settings_field( 'ds_npr_api_push_url', 'Push URL', 'nprstory_api_push_url_callback', 'ds_npr_api', 'ds_npr_api_settings' );
+    register_setting( 'ds_npr_api', 'ds_npr_api_push_url', 'nprstory_validation_callback_push_url' );
 
-    add_settings_section( 'ds_npr_api_get_multi_settings', 'NPR API multiple get settings', 'ds_npr_api_get_multi_settings_callback', 'ds_npr_api_get_multi_settings' );
+    add_settings_field( 'ds_npr_api_org_id', 'Org ID', 'nprstory_api_org_id_callback', 'ds_npr_api', 'ds_npr_api_settings' );
+    register_setting( 'ds_npr_api', 'ds_npr_api_org_id', 'nprstory_validation_callback_api_key' );
 
-    add_settings_field( 'ds_npr_num', 'Number of things to get', 'ds_npr_api_num_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
-    register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_num' );
+    add_settings_section( 'ds_npr_api_get_multi_settings', 'NPR API multiple get settings', 'nprstory_api_get_multi_settings_callback', 'ds_npr_api_get_multi_settings' );
+
+    add_settings_field( 'ds_npr_num', 'Number of things to get', 'nprstory_api_num_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
+    register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_num', 'intval' );
+
+	/**
+	 * Create a number of forms based off of the number of queries that are registered
+	 */
     $num =  get_option( 'ds_npr_num' );
     if ( empty($num) ) {
         $num = 5;
     }
     for( $i = 0; $i < $num; $i++ ) {
-        add_settings_field( 'ds_npr_query_' . $i, 'Query String ' . $i, 'ds_npr_api_query_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
-        register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_' . $i );
-    	
+        add_settings_field( 'ds_npr_query_' . $i, 'Query String ' . $i, 'nprstory_api_query_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
+        register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_' . $i , 'nprstory_validation_callback_url');
+
     	//ds_npr_query_publish_
-        add_settings_field( 'ds_npr_query_publish_' . $i, 'Publish Stories ' . $i, 'ds_npr_api_query_publish_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
-        register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_publish_' . $i );
+        add_settings_field( 'ds_npr_query_publish_' . $i, 'Publish Stories ' . $i, 'nprstory_api_query_publish_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
+        register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_publish_' . $i , 'nprstory_validation_callback_select');
     }
-    
-    add_settings_field( 'dp_npr_query_run_multi', 'Run the queries on saving changes', 'dp_npr_query_run_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
-    register_setting( 'ds_npr_api_get_multi_settings', 'dp_npr_query_run_multi' );
-    
-    add_settings_field( 'dp_npr_query_multi_cron_interval', 'Interval to run Get Multi cron', 'dp_npr_query_multi_cron_interval_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
-    register_setting( 'ds_npr_api_get_multi_settings', 'dp_npr_query_multi_cron_interval' );
-    
-    add_settings_field( 'ds_npr_pull_post_type', 'NPR Pull Post Type', 'ds_npr_pull_post_type_callback', 'ds_npr_api', 'ds_npr_api_settings' );
-    register_setting( 'ds_npr_api', 'ds_npr_pull_post_type' );
-    
-    add_settings_field( 'ds_npr_push_post_type', 'NPR Push Post Type', 'ds_npr_push_post_type_callback', 'ds_npr_api', 'ds_npr_api_settings' );
-    register_setting( 'ds_npr_api', 'ds_npr_push_post_type' );
-    
-    add_settings_field( 'ds_npr_story_default_permission', 'NPR Permissions', 'ds_npr_push_story_permissions_callback', 'ds_npr_api', 'ds_npr_api_settings' );
+
+    add_settings_field( 'dp_npr_query_run_multi', 'Run the queries on saving changes', 'nprstory_query_run_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
+    register_setting( 'ds_npr_api_get_multi_settings', 'dp_npr_query_run_multi' , 'nprstory_validation_callback_checkbox');
+
+    add_settings_field( 'dp_npr_query_multi_cron_interval', 'Interval to run Get Multi cron', 'nprstory_query_multi_cron_interval_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
+    register_setting( 'ds_npr_api_get_multi_settings', 'dp_npr_query_multi_cron_interval', 'intval' );
+
+    add_settings_field( 'ds_npr_pull_post_type', 'NPR Pull Post Type', 'nprstory_pull_post_type_callback', 'ds_npr_api', 'ds_npr_api_settings' );
+    register_setting( 'ds_npr_api', 'ds_npr_pull_post_type', 'nprstory_validation_callback_select' );
+
+    add_settings_field( 'ds_npr_push_post_type', 'NPR Push Post Type', 'nprstory_push_post_type_callback', 'ds_npr_api', 'ds_npr_api_settings' );
+    register_setting( 'ds_npr_api', 'ds_npr_push_post_type' , 'nprstory_validation_callback_select');
+
+    add_settings_field( 'ds_npr_story_default_permission', 'NPR Permissions', 'nprstory_push_story_permissions_callback', 'ds_npr_api', 'ds_npr_api_settings' );
     register_setting( 'ds_npr_api', 'ds_npr_story_default_permission' );
 
 }
+add_action( 'admin_init', 'nprstory_settings_init' );
 
-add_action( 'admin_init', 'ds_npr_settings_init' );
+function nprstory_api_settings_callback() { }
 
-function ds_npr_api_settings_callback() { }
-
-add_filter( 'cron_schedules', 'cron_add_ds_interval' );
-
-function cron_add_ds_interval( $schedules ) {
+function nprstory_add_cron_interval( $schedules ) {
     $ds_interval = get_option( 'dp_npr_query_multi_cron_interval' );
 	//if for some reason we don't get a number in the option, use 60 minutes as the default.
 	if ( ! is_numeric($ds_interval) || $ds_interval < 1 ) {
@@ -108,23 +108,23 @@ function cron_add_ds_interval( $schedules ) {
     );
     return $schedules;
 }
- 
-function ds_npr_api_get_multi_settings_callback() { 
+add_filter( 'cron_schedules', 'nprstory_add_cron_interval' );
+
+function nprstory_api_get_multi_settings_callback() {
 	$run_multi = get_option( 'dp_npr_query_run_multi' );
 	if ( $run_multi ) {
-	 	DS_NPR_API::ds_npr_story_cron_pull();
+		DS_NPR_API::nprstory_cron_pull();
 	}
-	 
+
 	//change the cron timer
 	if ( wp_next_scheduled( 'npr_ds_hourly_cron' ) ) {
 		wp_clear_scheduled_hook( 'npr_ds_hourly_cron' );
 	}
 	error_log('updating the cron event');
 	wp_schedule_event( time(), 'ds_interval', 'npr_ds_hourly_cron');
-	
 }
 
-function dp_npr_query_run_multi_callback() {
+function nprstory_query_run_multi_callback() {
 	$run_multi = get_option('dp_npr_query_run_multi');
 	$check_box_string = "<input id='dp_npr_query_run_multi' name='dp_npr_query_run_multi' type='checkbox' value='true'";
 
@@ -134,19 +134,21 @@ function dp_npr_query_run_multi_callback() {
 	$check_box_string .= "/>";
 
 	echo $check_box_string;
+	wp_nonce_field( 'nprstory_nonce_ds_npr_query_run_multi', 'nprstory_nonce_ds_npr_query_run_multi_name', true, true );
 }
 
-function dp_npr_query_multi_cron_interval_callback() {
+function nprstory_query_multi_cron_interval_callback() {
 	$option = get_option( 'dp_npr_query_multi_cron_interval' );
-	echo "<input type='text' value='$option' name='dp_npr_query_multi_cron_interval' id='dp_npr_query_multi_cron_interval' style='width: 30px;' /> <p> How often, in minutes, should the Get Multi function run?  (default = 60)";
+	echo "<input type='number' value='$option' name='dp_npr_query_multi_cron_interval' id='dp_npr_query_multi_cron_interval' /> <p> How often, in minutes, should the Get Multi function run?  (default = 60)";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_query_multi_cron_interval', 'nprstory_nonce_ds_npr_query_multi_cron_interval_name', true, true );
 }
 
-function ds_npr_api_query_publish_callback( $i ){
+function nprstory_api_query_publish_callback($i) {
 	$selected = get_option( 'ds_npr_query_publish_' . $i );
-	
+
 	echo "<div>Publish or Draft the returns from Query " . $i . "? <select id=" . 'ds_npr_query_publish_' . $i . " name=" . 'ds_npr_query_publish_' . $i . ">";
-	
-	//echo '<option value=""> &mdash; Select &mdash; </option>'; 
+
+	//echo '<option value=""> &mdash; Select &mdash; </option>';
 	$keys = array( "Publish", "Draft" );
 	foreach ( $keys as $key ) {
 		$option_string = "\n<option  ";
@@ -156,76 +158,81 @@ function ds_npr_api_query_publish_callback( $i ){
 		$option_string .=   "value='" . esc_attr($key) . "'>" . esc_html($key) . " </option>";
 		echo $option_string;
 	}
+	$option_string .= wp_nonce_field( 'nprstory_nonce_ds_npr_query_publish_' . $i, 'nprstory_nonce_ds_npr_query_publish_' . $i . '_name', true, false );
     echo "</select> </div><p><hr></p>";
 }
 
-function ds_npr_api_query_callback( $i ) {
+function nprstory_api_query_callback( $i ) {
 	$option = get_option( 'ds_npr_query_' . $i );
 	$name = 'ds_npr_query_' . $i;
 	echo "<input type='text' value='$option' name='$name' style='width: 300px;' />";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_query_' . $i, 'nprstory_nonce_ds_npr_query_' . $i . '_name', true, true );
+
 }
 
-function ds_npr_api_num_multi_callback() {
+function nprstory_api_num_multi_callback() {
 	$option = get_option('ds_npr_num');
-	echo "<input type='text' value='$option' name='ds_npr_num' style='width: 30px;' /> <p> Increase the number of queries by changing the number in the field above.";
+	echo "<input type='number' value='$option' name='ds_npr_num' /> <p> Increase the number of queries by changing the number in the field above.";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_num', 'nprstory_nonce_ds_npr_num_name', true, true );
 }
 
-function ds_npr_api_key_callback() {
+function nprstory_api_key_callback() {
     $option = get_option( 'ds_npr_api_key' );
-    echo "<input type='text' value='$option' name='ds_npr_api_key' style='width: 300px;' />"; 
+    echo "<input type='text' value='$option' name='ds_npr_api_key' style='width: 300px;' />";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_api_key', 'nprstory_nonce_ds_npr_api_key_name', true, true );
 }
 
-function ds_npr_api_pull_url_callback() {
+function nprstory_api_pull_url_callback() {
     $option = get_option( 'ds_npr_api_pull_url' );
-    echo "<input type='text' value='$option' name='ds_npr_api_pull_url' style='width: 300px;' />"; 
+    echo "<input type='text' value='$option' name='ds_npr_api_pull_url' style='width: 300px;' />";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_api_pull_url', 'nprstory_nonce_ds_npr_api_pull_url_name', true, true );
 }
 
-function ds_npr_api_push_url_callback() {
+function nprstory_api_push_url_callback() {
     $option = get_option( 'ds_npr_api_push_url' );
-    echo "<input type='text' value='$option' name='ds_npr_api_push_url' style='width: 300px;' />"; 
+    echo "<input type='text' value='$option' name='ds_npr_api_push_url' style='width: 300px;' />";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_api_push_url', 'nprstory_nonce_ds_npr_api_push_url_name', true, true );
 }
 
-function ds_npr_api_org_id_callback() {
+function nprstory_api_org_id_callback() {
     $option = get_option( 'ds_npr_api_org_id' );
-    echo "<input type='text' value='$option' name='ds_npr_api_org_id' style='width: 300px;' />"; 
+    echo "<input type='text' value='$option' name='ds_npr_api_org_id' style='width: 300px;' />";
+	wp_nonce_field( 'nprstory_nonce_ds_npr_api_org_id', 'nprstory_nonce_ds_npr_api_org_id_name', true, true );
 }
 
-function ds_npr_pull_post_type_callback() {
+function nprstory_pull_post_type_callback() {
 	$post_types = get_post_types();
-	ds_npr_show_post_types_select( 'ds_npr_pull_post_type', $post_types );
+	nprstory_show_post_types_select( 'ds_npr_pull_post_type', $post_types );
 }
 
-function ds_npr_push_post_type_callback() {
+function nprstory_push_post_type_callback() {
 	$post_types = get_post_types();
-	ds_npr_show_post_types_select( 'ds_npr_push_post_type', $post_types );
+	nprstory_show_post_types_select( 'ds_npr_push_post_type', $post_types );
     echo ('<div> If you change the Push Post Type setting remember to update the mappings for API Fields at <a href="' . admin_url('options-general.php?page=ds_npr_api_push_mapping') . '">NPR API Field Mapping </a> page.</div>');
-	
 }
 
-function ds_npr_push_story_permissions_callback() {
-    $permissions_groups = ds_npr_get_permission_groups();
-	
+function nprstory_push_story_permissions_callback() {
+    $permissions_groups = nprstory_get_permission_groups();
+
 	if (!empty($permissions_groups)){
-		ds_npr_show_perms_select( 'ds_npr_story_default_permission', $permissions_groups );
+		nprstory_show_perms_select( 'ds_npr_story_default_permission', $permissions_groups );
 		echo ('<div> This is where you select the default permissions group to use when pushing stories to the NPR API.</div>');
 	} else {
 		echo ('<div> You have no Permission Groups defined with the NPR API. </div>');
 	}
 }
 
- /**
- * 
- * create the select widget where the Id is the value in the array
- * @param  $field_name
- * @param  $keys - an array like (1=>'Value1', 2=>'Value2', 3=>'Value3');
- */
-function ds_npr_show_post_types_select( $field_name, $keys ){
-	
+/**
+* create the select widget where the Id is the value in the array
+* @param  $field_name
+* @param  $keys - an array like (1=>'Value1', 2=>'Value2', 3=>'Value3');
+*/
+function nprstory_show_post_types_select( $field_name, $keys ){
 	$selected = get_option( $field_name );
-	
+
 	echo "<div><select id=" . $field_name . " name=" . $field_name . ">";
-	
-	echo '<option value=""> &mdash; Select &mdash; </option>'; 
+
+	echo '<option value=""> &mdash; Select &mdash; </option>';
 	foreach ( $keys as $key ) {
         $option_string = "\n<option  ";
 		if ($key == $selected) {
@@ -235,20 +242,19 @@ function ds_npr_show_post_types_select( $field_name, $keys ){
 		echo $option_string;
 	}
 	echo "</select> </div>";
-	
+	wp_nonce_field( 'nprstory_nonce_' . $field_name, 'nprstory_nonce_' . $field_name . '_name', true, true );
 }
 
 /**
- * 
  * create the select widget where the ID for an element is the index to the array
  * @param  $field_name
  * @param  $keys an array like (id1=>'Value1', id2=>'Value2', id3=>'Value3');
  */
-function ds_npr_show_perms_select( $field_name, $keys ){
+function nprstory_show_perms_select( $field_name, $keys ){
 	$selected = get_option( $field_name );
 	echo "<div><select id=" . $field_name . " name=" . $field_name . ">";
-	
-	echo '<option value=""> &mdash; Select &mdash; </option>'; 
+
+	echo '<option value=""> &mdash; Select &mdash; </option>';
 	foreach ( $keys as $id => $key ) {
 		$option_string = "\n<option  ";
 		if ($id == $selected) {
@@ -258,5 +264,5 @@ function ds_npr_show_perms_select( $field_name, $keys ){
 		echo $option_string;
 	}
 	echo "</select> </div>";
+	wp_nonce_field( 'nprstory_nonce_' . $field_name, 'nprstory_nonce_' . $field_name . '_name', true, true );
 }
-?>

@@ -38,7 +38,7 @@ class NPRAPIWordpress extends NPRAPI {
     $this->request->request_url = $request_url;
     $this->query_by_url($request_url);
   }
-  
+
   /**
    * 
    * Query a single url.  If there is not an API Key in the query string, append one, but otherwise just do a straight query
@@ -50,9 +50,9 @@ class NPRAPIWordpress extends NPRAPI {
         if ( ! stristr( $url, 'apiKey=' ) ) {
             $url .= '&apiKey='. get_option( 'ds_npr_api_key' );
         }
-  	
+
         $this->request->request_url = $url;
-  	
+
         //fill out the $this->request->param array so we can know what params were sent
         $parsed_url = parse_url( $url );
         if ( ! empty( $parsed_url['query'] ) ) {
@@ -74,23 +74,23 @@ class NPRAPIWordpress extends NPRAPI {
                     $this->notice[] = t( 'No data available.' );
                 }
             } else {
-                ds_npr_show_message( 'An error occurred pulling your story from the NPR API.  The API responded with message =' . $response['response']['message'], TRUE );
+                nprstory_show_message( 'An error occurred pulling your story from the NPR API.  The API responded with message =' . $response['response']['message'], TRUE );
 	       }
         } else {
             $error_text = '';
             if ( ! empty( $response->errors['http_request_failed'][0] ) ) {
                 $error_text = '<br> HTTP Error response =  '. $response->errors['http_request_failed'][0];
             }
-            ds_npr_show_message( 'Error pulling story for url='.$url . $error_text, TRUE );
+            nprstory_show_message( 'Error pulling story for url='.$url . $error_text, TRUE );
             error_log( 'Error retrieving story for url='.$url );
         }
     }
-  
+
   /**
-   * 
+   *
    * This function will go through the list of stories in the object and check to see if there are updates
    * available from the NPR API if the pubDate on the API is after the pubDate originally stored locally.
-   * 
+   *
    * @param unknown_type $publish
    */
     function update_posts_from_stories( $publish = TRUE ) {
@@ -273,7 +273,7 @@ class NPRAPIWordpress extends NPRAPI {
                             if ( empty( $image_url ) ) {
                                 $image_url = $image->src;
                             }
-                            error_log('Got image from :' . $image_url);
+                            error_log('Got image from: ' . $image_url);
                             // Download file to temp location
                             $tmp = download_url( $image_url );
 
@@ -414,7 +414,7 @@ class NPRAPIWordpress extends NPRAPI {
    */
     function create_NPRML( $post ) {
         //using some old helper code
-        return as_nprml( $post );
+        return nprstory_to_nprml( $post );
     }
 
   /**
@@ -432,7 +432,7 @@ class NPRAPIWordpress extends NPRAPI {
             ), get_option( 'ds_npr_api_push_url' ) . '/story' );
 
             error_log('Sending nprml = ' . $nprml);
-	    
+
             $result = wp_remote_post( $url, array( 'body' => $nprml ) );
             if ( ! is_wp_error( $result ) ) {
                 if ( $result['response']['code'] == 200 ) {
@@ -451,7 +451,7 @@ class NPRAPIWordpress extends NPRAPI {
                         $error_text = 'Error pushing story with post_id = '. $post_ID .' for url='.$url . ' HTTP Error response =  '. $result['response']['message'];
                     }
                     $body = wp_remote_retrieve_body( $result );
-		    	
+
                     if ( $body ) {
                         $response_xml = simplexml_load_string( $body );
                         $error_text .= '  API Error Message = ' . $response_xml->message->text;
@@ -467,6 +467,7 @@ class NPRAPIWordpress extends NPRAPI {
             error_log($error_text);
         }
 
+		// Add errors to the post that you just tried to push
 		if ( ! empty( $error_text ) ) {
             update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $error_text );
 		}
@@ -476,17 +477,17 @@ class NPRAPIWordpress extends NPRAPI {
     }
 
   /**
-   * 
+   *
    * Because wordpress doesn't offer a method=DELETE for wp_remote_post, we needed to write a curl version to send delete 
    * requests to the NPR API
-   * 
+   *
    * @param  $api_id
    */
     function send_delete( $api_id ) {
         $url = add_query_arg( array(
             'orgId'  => get_option( 'ds_npr_api_org_id' ),
             'apiKey' => get_option( 'ds_npr_api_key' ),
-  			'id' => $api_id
+			'id' => $api_id
         ), get_option( 'ds_npr_api_push_url' ) . '/story' );
 
 		//wp doesn't let me do a wp_remote_post with method=DELETE so we have to make our own curl request.  fun
