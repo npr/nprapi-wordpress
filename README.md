@@ -2,7 +2,7 @@
 
 A collection of tools for reusing content from NPR.org supplied by Digital Services.
 
-Contributors: David Moore, Jeremy Dunn, kgrantNPR, Kevin Moylan, Ryan Nagle, Adam Schweigert, jackbrighton
+Contributors: nprds, inn_nerds
 
 Requires at least: 3.8.14
 
