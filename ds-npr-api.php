@@ -178,8 +178,8 @@ add_action('add_meta_boxes', 'nprstory_add_meta_boxes');
  * This should only be used for error_log in development environments
  * If the thing being logged is a fatal error, use error_log so it will always be logged
  */
-function nprstory_error_log($thing) {
+function nprstory_error_log( $thing ) {
 	if ( WP_DEBUG ) {
-		error_log($thing); //debug use
+		error_log( $thing ); //debug use
 	}
 }
