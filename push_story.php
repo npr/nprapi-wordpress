@@ -272,8 +272,10 @@ function nprstory_validation_callback_org_id( $value ) {
 	}
 	return esc_attr( $value );
 }
+
 /**
  * callback for debugging validation callbacks
+ * This should not be used in any released code
  */
 function nprstory_validation_callback_debug( $value ) {
 	error_log( var_export( $value, true ) );
