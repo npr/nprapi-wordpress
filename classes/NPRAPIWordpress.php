@@ -273,7 +273,7 @@ class NPRAPIWordpress extends NPRAPI {
                             if ( empty( $image_url ) ) {
                                 $image_url = $image->src;
                             }
-                            nprstory_error_log('Got image from: ' . $image_url);
+                            nprstory_error_log( 'Got image from: ' . $image_url );
                             // Download file to temp location
                             $tmp = download_url( $image_url );
 
@@ -340,13 +340,13 @@ class NPRAPIWordpress extends NPRAPI {
                         'post_excerpt' => $story->teaser,
                         'post_type'    => $pull_post_type,
                         'ID'   => $post_id,
-                        'post_date'		 => $post_date,
+                        'post_date'	=> $post_date,
                     );
 
                     //set author
                     if ( ! empty( $by_line ) ) {
                         $userQuery = new WP_User_Query( array(
-                            'search' => trim($by_line),
+                            'search' => trim( $by_line ),
                             'search_columns' => array(
                                 'nickname'
                                 )
@@ -431,7 +431,7 @@ class NPRAPIWordpress extends NPRAPI {
                 'apiKey' => get_option( 'ds_npr_api_key' )
             ), get_option( 'ds_npr_api_push_url' ) . '/story' );
 
-            nprstory_error_log('Sending nprml = ' . $nprml);
+            nprstory_error_log( 'Sending nprml = ' . $nprml );
 
             $result = wp_remote_post( $url, array( 'body' => $nprml ) );
             if ( ! is_wp_error( $result ) ) {
@@ -459,16 +459,16 @@ class NPRAPIWordpress extends NPRAPI {
                 }
             } else {
                 $error_text = 'WP_Error returned when sending story with post_ID ' . $post_ID . ' for url ' . $url . ' to NPR Story API:'. $result->get_error_message();
-                error_log($error_text); // debug use
+                error_log( $error_text ); // debug use
             }
         } else {
             $error_text = 'OrgID was not set when tried to push post_ID ' . $post_ID . ' to the NPR Story API.';
-            error_log($error_text); // debug use
+            error_log $error_text ); // debug use
         }
 
 		// Add errors to the post that you just tried to push
 		if ( ! empty( $error_text ) ) {
-            update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $error_text );
+            		update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $error_text );
 		}
 		else {
 			delete_post_meta( $post_ID, NPR_PUSH_STORY_ERROR );
