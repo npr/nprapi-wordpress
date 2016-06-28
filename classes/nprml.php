@@ -453,5 +453,3 @@ function nprstory_nai_get_excerpt( $post, $word_count = 30 ) {
     }
     return $text;
 }
-
-?>
