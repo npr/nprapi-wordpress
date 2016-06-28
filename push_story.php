@@ -230,7 +230,6 @@ function nprstory_validation_callback_api_key( $value ) {
  */
 function nprstory_validation_callback_pull_url( $value ) {
 	// Is this a URL? It better be a URL.
-	error_log( var_export( strpos( $value, 'http' ) !== 0 ), true );
 	if ( strpos( $value, 'http' ) !== 0 ) {
 		add_settings_error(
 			'ds_npr_api_pull_url',
@@ -244,7 +243,6 @@ function nprstory_validation_callback_pull_url( $value ) {
 }
 function nprstory_validation_callback_push_url( $value ) {
 	// Is this a URL? It better be a URL.
-	error_log(var_export( strpos( $value, 'http' ) !== 0 ), true);
 	if ( strpos( $value, 'http' ) !== 0 ) {
 		add_settings_error(
 			'ds_npr_api_push_url',
