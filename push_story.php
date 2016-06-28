@@ -63,7 +63,7 @@ function nprstory_api_push ( $post_ID, $post ) {
 		if ( empty( $retrieved ) || $retrieved == 0 ) {
 			$api->send_request( $api->create_NPRML( $post ), $post_ID);
 		} else {
-			//error_log('Not pushing the story because it came from the API');
+			nprstory_error_log('Not pushing the story with post_ID ' . (str)  $post_ID . ' to the NPR Story API because it came from the API');
 		}
 	}
 }
@@ -105,7 +105,7 @@ function nprstory_api_delete ( $post_ID ) {
 		if ( empty( $retrieved ) || $retrieved == 0) {
 			$api->send_request( $api->create_NPRML( $post ), $post_ID);
 		} else {
-			//error_log('Not pushing the story because it came from the API');
+			nprstory_error_log('Pushing delete action to the NPR Story API for the story with post_ID ' . (str)  $post_ID );
 			$api->send_delete( $api_id );
 		}
 	}
@@ -278,7 +278,7 @@ function nprstory_validation_callback_org_id( $value ) {
  * This should not be used in any released code
  */
 function nprstory_validation_callback_debug( $value ) {
-	error_log( var_export( $value, true ) );
+	error_log( var_export( $value, true ) ); // for debug use
 	return $value;
 }
 

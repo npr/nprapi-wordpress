@@ -80,7 +80,7 @@ function nprstory_bulk_action_update_action() {
 				$api->request( $params, 'query', get_option( 'ds_npr_api_pull_url' ) );
 				$api->parse();
 				if ( empty( $api->message ) || $api->message->level != 'warning' ){
-					error_log( 'updating story for API ID='.$api_id );
+					nprstory_error_log( 'updating story for API ID='.$api_id );
 					$story = $api->update_posts_from_stories();
 				}
 			} else {
