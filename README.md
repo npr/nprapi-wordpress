@@ -8,7 +8,7 @@ Requires at least: 3.8.14
 
 Tested up to: 4.5.2
 
-Stable tag: 1.5.2
+Stable tag: 1.6
 
 License: GPLv2
 
@@ -28,7 +28,7 @@ The WordPress plugin is being developed as an Open Source plugin by NPR Digital 
 
 1. Upload the plugin files to the `/wp-content/plugins/plugin-name` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
-3. Use the Settings->NPR API screen to configure the plugin. Begin by entering your API Key, then add your Push URL and Org ID. 
+3. Use the Settings->NPR API screen to configure the plugin. Begin by entering your API Key, then add your Push URL and Org ID.
 
 
 == Frequently Asked Questions ==
@@ -75,6 +75,24 @@ NPR Stories having got gotten
 
 
 == Changelog ==
+
+= V1.6 =
+
+* Added meta box to post edit page to explicitly push a story to NPR One
+* Added [documentation](https://github.com/nprds/nprapi-wordpress/tree/master/docs)
+* If pushing a story to NPR fails, the error message is displayed on the post edit page
+* If it succeeds, a success message is displayed
+* Rename the plugin to "NPR Story API"
+* The plugin now requires certain WordPress capabilities before performing API actions:
+  - deleting posts in the API now requires the `delete_others_posts` capability for the user trying to delete the post. In effect, this limits deletion of stories from the NPR API to admins and editors.
+  - pushing stories to the API requires the `publish_posts` capability, which means that contributors and guests can't push to NPR.
+  - pulling posts from the API requires the `edit_posts` capability, meaning that contributors and guests can't pull from NPR. We may want to revisit this in the future, or make the permissions filterable if sites using the plugin want to lock permissions down or open them up.
+* A number of settings in the admin now use the number input type instead of text fields
+* Added unit tests for much of the PHP code
+* Most functions were renamed to use the prefix nprstory_ instead of ds_npr_ or no common prefix. This does not affect
+* Added nonces, input sanitization, and input validation for settings.
+* `DS_NPR_API` class now uses new-style `__construct()` constructor.
+* Removed `/wp-admin/includes/admin.php`, `/wp-load.php`, `/wp-includes/class-wp-error.php` from the cron job function, see [4b3d65a](https://github.com/nprds/nprapi-wordpress/pull/19/commits/4b3d65a19122b0da5215997939db94c7accf3e5e) and [cf2dfa3](https://github.com/nprds/nprapi-wordpress/pull/19/commits/cf2dfa39c1f118d0ca0c836d7967e09baec63bd6) - the cron job works without them.
 
 = V1.5.2 =
 
@@ -172,4 +190,4 @@ As not a lot of users have installed the V1.0 of the NPR API Plugin, there are a
 
 = 1.5.2 =
 
-This version adds export functionality for the NPR One mobile app, in addition to assorted bug fixes. 
+This version adds export functionality for the NPR One mobile app, in addition to assorted bug fixes.

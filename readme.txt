@@ -4,7 +4,7 @@ Donate link: http://www.npr.org/series/750002/support-public-radio
 Tags: npr, news, public radio, api
 Requires at least: 3.8.14
 Tested up to: 4.5.2
-Stable tag: 1.5.2
+Stable tag: 1.6
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ A collection of tools for reusing content from NPR.org supplied by Digital Servi
 
 == Description ==
 
-The NPR Story API Plugin provides push and pull functionality with the NPR API along with a user-friendly administrative interface. 
+The NPR Story API Plugin provides push and pull functionality with the NPR API along with a user-friendly administrative interface.
 
 NPR's API is a content API, which essentially provides a structured way for other computer applications to get NPR stories in a predictable, flexible and powerful way. The content that is available includes audio from most NPR programs dating back to 1995 as well as text, images and other web-only content from NPR and NPR member stations. This archive consists of over 250,000 stories that are grouped into more than 5,000 different aggregations.
 
@@ -24,7 +24,7 @@ The WordPress plugin is being developed as an Open Source plugin by NPR Digital 
 
 1. Upload the plugin files to the `/wp-content/plugins/plugin-name` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
-3. Use the Settings->NPR API screen to configure the plugin. Begin by entering your API Key, then add your Push URL and Org ID. 
+3. Use the Settings->NPR API screen to configure the plugin. Begin by entering your API Key, then add your Push URL and Org ID.
 
 
 == Frequently Asked Questions ==
@@ -72,6 +72,24 @@ NPR Stories having got gotten
 
 == Changelog ==
 
+= V1.6 =
+
+* Added meta box to post edit page to explicitly push a story to NPR One
+* Added [documentation](https://github.com/nprds/nprapi-wordpress/tree/master/docs)
+* If pushing a story to NPR fails, the error message is displayed on the post edit page
+* If it succeeds, a success message is displayed
+* Rename the plugin to "NPR Story API"
+* The plugin now requires certain WordPress capabilities before performing API actions:
+  - deleting posts in the API now requires the `delete_others_posts` capability for the user trying to delete the post. In effect, this limits deletion of stories from the NPR API to admins and editors.
+  - pushing stories to the API requires the `publish_posts` capability, which means that contributors and guests can't push to NPR.
+  - pulling posts from the API requires the `edit_posts` capability, meaning that contributors and guests can't pull from NPR. We may want to revisit this in the future, or make the permissions filterable if sites using the plugin want to lock permissions down or open them up.
+* A number of settings in the admin now use the number input type instead of text fields
+* Added unit tests for much of the PHP code
+* Most functions were renamed to use the prefix nprstory_ instead of ds_npr_ or no common prefix. This does not affect
+* Added nonces, input sanitization, and input validation for settings.
+* `DS_NPR_API` class now uses new-style `__construct()` constructor.
+* Removed `/wp-admin/includes/admin.php`, `/wp-load.php`, `/wp-includes/class-wp-error.php` from the cron job function, see [4b3d65a](https://github.com/nprds/nprapi-wordpress/pull/19/commits/4b3d65a19122b0da5215997939db94c7accf3e5e) and [cf2dfa3](https://github.com/nprds/nprapi-wordpress/pull/19/commits/cf2dfa39c1f118d0ca0c836d7967e09baec63bd6) - the cron job works without them.
+
 = V1.5.2 =
 
 * Adding support for enclosures created as metadata by the PowerPress plugin.
@@ -111,7 +129,7 @@ NPR Stories having got gotten
 = V1.4 =
 
 * Filters for Shortcodes - We've now implemented a hook to a filter that will be used to alter any short codes that a plugin may own in a post before pushing that post to the NPR API. The filter (`npr_ds_shortcode_filter`) will fire before we remove shortcodes when we're pushing the post. Any plugin that has shortcodes should alter those shortcodes via this filter to something that's more HTML-friendly, so that other clients can access that information. As an example of what needs to be done in a plugin to take advantage of this new filter please see the branch for the following plugin: <https://github.com/argoproject/navis-documentcloud/tree/kmoylan-filter> What we've done here is write a function `my_documentCloud_filter` that is linked to the filter `npr_ds_shortcode_filter` (all near the bottom of the PHP file).  This function will turn any shortcode created by this plugin into an HTML `<a>` tag to link to what was an embedded document. As with any other filter in WordPress, nothing will happen if you do not have any plugins installed that have implemented the filter. It will be up to any other plugin's maintainer to implement the filter correctly if they wish to take advantage of this functionality.
-* Bulk Push - From the post list page for you NPR Push post type you can now select multiple posts and using the bulk operation dropdown on that page, push the selected posts to the NPR API. This should helpful for posts that have been living on a site before the NPR API plugin was installed. Note that this will only push a maximum 20 posts at one time.   
+* Bulk Push - From the post list page for you NPR Push post type you can now select multiple posts and using the bulk operation dropdown on that page, push the selected posts to the NPR API. This should helpful for posts that have been living on a site before the NPR API plugin was installed. Note that this will only push a maximum 20 posts at one time.
 * Publish or Draft for Get Multi -  It's now possible for an admin to select Draft or Publish for the posts that come from a query on the get multi page. This way, the return from each query can be reviewed before it's published to a site.
 * Run Get Multi on Demand -  An admin can now select a checkbox if they would like the get multi queries to run when the page is saved. This will allow admins to immediately check queries instead of having to wait for the cron to run.
 
@@ -168,4 +186,4 @@ As not a lot of users have installed the V1.0 of the NPR API Plugin, there are a
 
 = 1.5.2 =
 
-This version adds export functionality for the NPR One mobile app, in addition to assorted bug fixes. 
+This version adds export functionality for the NPR One mobile app, in addition to assorted bug fixes.
