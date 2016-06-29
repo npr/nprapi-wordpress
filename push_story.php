@@ -588,14 +588,16 @@ function nprstory_post_updated_messages_success( $messages ) {
 	$id = get_post_meta(get_the_ID(), NPR_STORY_ID_META_KEY, true); // single
 
 	if ( !empty($id) ) {
+
+		// what do we call this thing?
 		$post_type = get_post_type( get_the_ID() );
 		$obj = get_post_type_object( $post_type );
 		$singular = $obj->labels->singular_name;
 
+		// Create the message about the thing being updated
 		$messages['post'][4] = sprintf(
 			__( '%s updated. This post\'s NPR ID is %s. ' ),
 			esc_attr( $singular ),
-			strtolower( $singular ),
 			(string) $id
 		);
 	}
