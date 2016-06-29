@@ -545,7 +545,7 @@ function nprstory_save_send_to_nprone( $post_ID ) {
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
     if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
     if ( empty( $post_ID ) ) return false;
-    $value = ($_POST['send_to_nprone'] == 1 ) ? 1 : 0;
+    $value = ( isset( $_POST['send_to_nprone'] ) && $_POST['send_to_nprone'] == 1 ) ? 1 : 0;
     update_post_meta( $post_ID, '_send_to_nprone', $value );
 }
 
