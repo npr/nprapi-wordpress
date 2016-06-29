@@ -463,7 +463,7 @@ class NPRAPIWordpress extends NPRAPI {
             }
         } else {
             $error_text = 'OrgID was not set when tried to push post_ID ' . $post_ID . ' to the NPR Story API.';
-            error_log $error_text ); // debug use
+            error_log ( $error_text ); // debug use
         }
 
 		// Add errors to the post that you just tried to push
