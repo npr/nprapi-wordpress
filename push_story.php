@@ -63,7 +63,7 @@ function nprstory_api_push ( $post_ID, $post ) {
 		if ( empty( $retrieved ) || $retrieved == 0 ) {
 			$api->send_request( $api->create_NPRML( $post ), $post_ID);
 		} else {
-			//error_log('Not pushing the story because it came from the API');
+			nprstory_error_log('Not pushing the story with post_ID ' . $post_ID . ' to the NPR Story API because it came from the API');
 		}
 	}
 }
@@ -105,7 +105,7 @@ function nprstory_api_delete ( $post_ID ) {
 		if ( empty( $retrieved ) || $retrieved == 0) {
 			$api->send_request( $api->create_NPRML( $post ), $post_ID);
 		} else {
-			//error_log('Not pushing the story because it came from the API');
+			nprstory_error_log('Pushing delete action to the NPR Story API for the story with post_ID ' . $post_ID );
 			$api->send_delete( $api_id );
 		}
 	}
@@ -230,7 +230,6 @@ function nprstory_validation_callback_api_key( $value ) {
  */
 function nprstory_validation_callback_pull_url( $value ) {
 	// Is this a URL? It better be a URL.
-	error_log( var_export( strpos( $value, 'http' ) !== 0 ), true );
 	if ( strpos( $value, 'http' ) !== 0 ) {
 		add_settings_error(
 			'ds_npr_api_pull_url',
@@ -244,7 +243,6 @@ function nprstory_validation_callback_pull_url( $value ) {
 }
 function nprstory_validation_callback_push_url( $value ) {
 	// Is this a URL? It better be a URL.
-	error_log(var_export( strpos( $value, 'http' ) !== 0 ), true);
 	if ( strpos( $value, 'http' ) !== 0 ) {
 		add_settings_error(
 			'ds_npr_api_push_url',
@@ -274,11 +272,13 @@ function nprstory_validation_callback_org_id( $value ) {
 	}
 	return esc_attr( $value );
 }
+
 /**
  * callback for debugging validation callbacks
+ * This should not be used in any released code
  */
 function nprstory_validation_callback_debug( $value ) {
-	error_log( var_export( $value, true ) );
+	error_log( var_export( $value, true ) ); // for debug use
 	return $value;
 }
 
@@ -545,7 +545,7 @@ function nprstory_save_send_to_nprone( $post_ID ) {
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
     if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
     if ( empty( $post_ID ) ) return false;
-    $value = ($_POST['send_to_nprone'] == 1 ) ? 1 : 0;
+    $value = ( isset( $_POST['send_to_nprone'] ) && $_POST['send_to_nprone'] == 1 ) ? 1 : 0;
     update_post_meta( $post_ID, '_send_to_nprone', $value );
 }
 
@@ -588,14 +588,16 @@ function nprstory_post_updated_messages_success( $messages ) {
 	$id = get_post_meta(get_the_ID(), NPR_STORY_ID_META_KEY, true); // single
 
 	if ( !empty($id) ) {
+
+		// what do we call this thing?
 		$post_type = get_post_type( get_the_ID() );
 		$obj = get_post_type_object( $post_type );
 		$singular = $obj->labels->singular_name;
 
+		// Create the message about the thing being updated
 		$messages['post'][4] = sprintf(
 			__( '%s updated. This post\'s NPR ID is %s. ' ),
 			esc_attr( $singular ),
-			strtolower( $singular ),
 			(string) $id
 		);
 	}

@@ -22,7 +22,7 @@ class DS_NPR_API {
 		// This is debug code. It may be save future devs some time; please keep it around.
 		/*
 		$now = gmDate("D, d M Y G:i:s O ");
-		error_log("right now the time is -- ".$now);
+		error_log("right now the time is -- ".$now); // debug use
 		*/
 
 		// here we go.
@@ -32,21 +32,20 @@ class DS_NPR_API {
 			$q = 'ds_npr_query_' . $i;
 			$query_string = get_option( $q );
 			if ( ! empty( $query_string ) ) {
-				error_log('Cron '. $i . ' querying NPR API for ' . $query_string);
+				nprstory_error_log('Cron '. $i . ' querying NPR API for ' . $query_string);
 				//if the query string contains the pull url and 'query', just make request from the API
 				if ( stristr( $query_string, get_option( 'ds_npr_api_pull_url' ) ) && stristr( $query_string,'query' ) ) {
 					$api->query_by_url( $query_string );
 				} else {
 				    //if the string doesn't contain the base url, try to query using an ID
 					if ( stristr( $query_string, 'http:' ) ) {
-						error_log('Not going to run query because the query string contains http and is not pointing to the pullURL');
+						error_log('Not going to run query because the query string contains http and is not pointing to the pullURL: ' . $query_string ); // debug use
 					} else {
 						$params = array ('id' => $query_string, 'apiKey' => get_option( 'ds_npr_api_key' ));
                         $api->request( $params, 'query', get_option( 'ds_npr_api_pull_url' ) );
 					}
 				}
 				$api->parse();
-	            //var_dump($api);
                 try {
                     if ( empty( $api->message ) || $api->message->level != 'warning' ) {
                         //check the publish flag and send that along.
@@ -58,12 +57,12 @@ class DS_NPR_API {
                         $story = $api->update_posts_from_stories($pub_flag);
                     } else {
                         if ( empty($story) ) {
-                            error_log('Not going to save story.  Return from query='. $query_string .', we got an error='.$api->message->id. ' error');
+                            error_log('NPR Story API: not going to save story.  Query '. $query_string .' returned an error '.$api->message->id. ' error'); // debug use
                         }
                     }
                 }
                 catch (Exception $e) {
-                    error_log('we have an error going in '. __FUNCTION__. ' like this :'. $e);
+                    error_log('NPR Story API: error in ' .  __FUNCTION__ . ' like this :'. $e); // debug use
                 }
 			}
 		}
@@ -139,7 +138,7 @@ class DS_NPR_API {
                 if ( empty($story) ) {
                     $xml = simplexml_load_string( $api->xml );
                     nprstory_show_message('Error retrieving story for id = ' . $story_id . '<br> API error ='.$api->message->id . '<br> API Message ='. $xml->message->text , TRUE);
-                    error_log('Not going to save the return from query for story_id='. $story_id .', we got an error='.$api->message->id. ' from the API');
+                    error_log('Not going to save the return from query for story_id='. $story_id .', we got an error='.$api->message->id. ' from the NPR Story API'); // debug use
                     return;
 	            }
             }

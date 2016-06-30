@@ -83,7 +83,7 @@ function nprstory_activation() {
 function nprstory_activate() {
 	update_option( 'dp_npr_query_multi_cron_interval', 60 );
 	if ( ! wp_next_scheduled( 'npr_ds_hourly_cron' ) ) {
-		error_log( 'turning on cron event for NPR Story API plugin' );
+		nprstory_error_log( 'turning on cron event for NPR Story API plugin' );
 		wp_schedule_event( time(), 'hourly', 'npr_ds_hourly_cron' );
 	}
 
@@ -171,3 +171,15 @@ function nprstory_add_meta_boxes() {
 	}
 }
 add_action('add_meta_boxes', 'nprstory_add_meta_boxes');
+
+/**
+ * Function to only enable error_logging if WP_DEBUG is true
+ *
+ * This should only be used for error_log in development environments
+ * If the thing being logged is a fatal error, use error_log so it will always be logged
+ */
+function nprstory_error_log( $thing ) {
+	if ( WP_DEBUG ) {
+		error_log( $thing ); //debug use
+	}
+}

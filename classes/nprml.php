@@ -118,10 +118,10 @@ function nprstory_post_to_nprml_story( $post ) {
                 );
             }		
         } else {
-            error_log( 'we do not have co authors' );
+            nprstory_error_log( 'we do not have co authors' );
     	}
     } else {
-   		error_log('can not find get_coauthors');
+   		nprstory_error_log('can not find get_coauthors');
    	}    
     if ( ! $byline ) {
         $story[] = array(
@@ -382,12 +382,15 @@ function nprstory_nprml_array_to_xml( $tag, $attrs, $data ) {
 /**
  * convert a loosely-defined item to XML
  *
+ * @todo figure out way for this to safely fail
+ *
  * @param Array $item Must have a key 'tag'
  * @param DOMDocument $xml
  */
 function nprstory_nprml_item_to_xml( $item, $xml ) {
     if ( ! array_key_exists( 'tag', $item ) ) {
-        error_log( "no tag for: " . print_r( $item, true ) );
+        error_log( "Unable to convert NPRML item to XML: no tag for: " . print_r( $item, true ) ); // debug use
+		// this should actually be a serious error
     }
     $elem = $xml->createElement( $item[ 'tag' ] );
     if ( array_key_exists( 'children', $item ) ) {
@@ -450,5 +453,3 @@ function nprstory_nai_get_excerpt( $post, $word_count = 30 ) {
     }
     return $text;
 }
-
-?>

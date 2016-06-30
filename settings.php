@@ -120,7 +120,7 @@ function nprstory_api_get_multi_settings_callback() {
 	if ( wp_next_scheduled( 'npr_ds_hourly_cron' ) ) {
 		wp_clear_scheduled_hook( 'npr_ds_hourly_cron' );
 	}
-	error_log('updating the cron event');
+	nprstory_error_log( 'NPR Story API plugin: updating the npr_ds_hourly_cron event timer' );
 	wp_schedule_event( time(), 'ds_interval', 'npr_ds_hourly_cron');
 }
 
