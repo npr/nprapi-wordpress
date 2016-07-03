@@ -122,8 +122,7 @@ class NPRAPI {
             if (!empty($parsed->{$key})){
               //if it's not an array, make an array, add the existing element to it
               if (!is_array($parsed->{$key})){
-                $my_array[] = $parsed->{$key};
-                $parsed->{$key} = $my_array;
+                $parsed->{$key} = array( $parsed->{$key} );
               }
               // then add the new child. 
               $parsed->{$key}[] = $this->parse_simplexml_element($current);
@@ -186,8 +185,7 @@ class NPRAPI {
           if (!empty($NPRMLElement->$i)){
             //if it's not an array, make an array, add the existing element to it
             if (!is_array($NPRMLElement->$i)) {
-              $my_array[] = $NPRMLElement->$i;
-              $NPRMLElement->$i = $my_array;
+              $NPRMLElement->$i = array( $NPRMLElement->$i );
             }
             // then add the new child. 
             $NPRMLElement->{$i}[] = $this->parse_simplexml_element($child);
