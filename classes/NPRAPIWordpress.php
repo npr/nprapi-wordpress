@@ -390,7 +390,7 @@ class NPRAPIWordpress extends NPRAPI {
                         $category_ids[] = $category_id;
                     }
                 }
-                if ( count( $category_ids ) > 0 && is_integer( $ret ) ) {
+                if ( count( $category_ids ) > 0 && isset( $ret ) && is_integer( $ret ) ) {
                     wp_set_post_categories( $ret, $category_ids );
                 }
             }
