@@ -56,10 +56,10 @@ class NPRAPIWordpress extends NPRAPI {
         //fill out the $this->request->param array so we can know what params were sent
         $parsed_url = parse_url( $url );
         if ( ! empty( $parsed_url['query'] ) ) {
-            $parms = split( '&', $parsed_url['query'] );
+            $parms = explode( '&', $parsed_url['query'] );
             if ( ! empty( $params ) ){
                 foreach ( $params as $p ){
-                    $attrs = split( '=', $p );
+                    $attrs = explode( '=', $p );
                     $this->request->param[$attrs[0]] = $attrs[1];
                 }
             }
