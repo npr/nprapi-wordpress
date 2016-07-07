@@ -45,7 +45,15 @@ class NPRAPI {
 
   }
 
-  function send_request() {
+  /**
+   * This function will send the push request to the NPR API to add/update a story.
+   *
+   * @see NPRAPI::send_request()
+   *
+   * @param string $nprml
+   * @param int $ID
+   */
+  function send_request ( $nprml, $ID ) {
 
   }
 
@@ -61,8 +69,16 @@ class NPRAPI {
 
   }
 
-  function create_NPRML() {
+  /**
+   * Create NPRML from wordpress post.
+   *
+   * @param object $object
 
+   * @return string
+   *   An NPRML string.
+   */
+  function create_NPRML( $object ) {
+    return '';
   }
 
   /**

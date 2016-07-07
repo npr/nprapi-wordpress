@@ -421,6 +421,9 @@ class NPRAPIWordpress extends NPRAPI {
    * This function will send the push request to the NPR API to add/update a story.
    * 
    * @see NPRAPI::send_request()
+   *
+   * @param string $nprml
+   * @param int $post_ID
    */
     function send_request ( $nprml, $post_ID ) {
         $error_text = '';
