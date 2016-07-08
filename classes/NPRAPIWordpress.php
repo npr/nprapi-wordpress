@@ -555,9 +555,9 @@ class NPRAPIWordpress extends NPRAPI {
                     if ( empty( $body_xml->paragraph ) || ! is_array( $body_xml->paragraph ) ) {
                         continue;
                     }
-                    $transcript_body .= "<p><strong>Transcript :</strong><p>";
+                    $transcript_body .= "<p><strong>Transcript :</strong></p>";
                     foreach ( $body_xml->paragraph as $paragraph ) {
-                        $transcript_body .= ( strip_tags( $paragraph ) ) . '<p>';
+                        $transcript_body .= '<p>' . ( strip_tags( $paragraph ) ) . '</p>';
                     }
                 }
             }
