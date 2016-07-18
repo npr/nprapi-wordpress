@@ -56,10 +56,10 @@ class NPRAPIWordpress extends NPRAPI {
         //fill out the $this->request->param array so we can know what params were sent
         $parsed_url = parse_url( $url );
         if ( ! empty( $parsed_url['query'] ) ) {
-            $parms = split( '&', $parsed_url['query'] );
+            $parms = explode( '&', $parsed_url['query'] );
             if ( ! empty( $params ) ){
                 foreach ( $params as $p ){
-                    $attrs = split( '=', $p );
+                    $attrs = explode( '=', $p );
                     $this->request->param[$attrs[0]] = $attrs[1];
                 }
             }
@@ -91,7 +91,7 @@ class NPRAPIWordpress extends NPRAPI {
    * This function will go through the list of stories in the object and check to see if there are updates
    * available from the NPR API if the pubDate on the API is after the pubDate originally stored locally.
    *
-   * @param unknown_type $publish
+   * @param bool $publish
    */
     function update_posts_from_stories( $publish = TRUE ) {
 		$pull_post_type = get_option( 'ds_npr_pull_post_type' );
@@ -130,7 +130,7 @@ class NPRAPIWordpress extends NPRAPI {
                         $post_pub_date = strtotime($post_pub_date_meta[0]);
                     }
                 } else {
-                    $existing = null;
+                    $existing = $existing_status = null;
                 }
     
                 //add the transcript
@@ -159,28 +159,42 @@ class NPRAPIWordpress extends NPRAPI {
                         $by_line = $story->byline->name->value;
                         $multi_by_line = 0; //only single author, set multi to false
                         if ( ! empty( $story->byline->link ) ) {
-                            foreach( $story->byline->link as $link ) {
-                                if ( $link->type == 'html' ) {
-                                    $byline_link = $link->value;
+                            $links = $story->byline->link;
+                            if ( is_string( $links ) ) {
+                                $byline_link = $links;
+                            } else if ( is_array( $links ) ) {
+                                foreach ( $links as $link ) {
+                                    if ( empty( $link->type ) ) {
+                                        continue;
+                                    }
+                                    if ( 'html' === $link->type ) {
+                                        $byline_link = $link->value;
+                                    }
                                 }
+                            } else if ( $links instanceof NPRMLElement && ! empty( $links->value ) ) {
+                                $byline_link = $links->value;
                             }
                         }
                     }
 				
                     //construct delimited string if there are multiple bylines
-                    if ( is_array( $story->byline ) && !empty( $story->byline ) ) {
+                    if ( ! empty( $story->byline ) ) {
                         $i = 0;
-                        foreach ( $story->byline as $single ) {
-                            if ( $i==0 ) {
-				                $multi_by_line .= $single->name->value; //builds multi byline string without delimiter on first pass
-                            } else {
-                                $multi_by_line .= '|' . $single->name->value ; //builds multi byline string with delimiter
+                        foreach ( (array) $story->byline as $single ) {
+                            if ( ! empty( $single->name->value ) ) {
+                                if ( $i == 0 ) {
+                                    $multi_by_line .= $single->name->value; //builds multi byline string without delimiter on first pass
+                                } else {
+                                    $multi_by_line .= '|' . $single->name->value; //builds multi byline string with delimiter
+                                }
+                                $by_line = $single->name->value; //overwrites so as to save just the last byline for previous single byline themes
                             }
-                            $by_line = $single->name->value; //overwrites so as to save just the last byline for previous single byline themes
-									
                             if ( ! empty( $single->link ) ) {
-                                foreach( $single->link as $link ) {
-                                    if ($link->type == 'html' ) {
+                                foreach( (array) $single->link as $link ) {
+                                    if ( empty( $link->type ) ) {
+                                        continue;
+                                    }
+                                    if ( 'html' === $link->type ) {
 								        $byline_link = $link->value; //overwrites so as to save just the last byline link for previous single byline themes
 								        $multi_by_line .= '~' . $link->value; //builds multi byline string links
 								    }
@@ -208,7 +222,7 @@ class NPRAPIWordpress extends NPRAPI {
                     if ( isset($story->audio) ) {
                         $mp3_array = array();
                         $m3u_array = array();
-                        foreach ( $story->audio as $n => $audio ) {
+                        foreach ( (array) $story->audio as $n => $audio ) {
                             if ( ! empty( $audio->format->mp3['mp3']) && $audio->permissions->download->allow == 'true' ) {
 				                if ($audio->format->mp3['mp3']->type == 'mp3' ) {
 				                    $mp3_array[] = $audio->format->mp3['mp3']->value;	
@@ -232,7 +246,7 @@ class NPRAPIWordpress extends NPRAPI {
                     //now that we have an id, we can add images
                     //this is the way WP seems to do it, but we couldn't call media_sideload_image or media_ because that returned only the URL
                     //for the attachment, and we want to be able to set the primary image, so we had to use this method to get the attachment ID.
-                    if ( isset( $story->image[0] ) ) {
+                    if ( ! empty( $story->image ) && is_array( $story->image ) && count( $story->image ) ) {
 							
 				    //are there any images saved for this post, probably on update, but no sense looking of the post didn't already exist
                         if ( $existing ) {
@@ -246,31 +260,35 @@ class NPRAPIWordpress extends NPRAPI {
 				            );
                             $attached_images = get_children( $image_args );
                         }	
-                        foreach ( $story->image as $image ) {
+                        foreach ( (array) $story->image as $image ) {
                             $image_url = '';
 		        		    //check the <enlargement> and then the crops, in this order "enlargement", "standard"  if they don't exist, just get the image->src
                             if ( ! empty( $image->enlargement ) ) {
                                 $image_url = $image->enlargement->src;
                             } else {
-                                if ( ! empty( $image->crop ) ) {
+                                if ( ! empty( $image->crop ) && is_array( $image->crop ) ) {
                                     foreach ( $image->crop as $crop ) {
-                                        if ( $crop->type == 'enlargement' ) {
-                                            $image_url = $crop->src;
+                                        if ( empty( $crop->type ) ) {
                                             continue;
+                                        }
+                                         if ( 'enlargement' === $crop->type ) {
+                                            $image_url = $crop->src;
                                         }
                                     }
                                     if ( empty( $image_url ) ) {
                                         foreach ( $image->crop as $crop ) {
-                                            if ( $crop->type == 'standard' ) {
-                                                $image_url = $crop->src;
+                                            if ( empty( $crop->type ) ) {
                                                 continue;
+                                            }
+                                            if ( 'standard' === $crop->type ) {
+                                                $image_url = $crop->src;
                                             }
                                         }
                                     }
                                 }
                             }
 
-                            if ( empty( $image_url ) ) {
+                            if ( empty( $image_url ) && ! empty( $image->src ) ) {
                                 $image_url = $image->src;
                             }
                             nprstory_error_log( 'Got image from: ' . $image_url );
@@ -390,15 +408,15 @@ class NPRAPIWordpress extends NPRAPI {
                         $category_ids[] = $category_id;
                     }
                 }
-                if ( count( $category_ids ) > 0 && is_integer( $ret ) ) {
+                if ( count( $category_ids ) > 0 && isset( $ret ) && is_integer( $ret ) ) {
                     wp_set_post_categories( $ret, $category_ids );
                 }
             }
             if ( $single_story ) {
-                return $post_id;
+                return isset( $post_id ) ? $post_id : 0;
             }
         }
-        return;
+        return null;
     }
 
 
@@ -421,6 +439,9 @@ class NPRAPIWordpress extends NPRAPI {
    * This function will send the push request to the NPR API to add/update a story.
    * 
    * @see NPRAPI::send_request()
+   *
+   * @param string $nprml
+   * @param int $post_ID
    */
     function send_request ( $nprml, $post_ID ) {
         $error_text = '';
@@ -501,30 +522,48 @@ class NPRAPIWordpress extends NPRAPI {
     }
 
   /**
-   * 
+   *
    * This function will check a story to see if there are transcripts that should go with it, if there are
    * we'll return the transcript as one big strang with Transcript at the top and each paragraph separated by <p>
    * 
-   * @param  $story
+   * @param string $story
+   * @return string
    */
     function get_transcript_body( $story ) {
         $transcript_body = "";
-        if ( ! empty( $story->transcript ) ) {
+        if ( ! empty( $story->transcript ) && is_array( $story->transcript ) ) {
             foreach ( $story->transcript as $transcript ) {
-                if ( $transcript->type == 'api' ) {
-                    $response = wp_remote_get( $transcript->value );
-                    if ( !is_wp_error( $response ) ) {
-                        $transcript_body .= "<p><strong>Transcript :</strong><p>";
-                        $body_xml = simplexml_load_string( $response['body'] );
-                        if ( ! empty( $body_xml->paragraph ) ) {
-                            foreach( $body_xml->paragraph as $paragraph ) {
-                                $transcript_body .= (strip_tags( $paragraph )) . '<p>';
-                            }
-                        }
+                if ( empty( $transcript->link ) ) {
+                    continue;
+                }
+                foreach ( (array) $transcript->link as $link ) {
+                    if ( ! isset( $link->type ) || 'api' !== $link->type ) {
+                        continue;
+                    }
+                    $response = wp_remote_get( $link->value );
+                    if ( is_wp_error( $response ) ) {
+                        /**
+                         * @var WP_Error $response
+                         */
+                        $code = $response->get_error_code();
+                        $message = $response->get_error_message();
+                        $message = sprintf( 'Error requesting story transcript via API URL: %s (%s [%d])', $link->value, $message,  $code );
+                        error_log( $message );
+                        continue;
+                    }
+                    $body_xml = simplexml_load_string( $response[ 'body' ] );
+                    if ( empty( $body_xml->paragraph ) || ! is_array( $body_xml->paragraph ) ) {
+                        continue;
+                    }
+                    $transcript_body .= "<p><strong>Transcript :</strong></p>";
+                    foreach ( $body_xml->paragraph as $paragraph ) {
+                        $transcript_body .= '<p>' . ( strip_tags( $paragraph ) ) . '</p>';
                     }
                 }
             }
+
         }
+
         return $transcript_body;
     }
 }

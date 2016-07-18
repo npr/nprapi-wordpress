@@ -31,9 +31,11 @@ class NPRAPI {
     $this->request->data = NULL;
     $this->request->path = NULL;
     $this->request->base = NULL;
+    $this->request->request_url = NULL;
 
 
     $this->response = new stdClass;
+    $this->response->id = NULL;
     $this->response->code = NULL;
   }
 
@@ -45,7 +47,15 @@ class NPRAPI {
 
   }
 
-  function send_request() {
+  /**
+   * This function will send the push request to the NPR API to add/update a story.
+   *
+   * @see NPRAPI::send_request()
+   *
+   * @param string $nprml
+   * @param int $ID
+   */
+  function send_request ( $nprml, $ID ) {
 
   }
 
@@ -61,8 +71,16 @@ class NPRAPI {
 
   }
 
-  function create_NPRML() {
+  /**
+   * Create NPRML from wordpress post.
+   *
+   * @param object $object
 
+   * @return string
+   *   An NPRML string.
+   */
+  function create_NPRML( $object ) {
+    return '';
   }
 
   /**
@@ -145,7 +163,7 @@ class NPRAPI {
       //if the query didn't have a sort parameter, reverse the order so that we end up with
       //stories in reverse-chron order.
       //there are no params and 'sort=' is not in the URL
-      if (empty($this->request->params) && !stristr($this->request->url, 'sort=')){
+      if (empty($this->request->params) && !stristr($this->request->request_url, 'sort=')){
       	$this->stories = array_reverse($this->stories);
       } 
       //there are params, and sort is not one of them
