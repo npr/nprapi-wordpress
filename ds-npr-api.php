@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: WP DS NPR API
+ * Plugin Name: KCPT NPR API Fork
  * Description: A collection of tools for reusing content from NPR.org supplied by Digital Services.
  * Version: 1.5.2
- * Author: Kevin Moylan
+ * Author: Kevin Moylan | Editied by KCPT
  * License: GPLv2
 */
 /*
