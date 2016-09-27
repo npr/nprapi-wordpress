@@ -93,7 +93,7 @@ class NPRAPIWordpress extends NPRAPI {
    *
    * @param bool $publish
    */
-    function update_posts_from_stories( $publish = TRUE ) {
+    function update_posts_from_stories( $publish = TRUE, $qnum = false ) {
 		$pull_post_type = get_option( 'ds_npr_pull_post_type' );
 		if ( empty( $pull_post_type ) ) {
 			$pull_post_type = 'post';
@@ -148,6 +148,9 @@ class NPRAPIWordpress extends NPRAPI {
 	        		'post_type'    => $pull_post_type,
                     'post_date'    => $post_date,
                 );
+                if( false !== $qnum ) {
+                    $args['tags_input'] = get_option('ds_npr_query_tags_'.$qnum);
+                }
 				//check the last modified date and pub date (sometimes the API just updates the pub date), if the story hasn't changed, just go on
                 if ( $post_mod_date != strtotime( $story->lastModifiedDate->value ) || $post_pub_date !=  strtotime( $story->pubDate->value ) ) {
 						

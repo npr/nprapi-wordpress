@@ -54,7 +54,7 @@ class DS_NPR_API {
                         if ( $pub_option == 'Publish' ) {
                             $pub_flag = TRUE;
                         }
-                        $story = $api->update_posts_from_stories($pub_flag);
+                        $story = $api->update_posts_from_stories($pub_flag, $i);
                     } else {
                         if ( empty($story) ) {
                             error_log('NPR Story API: not going to save story.  Query '. $query_string .' returned an error '.$api->message->id. ' error'); // debug use
