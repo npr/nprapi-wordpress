@@ -1,0 +1,16 @@
+version: '2'
+services:
+  web:
+    image: wordpress
+    volumes:
+      - .:/var/www/html/wp-content/plugins/nprapi-wordpress
+    ports:
+      - '8080:80'
+    depends_on:
+      - mysql
+    environment:
+      - WORDPRESS_DB_PASSWORD=foo
+  mysql:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=foo
