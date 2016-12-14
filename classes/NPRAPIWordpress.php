@@ -256,10 +256,11 @@ class NPRAPIWordpress extends NPRAPI {
 	                 * @since 1.7
 	                 *
 	                 * @param array $args Parameters passed to wp_insert_post()
-	                 * @param object $story Story object created during import
+	                 * @param int $post_id Post ID or NULL if no post ID.
+	                 * @param NPRMLEntity $story Story object created during import
 	                 * @param bool $created true if not pre-existing, false otherwise
 	                 */
-	                $args = apply_filters( 'npr_pre_insert_post', $args, $story, $created );
+	                $args = apply_filters( 'npr_pre_insert_post', $args, $post_id, $story, $created );
 
 	                $post_id = wp_insert_post( $args );
 
@@ -377,10 +378,11 @@ class NPRAPIWordpress extends NPRAPI {
 	                 * @since 1.7
 	                 *
 	                 * @param array $metas Array of key/value pairs to be updated
+	                 * @param int $post_id Post ID or NULL if no post ID.
 	                 * @param NPRMLEntity $story Story object created during import
 	                 * @param bool $created true if not pre-existing, false otherwise
 	                 */
-	                $metas = apply_filters( 'npr_pre_update_post_metas', $metas, $story, $created );
+	                $metas = apply_filters( 'npr_pre_update_post_metas', $metas, $post_id, $story, $created );
 
 	                foreach ( $metas as $k => $v ) {
                         update_post_meta( $post_id, $k, $v );
@@ -431,9 +433,10 @@ class NPRAPIWordpress extends NPRAPI {
 	                 * @since 1.7
 	                 *
 	                 * @param array $args Parameters passed to wp_insert_post()
+	                 * @param int $post_id Post ID or NULL if no post ID.
 	                 * @param NPRMLEntity $story Story object created during import
 	                 */
-	                $args = apply_filters( 'npr_pre_update_post', $args, $story );
+	                $args = apply_filters( 'npr_pre_update_post', $args, $post_id, $story );
 
 	                $post_id = wp_insert_post( $args );
                 }
@@ -443,7 +446,7 @@ class NPRAPIWordpress extends NPRAPI {
 				if ( isset( $story->parent ) ) {
 	                if ( is_array( $story->parent ) ) {
 	                    foreach ( $story->parent as $parent ) {
-	                        if ( isset( $parent->type ) && $parent->type === 'category' ) {
+	                        if ( isset( $parent->type ) && 'category' === $parent->type ) {
 
 		                        /**
 		                         * Filters term name prior to lookup of terms
@@ -453,9 +456,10 @@ class NPRAPIWordpress extends NPRAPI {
 		                         * @since 1.7
 		                         *
 		                         * @param string $term_name Name of term
+		                         * @param int $post_id Post ID or NULL if no post ID.
 		                         * @param NPRMLEntity $story Story object created during import
 		                         */
-		                        $term_name   = apply_filters('npr_resolve_category_term', $parent->title->value, $story );
+		                        $term_name   = apply_filters( 'npr_resolve_category_term', $parent->title->value, $post_id, $story );
 		                        $category_id = get_cat_ID( $term_name );
 
 	                            if ( ! empty( $category_id ) ) {
@@ -472,9 +476,10 @@ class NPRAPIWordpress extends NPRAPI {
                          * @since 1.7
                          *
                          * @param string $term_name Name of term
+	                     * @param int $post_id Post ID or NULL if no post ID.
                          * @param NPRMLEntity $story Story object created during import
                          */
-		                $term_name   = apply_filters('npr_resolve_category_term', $story->parent->title->value );
+		                $term_name   = apply_filters('npr_resolve_category_term', $story->parent->title->value, $post_id, $story );
 		                $category_id = get_cat_ID( $term_name );
 	                    if ( ! empty( $category_id) ) {
 	                        $category_ids[] = $category_id;
