@@ -3,12 +3,15 @@
 /**
  * @file
  *
- * Defines a class for NPRML creation/transmission and retreival/parsing
+ * Defines a class for NPRML creation/transmission and retrieval/parsing
  * Unlike NPRAPI class, NPRAPIDrupal is drupal-specific
  */
-require_once( 'NPRAPI.php' );
-require_once( 'nprml.php' );
+require_once( dirname( __FILE__ ) . '/NPRAPI.php' );
+require_once( dirname( __FILE__ ) . '/nprml.php' );
 
+/**
+ * Class NPRAPIWordpress
+ */
 class NPRAPIWordpress extends NPRAPI {
 
   /**
@@ -56,7 +59,7 @@ class NPRAPIWordpress extends NPRAPI {
         //fill out the $this->request->param array so we can know what params were sent
         $parsed_url = parse_url( $url );
         if ( ! empty( $parsed_url['query'] ) ) {
-            $parms = explode( '&', $parsed_url['query'] );
+            $params = explode( '&', $parsed_url['query'] );
             if ( ! empty( $params ) ){
                 foreach ( $params as $p ){
                     $attrs = explode( '=', $p );
@@ -71,7 +74,7 @@ class NPRAPIWordpress extends NPRAPI {
                 if ( $response['body'] ) {
                     $this->xml = $response['body'];
                 } else {
-                    $this->notice[] = t( 'No data available.' );
+                    $this->notice[] = __( 'No data available.' );
                 }
             } else {
                 nprstory_show_message( 'An error occurred pulling your story from the NPR API.  The API responded with message =' . $response['response']['message'], TRUE );
@@ -92,6 +95,7 @@ class NPRAPIWordpress extends NPRAPI {
    * available from the NPR API if the pubDate on the API is after the pubDate originally stored locally.
    *
    * @param bool $publish
+   * @return int|null $post_id or null
    */
     function update_posts_from_stories( $publish = TRUE ) {
 		$pull_post_type = get_option( 'ds_npr_pull_post_type' );
@@ -99,7 +103,9 @@ class NPRAPIWordpress extends NPRAPI {
 			$pull_post_type = 'post';
 		}
 
-		if ( ! empty( $this->stories ) ) {
+	    $post_id = null;
+
+	    if ( ! empty( $this->stories ) ) {
 			$single_story = TRUE;
 			if ( sizeof( $this->stories ) > 1) {
 				$single_story = FALSE;
@@ -241,7 +247,22 @@ class NPRAPIWordpress extends NPRAPI {
                     } else {
                         $created = true;
                     }
-                    $post_id = wp_insert_post( $args );
+
+	                /**
+	                 * Filters the $args passed to wp_insert_post()
+	                 *
+	                 * Allow a site to modify the $args passed to wp_insert_post() prior to post being inserted.
+	                 *
+	                 * @since 1.7
+	                 *
+	                 * @param array $args Parameters passed to wp_insert_post()
+	                 * @param int $post_id Post ID or NULL if no post ID.
+	                 * @param NPRMLEntity $story Story object created during import
+	                 * @param bool $created true if not pre-existing, false otherwise
+	                 */
+	                $args = apply_filters( 'npr_pre_insert_post', $args, $post_id, $story, $created );
+
+	                $post_id = wp_insert_post( $args );
 
                     //now that we have an id, we can add images
                     //this is the way WP seems to do it, but we couldn't call media_sideload_image or media_ because that returned only the URL
@@ -348,7 +369,22 @@ class NPRAPIWordpress extends NPRAPI {
                         }
                     }
 
-                    foreach ( $metas as $k => $v ) {
+	                /**
+	                 * Filters the post meta before series of update_post_meta() calls
+	                 *
+	                 * Allow a site to modify the post meta values prior to
+	                 * passing each element via update_post_meta().
+	                 *
+	                 * @since 1.7
+	                 *
+	                 * @param array $metas Array of key/value pairs to be updated
+	                 * @param int $post_id Post ID or NULL if no post ID.
+	                 * @param NPRMLEntity $story Story object created during import
+	                 * @param bool $created true if not pre-existing, false otherwise
+	                 */
+	                $metas = apply_filters( 'npr_pre_update_post_metas', $metas, $post_id, $story, $created );
+
+	                foreach ( $metas as $k => $v ) {
                         update_post_meta( $post_id, $k, $v );
                     }
 
@@ -388,30 +424,88 @@ class NPRAPIWordpress extends NPRAPI {
                         //if the post existed, save its status
                         $args['post_status'] = $existing_status;
                     }
-                    $ret = wp_insert_post( $args );
+
+	                /**
+	                 * Filters the $args passed to wp_insert_post() used to update
+	                 *
+	                 * Allow a site to modify the $args passed to wp_insert_post() prior to post being updated.
+	                 *
+	                 * @since 1.7
+	                 *
+	                 * @param array $args Parameters passed to wp_insert_post()
+	                 * @param int $post_id Post ID or NULL if no post ID.
+	                 * @param NPRMLEntity $story Story object created during import
+	                 */
+	                $args = apply_filters( 'npr_pre_update_post', $args, $post_id, $story );
+
+	                $post_id = wp_insert_post( $args );
                 }
 
                 //set categories for story
                 $category_ids = array();
-                if ( is_array( $story->parent ) ) {
-                    foreach ( $story->parent as $parent ) {
-                        if ( isset( $parent->type ) && $parent->type == 'category' ) {
-                            $category_id = get_cat_ID( $parent->title->value );
-                            if ( ! empty( $category_id ) ) {
-                                $category_ids[] = $category_id;
-                            }
-                        }
-                    }
-                } elseif ( isset( $story->parent->type ) && $story->parent->type == 'category') {
-                    $category_id = get_cat_ID( $story->parent->title->value );
-                    if ( ! empty( $category_id) ) {
-                        $category_ids[] = $category_id;
-                    }
-                }
-                if ( count( $category_ids ) > 0 && isset( $ret ) && is_integer( $ret ) ) {
-                    wp_set_post_categories( $ret, $category_ids );
-                }
-            }
+				if ( isset( $story->parent ) ) {
+	                if ( is_array( $story->parent ) ) {
+	                    foreach ( $story->parent as $parent ) {
+	                        if ( isset( $parent->type ) && 'category' === $parent->type ) {
+
+		                        /**
+		                         * Filters term name prior to lookup of terms
+		                         *
+		                         * Allow a site to modify the terms looked-up before adding them to list of categories.
+		                         *
+		                         * @since 1.7
+		                         *
+		                         * @param string $term_name Name of term
+		                         * @param int $post_id Post ID or NULL if no post ID.
+		                         * @param NPRMLEntity $story Story object created during import
+		                         */
+		                        $term_name   = apply_filters( 'npr_resolve_category_term', $parent->title->value, $post_id, $story );
+		                        $category_id = get_cat_ID( $term_name );
+
+	                            if ( ! empty( $category_id ) ) {
+	                                $category_ids[] = $category_id;
+	                            }
+	                        }
+	                    }
+	                } elseif ( isset( $story->parent->type ) && $story->parent->type === 'category') {
+		                /*
+                         * Filters term name prior to lookup of terms
+                         *
+                         * Allow a site to modify the terms looked-up before adding them to list of categories.
+                         *
+                         * @since 1.7
+                         *
+                         * @param string $term_name Name of term
+	                     * @param int $post_id Post ID or NULL if no post ID.
+                         * @param NPRMLEntity $story Story object created during import
+                         */
+		                $term_name   = apply_filters('npr_resolve_category_term', $story->parent->title->value, $post_id, $story );
+		                $category_id = get_cat_ID( $term_name );
+	                    if ( ! empty( $category_id) ) {
+	                        $category_ids[] = $category_id;
+	                    }
+	                }
+
+				}
+
+				/*
+				 * Filters category_ids prior to setting assigning to the post.
+				 *
+				 * Allow a site to modify category IDs before assigning to the post.
+				 *
+				 * @since 1.7
+				 *
+				 * @param int[] $category_ids Array of Category IDs to assign to post identified by $post_id
+				 * @param int $post_id Post ID or NULL if no post ID.
+				 * @param NPRMLEntity $story Story object created during import
+				 */
+				$category_ids = apply_filters( 'npr_pre_set_post_categories', $category_ids, $post_id, $story );
+				if ( 0 < count( $category_ids ) && is_integer( $post_id ) ) {
+					wp_set_post_categories( $post_id, $category_ids );
+				}
+
+
+			}
             if ( $single_story ) {
                 return isset( $post_id ) ? $post_id : 0;
             }
