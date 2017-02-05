@@ -56,6 +56,8 @@ function nprstory_settings_init() {
     add_settings_section( 'ds_npr_api_get_multi_settings', 'NPR API multiple get settings', 'nprstory_api_get_multi_settings_callback', 'ds_npr_api_get_multi_settings' );
 
     add_settings_field( 'ds_npr_num', 'Number of things to get', 'nprstory_api_num_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
+
+    add_settings_field( 'ds_npr_num', 'Number of things to get', 'nprstory_api_num_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
     register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_num', 'intval' );
 
 	/**
@@ -72,6 +74,10 @@ function nprstory_settings_init() {
     	//ds_npr_query_publish_
         add_settings_field( 'ds_npr_query_publish_' . $i, 'Publish Stories ' . $i, 'nprstory_api_query_publish_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
         register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_publish_' . $i , 'nprstory_validation_callback_select');
+
+        // Add tags
+        add_settings_field( 'ds_npr_query_tags_' . $i, 'Add Tags ' . $i, 'ds_npr_api_query_tags_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
+        register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_tags_' . $i );
     }
 
     add_settings_field( 'dp_npr_query_run_multi', 'Run the queries on saving changes', 'nprstory_query_run_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
@@ -168,6 +174,15 @@ function nprstory_api_query_callback( $i ) {
 	echo "<input type='text' value='$option' name='$name' style='width: 300px;' />";
 	wp_nonce_field( 'nprstory_nonce_ds_npr_query_' . $i, 'nprstory_nonce_ds_npr_query_' . $i . '_name', true, true );
 
+}
+
+function ds_npr_api_query_tags_callback( $i ) {
+	$name = 'ds_npr_query_tags_' . $i;
+	$option = get_option( $name );
+
+	echo "<input type='text' value='$option' name='$name' style='width: 300px;' /> <p> Add tag(s) to each story pulled from NPR (comma separated).</p>";
+  wp_nonce_field( 'nprstory_nonce_ds_npr_tags_' . $i, 'nprstory_nonce_ds_npr_tags_' . $i . '_name', true, true );
+	echo "<p><hr></p>";
 }
 
 function nprstory_api_num_multi_callback() {
