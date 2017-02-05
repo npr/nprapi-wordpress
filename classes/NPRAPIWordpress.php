@@ -94,11 +94,24 @@ class NPRAPIWordpress extends NPRAPI {
    * This function will go through the list of stories in the object and check to see if there are updates
    * available from the NPR API if the pubDate on the API is after the pubDate originally stored locally.
    *
+   * @see https://github.com/nprds/nprapi-wordpress/commit/ac0a7f7e3b7428ba783853eb76696b499bc85ecc for is_numeric($args)
+   *
+   * @since 1.7
+   *
    * @param bool $publish
-   * @param int|bool $qnum
+   * @param array|int $opts { If numeric it will be `'query_number' otherwise an array of named options.
+   *
+   *    @type int $query_number The number of the query for $args['tags_input']
+   *
+   * }
    * @return int|null $post_id or null
    */
-	function update_posts_from_stories( $publish = TRUE, $qnum = false ) {
+	function update_posts_from_stories( $publish = TRUE, $opts = array() ) {
+
+		$opts = wp_parse_args( $opts, array(
+			'query_number' => is_numeric( $opts ) ? intval( $opts ) : false,
+		));
+
 		$pull_post_type = get_option( 'ds_npr_pull_post_type' );
 		if ( empty( $pull_post_type ) ) {
 			$pull_post_type = 'post';
@@ -155,8 +168,8 @@ class NPRAPIWordpress extends NPRAPI {
 	        		'post_type'    => $pull_post_type,
                     'post_date'    => $post_date,
                 );
-				if ( false !== $qnum ) {
-					$args['tags_input'] = get_option('ds_npr_query_tags_'.$qnum);
+				if ( false !== $opts[ 'query_number' ] ) {
+					$args['tags_input'] = get_option( "ds_npr_query_tags_{$opts[ 'query_number' ]}" );
 				}
 				//check the last modified date and pub date (sometimes the API just updates the pub date), if the story hasn't changed, just go on
                 if ( $post_mod_date != strtotime( $story->lastModifiedDate->value ) || $post_pub_date !=  strtotime( $story->pubDate->value ) ) {
