@@ -315,7 +315,22 @@ class NPRAPIWordpress extends NPRAPI {
                             if ( empty( $image_url ) && ! empty( $image->src ) ) {
                                 $image_url = $image->src;
                             }
-                            nprstory_error_log( 'Got image from: ' . $image_url );
+
+	                        /**
+	                         * Filters the image crop url
+	                         *
+	                         * Allows a site to decide which crop it prefers to use for thumbnail/featured image.
+	                         * Especially useful if/when the crop is way too big.
+	                         *
+	                         * @since 1.7
+	                         *
+	                         * @param string $image_url URL of image crop to download
+	                         * @param NPRMLEntity $story Story object created during import
+	                         * @param int $post_id Post ID or NULL if no post ID.
+	                         */
+	                        $image_url = apply_filters( 'npr_image_crop_url', $image_url, $story, $post_id );
+
+	                        nprstory_error_log( 'Got image from: ' . $image_url );
                             // Download file to temp location
                             $tmp = download_url( $image_url );
 
