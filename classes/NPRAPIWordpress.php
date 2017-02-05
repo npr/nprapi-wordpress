@@ -298,7 +298,7 @@ class NPRAPIWordpress extends NPRAPI {
 				            );
                             $attached_images = get_children( $image_args );
                         }	
-                        foreach ( (array) $story->image as $image ) {
+                        foreach ( (array) $story->image as $image_index => $image ) {
                             $image_url = '';
 		        		    //check the <enlargement> and then the crops, in this order "enlargement", "standard"  if they don't exist, just get the image->src
                             if ( ! empty( $image->enlargement ) ) {
@@ -339,10 +339,12 @@ class NPRAPIWordpress extends NPRAPI {
 	                         * @since 1.7
 	                         *
 	                         * @param string $image_url URL of image crop to download
-	                         * @param NPRMLEntity $story Story object created during import
+	                         * @param NPRMLElement $image Image object containing crops
 	                         * @param int $post_id Post ID or NULL if no post ID.
+	                         * @param NPRMLEntity $story Story object created during import
+	                         * @param int $image_index Index into $story->image[] that results in $image
 	                         */
-	                        $image_url = apply_filters( 'npr_image_crop_url', $image_url, $story, $post_id );
+	                        $image_url = apply_filters( 'npr_image_crop_url', $image_url, $story->image[ $image_index ], $post_id, $story, $image_index );
 
 	                        nprstory_error_log( 'Got image from: ' . $image_url );
                             // Download file to temp location
