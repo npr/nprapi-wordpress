@@ -159,14 +159,15 @@ function nprstory_create_post_type() {
 
 function nprstory_add_meta_boxes() {
 	$screen = get_current_screen();
+	$push_post_type = get_option( 'ds_npr_push_post_type' ) ?: 'post';
 	$push_url = get_option( 'ds_npr_api_push_url' );
-	if ( $screen->id == 'post' && ! empty( $push_url ) ) {
+	if ( $screen->id == $push_post_type && ! empty( $push_url ) ) {
 		global $post;
 		add_meta_box(
 			'ds_npr_document_meta',
 			'NPR Story API',
 			'nprstory_publish_meta_box',
-			'post', 'side'
+			$push_post_type, 'side'
 		);
 	}
 }
