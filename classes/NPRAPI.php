@@ -96,12 +96,20 @@ class NPRAPI {
       return;
     }
 
-    $object = simplexml_load_string($xml);
+	try {
+		$object = simplexml_load_string( $xml );
+	} catch ( Exception $e ) {
+    	echo "\nXML ERROR: {$e->getMessage()}\n";
+		$this->stories = array();
+		return;
+	}
     $this->add_simplexml_attributes($object, $this);
 
     if (!empty($object->message)) {
-      $this->message->id = $this->get_attribute($object->message, 'id');
-      $this->message->level = $this->get_attribute($object->message, 'level');
+		$this->message = (object) array(
+			'id'    => $this->get_attribute( $object->message, 'id' ),
+			'level' => $this->get_attribute( $object->message, 'level' )
+		);
     }
 
     if (!empty($object->list->story)) {

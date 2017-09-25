@@ -289,12 +289,12 @@ class NPRAPIWordpress extends NPRAPI {
 				    //are there any images saved for this post, probably on update, but no sense looking of the post didn't already exist
                         if ( $existing ) {
                             $image_args = array(
-                                'order'=> 'ASC',
-                                'post_mime_type' => 'image',
-                                'post_parent' => $post_id,
-                                'post_status' => null,
-                                'post_type' => 'attachment',
-                                'post_date'	=> $post_date,
+	                            'order'          => 'ASC',
+	                            'post_mime_type' => 'image',
+	                            'post_parent'    => $post_id,
+	                            'post_status'    => null,
+	                            'post_type'      => 'attachment',
+	                            'post_date'      => $post_date,
 				            );
                             $attached_images = get_children( $image_args );
                         }	
@@ -423,12 +423,12 @@ class NPRAPIWordpress extends NPRAPI {
                     }
 
                     $args = array(
-                        'post_title'   => $story->title,
-                        'post_content' => $story->body,
-                        'post_excerpt' => $story->teaser,
-                        'post_type'    => $pull_post_type,
-                        'ID'   => $post_id,
-                        'post_date'	=> $post_date,
+	                    'post_title'   => $story->title,
+	                    'post_content' => $story->body,
+	                    'post_excerpt' => $story->teaser,
+	                    'post_type'    => $pull_post_type,
+	                    'ID'           => $post_id,
+	                    'post_date'    => $post_date,
                     );
 
                     //set author
