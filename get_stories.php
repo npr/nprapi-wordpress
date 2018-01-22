@@ -109,10 +109,10 @@ class DS_NPR_API {
             } else {
                 // url format: /yyyy/mm/dd/id
 				// url format: /blogs/name/yyyy/mm/dd/id
-				$story_id = preg_replace( '/http\:\/\/[^\s\/]*npr\.org\/((([^\/]*\/){3,5})([0-9]{8,12}))\/.*/', '$4', $story_id );
+				$story_id = preg_replace( '/https?\:\/\/[^\s\/]*npr\.org\/((([^\/]*\/){3,5})([0-9]{8,12}))\/.*/', '$4', $story_id );
 				if ( ! is_numeric( $story_id ) ) {
 				    // url format: /templates/story/story.php?storyId=id
-				    $story_id = preg_replace( '/http\:\/\/[^\s\/]*npr\.org\/([^&\s\<]*storyId\=([0-9]+)).*/', '$2', $story_id );
+					$story_id = preg_replace( '/https?\:\/\/[^\s\/]*npr\.org\/([^&\s\<]*storyId\=([0-9]+)).*/', '$2', $story_id );
 				}
             }
 		}
