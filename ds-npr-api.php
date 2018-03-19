@@ -49,6 +49,8 @@ define( 'NPR_MAX_QUERIES', 10 );
 
 define( 'NPR_POST_TYPE', 'npr_story_post' );
 
+define( 'NPRSTORY_PLUGIN_URL', plugin_dir_url(__FILE__) );
+
 // Load files
 define( 'NPRSTORY_PLUGIN_DIR', plugin_dir_path(__FILE__) );
 require_once( NPRSTORY_PLUGIN_DIR . 'settings.php' );
