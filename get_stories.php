@@ -43,7 +43,7 @@ class DS_NPR_API {
 					 */
 					if ( stristr( $query_string, 'http:' ) || stristr( $query_string, 'https:' ) ) {
 						error_log( sprintf(
-							'Not going to run query because the query string %1$s contains http: or https: and is not pointing to the pullURL %2$s'
+							'Not going to run query because the query string %1$s contains http: or https: and is not pointing to the pullURL %2$s',
 							var_export( $query_string, true ),
 							var_export( get_option( 'ds_npr_api_pull_url' ), true )
 						) ); // debug use
