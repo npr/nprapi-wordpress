@@ -12,7 +12,7 @@ class Test_DsNprApi extends WP_UnitTestCase {
 		$this->assertEquals( $option, 5 );
 
 		$option = get_option( 'ds_npr_api_pull_url' );
-		$this->assertEquals( $option, 'http://api.npr.org' );
+		$this->assertEquals( $option, 'https://api.npr.org' );
 	}
 
 	function test_nprstory_activate() {

@@ -14,7 +14,7 @@ class NPRAPI {
   const NPRAPI_STATUS_OK = 200;
 
   // Default URL for pulling stories
-  const NPRAPI_PULL_URL = 'http://api.npr.org';
+  const NPRAPI_PULL_URL = 'https://api.npr.org';
 
   // NPRML CONSTANTS
   const NPRML_DATA = '<?xml version="1.0" encoding="UTF-8"?><nprml></nprml>';
