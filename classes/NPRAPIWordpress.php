@@ -22,7 +22,7 @@ class NPRAPIWordpress extends NPRAPI {
    *
    *
    * @param string $path
-   *   The path part of the request URL (i.e., http://example.com/PATH).
+   *   The path part of the request URL (i.e., https://example.com/PATH).
    *
    * @param string $base
    *   The base URL of the request (i.e., HTTP://EXAMPLE.COM/path) with no trailing slash.
