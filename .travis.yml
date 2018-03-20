@@ -1,7 +1,7 @@
 # Travis CI Configuration File
 
 # Use Travis CI container-based infrastructure
-# See: http://docs.travis-ci.com/user/workers/container-based-infrastructure/
+# See: https://docs.travis-ci.com/user/workers/container-based-infrastructure/
 sudo: false
 
 # Tell Travis CI we're using PHP
@@ -32,7 +32,7 @@ branches:
 # Clones WordPress and configures our testing environment.
 before_script:
     - export SLUG=$(basename $(pwd))
-    - svn co --quiet http://develop.svn.wordpress.org/tags/$WP_VERSION $WP_CORE_DIR
+    - svn co --quiet https://develop.svn.wordpress.org/tags/$WP_VERSION $WP_CORE_DIR
     - cd ..
     - mv $SLUG "$WP_CORE_DIR/src/wp-content/plugins/$SLUG"
     - cd $WP_CORE_DIR

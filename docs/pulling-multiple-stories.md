@@ -8,13 +8,13 @@ In the WordPress Dashboard go to **Settings > NPR API Get Multi**. This screen o
 
 Note that "Query String" simply means a URL containing query parameters like a Subject ID, content type, date range, number of results to return, etc. An NPR API query string looks something like this:
 
-`http://api.npr.org/query?id=1014,2&requiredAssets=audio&startDate=2016-04-01&endDate=2016-06-05&dateType=story&output=NPRML&numResults=10`
+`https://api.npr.org/query?id=1014,2&requiredAssets=audio&startDate=2016-04-01&endDate=2016-06-05&dateType=story&output=NPRML&numResults=10`
 
 You can enter multiple query strings to pull content for different subjects, programs, etc., and set how often the queries will run. Once you save one or more queries, WordPress will continue to run them against the NPR API and return fresh stories as  WordPress Posts or Drafts.
 
 ## How to Create a Query String
 
-You can easily create query strings for API content by visiting the [NPR API Query Generator](http://www.npr.org/api/queryGenerator.php). The Query Generator provides a graphical user interface to create queries by topic, blogs, program, series, stations, and other values in the NPR API. Note that the **Control** tab of the Query Generator adds filtering by date or date range, search terms, and content type. You can also specify the number of results to return for a given query. 
+You can easily create query strings for API content by visiting the [NPR API Query Generator](https://www.npr.org/api/queryGenerator.php). The Query Generator provides a graphical user interface to create queries by topic, blogs, program, series, stations, and other values in the NPR API. Note that the **Control** tab of the Query Generator adds filtering by date or date range, search terms, and content type. You can also specify the number of results to return for a given query. 
 
 After creating a query in the Query Generator, click the button to **Create API Call**:
 
