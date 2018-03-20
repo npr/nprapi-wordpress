@@ -1,6 +1,6 @@
 # NPR Story API
 
-A collection of tools for reusing content from NPR.org supplied by Digital Services.
+A collection of tools for publishing from and to NPR's Story API.
 
 Contributors: nprds, inn_nerds
 
@@ -20,9 +20,9 @@ The NPR Story API Plugin provides push and pull functionality with the NPR API a
 
 NPR's API is a content API, which essentially provides a structured way for other computer applications to get NPR stories in a predictable, flexible and powerful way. The content that is available includes audio from most NPR programs dating back to 1995 as well as text, images and other web-only content from NPR and NPR member stations. This archive consists of over 250,000 stories that are grouped into more than 5,000 different aggregations.
 
-Access to the NPR API requires an API Key which you can get by [registering for an NPR account](https://secure.npr.org/oauth2/login).
+Access to the NPR API requires an API Key to NPR's legacy APIs. If you are an NPR member station or are working with an NPR member station and do not know your key, please [ask NPR station relations for help](https://nprsupport.desk.com/customer/login?return_to=%2Fcustomer%2Fportal%2Femails%2Fnew). 
 
-The WordPress plugin is being developed as an Open Source plugin by NPR Digital Services. If you would like to suggest features or bug fixes, or better yet if you would like to contribute new features or bug fixes please contact Digital Services through our support page at [https://nprsupport.desk.com/](https://nprsupport.desk.com/).
+The WordPress plugin is being developed as an Open Source plugin by NPR. If you would like to suggest features or bug fixes, or better yet if you would like to contribute new features or bug fixes please contact [NPR station relations](https://nprsupport.desk.com/customer/login?return_to=%2Fcustomer%2Fportal%2Femails%2Fnew).
 
 == Installation ==
 
@@ -35,7 +35,7 @@ The WordPress plugin is being developed as an Open Source plugin by NPR Digital 
 
 = Can anyone get an NPR API Key? =
 
-That's up to NPR but you can [register for an account here](https://secure.npr.org/oauth2/login).
+We are no longer provisioning public API key for our legacy APIs. If you are an NPR member station or are working with an NPR member station and do not know your key, please [ask NPR station relations for help](https://nprsupport.desk.com/customer/login?return_to=%2Fcustomer%2Fportal%2Femails%2Fnew).
 
 = Can anyone push content into the NPR API using this plugin? =
 
@@ -43,9 +43,7 @@ Push requires an Organization ID in the NPR API, which is typically given out to
 
 = Where can I find NPR's documentation on the NPR API? =
 
-The best resource for general information about the NPR API is here: [https://nprsupport.desk.com/customer/en/portal/topics/783619-api/articles](https://nprsupport.desk.com/customer/en/portal/topics/783619-api/articles).
-
-There's also the documentation in the NPR API site: [https://www.npr.org/api/index.php](https://www.npr.org/api/index.php).
+There is some documentation in the NPR API site: [http://www.npr.org/api/index.php](http://www.npr.org/api/index.php).
 
 = Is there an easy way to directly query the NPR API? =
 
