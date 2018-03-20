@@ -31,6 +31,7 @@ language: php
 # for a breakdown of why these versions were chosen, see https://github.com/INN/WP-DS-NPR-API/issues/12#issuecomment-374730094
 matrix:
     include:
+      # PHPUnit 5
       - php: 5.6
         env: WP_VERSION=3.8 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
       - php: 5.6
@@ -55,14 +56,17 @@ matrix:
         env: WP_VERSION=4.8 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
       - php: 5.6
         env: WP_VERSION=4.9 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
+      # PHPUnit 6
       - php: 7.0
         env: WP_VERSION=4.8 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
       - php: 7.0
         env: WP_VERSION=4.9 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
+      # PHPUnit 6
       - php: 7.1
         env: WP_VERSION=4.8 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
       - php: 7.1
         env: WP_VERSION=4.9 WP_TESTS_DIR=/tmp/wordpress/tests/phpunit WP_CORE_DIR=/tmp/wordpress
+      # PHPUnit 7 not supported by WordPress
 
 branches:
     only:
