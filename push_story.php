@@ -7,14 +7,14 @@ require_once ( NPRSTORY_PLUGIN_DIR . 'classes/NPRAPIWordpress.php' );
  *
  * Limited to users that can publish posts
  *
- * @param unknown_type $post_ID
- * @param unknown_type $post
+ * @param Int $post_ID
+ * @param WP_Post $post
  */
 function nprstory_api_push ( $post_ID, $post ) {
 	if ( ! current_user_can( 'publish_posts' ) ) {
 		wp_die(
-			__('You do not have permission to publish posts, and therefore you do not have permission to push posts to the NPR API.'),
-			__('NPR Story API Error'),
+			__( 'You do not have permission to publish posts, and therefore you do not have permission to push posts to the NPR API.', 'nprapi' ),
+			__( 'NPR Story API Error', 'nprapi' ),
 			403
 		);
 	}
@@ -528,26 +528,90 @@ function nprstory_bulk_action_push_action() {
     //exit();
 }
 
-add_action( 'post_submitbox_misc_actions', 'nprstory_submitbox_send_to_nprone' );
-function nprstory_submitbox_send_to_nprone() {
-    global $post;
-    if ( get_post_type( $post ) == get_option( 'ds_npr_push_post_type' ) ) {
-        $value = get_post_meta( $post->ID, '_send_to_nprone', true );
-        $checked = ! empty( $value ) ? ' checked="checked" ' : '';
-        echo '<div class="misc-pub-section misc-pub-section-last"><input type="checkbox"' . $checked . 'value="1" name="send_to_nprone" /><label for="send_to_nprone">Send to NPR One</label></div>';
-    }
-}
+/**
+ * Save the "send to the API" metadata
+ *
+ * The meta name here is '_send_to_nprone' for backwards compatibility with plugin versions 1.6 and prior
+ *
+ * @param Int $post_ID The post ID of the post we're saving
+ * @since 1.6 at least
+ * @see nprstory_publish_meta_box
+ */
+function nprstory_save_send_to_api( $post_ID ) {
+	// safety checks
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
+	if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
+	if ( empty( $post_ID ) ) return false;
 
-add_action( 'save_post', 'nprstory_save_send_to_nprone');
-function nprstory_save_send_to_nprone( $post_ID ) {
-    global $post;
-    if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
-    if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
-    if ( empty( $post_ID ) ) return false;
-    $value = ( isset( $_POST['send_to_nprone'] ) && $_POST['send_to_nprone'] == 1 ) ? 1 : 0;
-    update_post_meta( $post_ID, '_send_to_nprone', $value );
+	global $post;
+
+	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
+	$value = ( isset( $_POST['send_to_api'] ) && $_POST['send_to_api'] == 1 ) ? 1 : 0;
+
+	// see historical note
+	update_post_meta( $post_ID, '_send_to_nprone', $value );
 }
+add_action( 'save_post', 'nprstory_save_send_to_api');
+
+/**
+ * Save the "send to NPR.org" metadata
+ *
+ * @param Int $post_ID The post ID of the post we're saving
+ * @since 1.7
+ */
+function nprstory_save_send_to_org( $post_ID ) {
+	// safety checks
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
+	if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
+	if ( empty( $post_ID ) ) return false;
+
+	global $post;
+
+	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
+	$value = ( isset( $_POST['send_to_org'] ) && $_POST['send_to_org'] == 1 ) ? 1 : 0;
+	update_post_meta( $post_ID, '_send_to_org', $value );
+}
+add_action( 'save_post', 'nprstory_save_send_to_org');
+
+/**
+ * Save the "Send to NPR One" metadata
+ *
+ * @param Int $post_ID The post ID of the post we're saving
+ * @since 1.7
+ */
+function nprstory_save_send_to_one( $post_ID ) {
+	// safety checks
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
+	if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
+	if ( empty( $post_ID ) ) return false;
+
+	global $post;
+
+	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
+	$value = ( isset( $_POST['send_to_one'] ) && $_POST['send_to_one'] == 1 ) ? 1 : 0;
+	update_post_meta( $post_ID, '_send_to_one', $value );
+}
+add_action( 'save_post', 'nprstory_save_send_to_one');
+
+/**
+ * Save the "NPR One Featured" metadata
+ *
+ * @param Int $post_ID The post ID of the post we're saving
+ * @since 1.7
+ */
+function nprstory_save_nprone_featured( $post_ID ) {
+	// safety checks
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
+	if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
+	if ( empty( $post_ID ) ) return false;
+
+	global $post;
+
+	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
+	$value = ( isset( $_POST['nprone_featured'] ) && $_POST['nprone_featured'] == 1 ) ? 1 : 0;
+	update_post_meta( $post_ID, '_nprone_featured', $value );
+}
+add_action( 'save_post', 'nprstory_save_nprone_featured');
 
 /**
  * Add an admin notice to the post editor with the post's error message if it exists
