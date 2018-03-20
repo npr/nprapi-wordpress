@@ -32,10 +32,12 @@ function nprstory_publish_meta_box( $post ) {
 		<ul>
 		<?php
 			// send to the npr api
+			$nprapi = get_post_meta( $post->ID, '_send_to_nprone', true ); // 0 or 1
+			if ( '0' !== $nprapi && '1' !== $nprapi ) { $nprapi = 1; } // defaults to checked; unset on new posts
 			printf(
 				'<li><label><input value="1" type="checkbox" name="send_to_api" id="send_to_api" %2$s/> %1$s</label></li>',
 				__( 'Send to NPR API', 'nprapi' ),
-				checked( get_post_meta( $post->ID, '_send_to_nprone', true ), '1', false )
+				checked( $nprapi, '1', false )
 				// @see nprstory_save_send_to_api for a historical note on this metadata name
 			);
 
