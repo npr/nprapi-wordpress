@@ -71,17 +71,42 @@ function nprstory_publish_meta_box( $post ) {
 
 		?>
 		</ul>
-		<hr>
-		<p class="helper-text"><?php echo wp_kses_post( $helper_text ); ?></p>
-		<?php
-			submit_button(
-				__( 'Push to NPR', 'nprapi' ),
-				'large',
-				'ds_npr_update_push',
-				false,
-				$attrs
-			);
-		?>
+	</div>
+	<!--
+		this section is only enabled if "include for listening in NPR One" is checked!
+	-->
+	<div id="nprone-expiry">
+		<div id="nprone-expiry-display">
+			<span >Expires on:</span>
+			<time style="font-weight: bold;">Nov 30, 2017 @ 20:45</time>
+			<button id="nprone-expiry-edit" class="link-effect"><?php esc_html_e( 'Edit', 'nprapi' ); ?></button>
+		</div>
+		<div id="nprone-expiry-form" class="hidden">
+			<select id="nprone-expiry-month" name="nprone-expiry-month">
+				<option value="1">1-Jan</option>
+				<option value="2">2-Feb</option>
+				<option value="3">3-Mar</option>
+				<option value="4">4-Apr</option>
+				<option value="5">5-May</option>
+				<option value="6">6-Jun</option>
+				<option value="7">7-Jul</option>
+				<option value="8">8-Aug</option>
+				<option value="9">9-Sept</option>
+				<option value="10">10-Oct</option>
+				<option value="11">11-Nov</option>
+				<option value="12">12-Dec</option>
+			</select>
+			<input id="nprone-expiry-day" name="nprone-expiry-day" type="number" min="1" max="32" />
+			,
+			<input id="nprone-expiry-year" name="nprone-expiry-year" type="number" min="1970" />
+			@
+			<input id="nprone-expiry-hour" name="nprone-expiry-hour" type="number" min="0" max="25" />
+			:
+			<input id="nprone-expiry-minute" name="nprone-expiry-minute" type="number" min="0" max="60" />
+
+			<button id="nprone-expiry-ok" class="button"><?php esc_html_e( 'OK', 'nprapi' ); ?></button>
+			<button id="nprone-expiry-cancel" class="link-effect"><?php esc_html_e( 'cancel', 'nprapi' ); ?></button>
+		</div>
 	</div>
 <?php
 }
