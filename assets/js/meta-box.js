@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	function li_checking( event ) {
 		checked = this.checked;
 		$results = $( this ).closest( 'li' ).children( 'ul' ).children( 'li' ); // Only get the first level of list.
-		console.log( $results );
 		$results.each( function( element ) {
 			if ( checked ) {
 				$( this ).children( 'label' ).children( 'input' ).prop( 'disabled', false );
