@@ -556,6 +556,8 @@ add_action( 'save_post', 'nprstory_save_send_to_api');
 /**
  * Save the "send to NPR.org" metadata
  *
+ * If the send_to_api value is falsy, then this should not be saved as truthy
+ *
  * @param Int $post_ID The post ID of the post we're saving
  * @since 1.7
  */
@@ -568,13 +570,20 @@ function nprstory_save_send_to_org( $post_ID ) {
 	global $post;
 
 	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
-	$value = ( isset( $_POST['send_to_org'] ) && $_POST['send_to_org'] == 1 ) ? 1 : 0;
+	$value = (
+		isset( $_POST['send_to_org'] )
+		&& $_POST['send_to_org'] == 1
+		&& isset( $_POST['send_to_api'] )
+		&& $_POST['send_to_api'] == 1
+	) ? 1 : 0;
 	update_post_meta( $post_ID, '_send_to_org', $value );
 }
 add_action( 'save_post', 'nprstory_save_send_to_org');
 
 /**
  * Save the "Send to NPR One" metadata
+ *
+ * If the send_to_api value is falsy, then this should not be saved as truthy
  *
  * @param Int $post_ID The post ID of the post we're saving
  * @since 1.7
@@ -588,13 +597,21 @@ function nprstory_save_send_to_one( $post_ID ) {
 	global $post;
 
 	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
-	$value = ( isset( $_POST['send_to_one'] ) && $_POST['send_to_one'] == 1 ) ? 1 : 0;
+	$value = (
+		isset( $_POST['send_to_one'] )
+		&& $_POST['send_to_one'] == 1
+		&& isset( $_POST['send_to_api'] )
+		&& $_POST['send_to_api'] == 1
+	) ? 1 : 0;
 	update_post_meta( $post_ID, '_send_to_one', $value );
 }
 add_action( 'save_post', 'nprstory_save_send_to_one');
 
 /**
  * Save the "NPR One Featured" metadata
+ *
+ * If the send_to_one value is falsy, then this should not be saved as truthy
+ * And thus, if the send_to_api value is falsy, then this should not be saved as truthy
  *
  * @param Int $post_ID The post ID of the post we're saving
  * @since 1.7
@@ -608,7 +625,14 @@ function nprstory_save_nprone_featured( $post_ID ) {
 	global $post;
 
 	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
-	$value = ( isset( $_POST['nprone_featured'] ) && $_POST['nprone_featured'] == 1 ) ? 1 : 0;
+	$value = (
+		isset( $_POST['nprone_featured'] )
+		&& $_POST['nprone_featured'] == 1
+		&& isset( $_POST['send_to_api'] )
+		&& $_POST['send_to_api'] == 1
+		&& isset( $_POST['send_to_one'] )
+		&& $_POST['send_to_one'] == 1
+	) ? 1 : 0;
 	update_post_meta( $post_ID, '_nprone_featured', $value );
 }
 add_action( 'save_post', 'nprstory_save_nprone_featured');
