@@ -26,6 +26,7 @@ function nprstory_publish_meta_box( $post ) {
 	}
 
 	wp_enqueue_style( 'nprstory_publish_meta_box_stylesheet' );
+	wp_enqueue_script( 'nprstory_publish_meta_box_script' );
 
 	?>
 	<div id="ds-npr-publish-actions">
@@ -34,12 +35,17 @@ function nprstory_publish_meta_box( $post ) {
 			// send to the npr api
 			$nprapi = get_post_meta( $post->ID, '_send_to_nprone', true ); // 0 or 1
 			if ( '0' !== $nprapi && '1' !== $nprapi ) { $nprapi = 1; } // defaults to checked; unset on new posts
+
+			// this list item contains all other list items, because their enabled/disabled depends on this checkbox
+			echo '<li>';
 			printf(
-				'<li><label><input value="1" type="checkbox" name="send_to_api" id="send_to_api" %2$s/> %1$s</label></li>',
+				'<label><input value="1" type="checkbox" name="send_to_api" id="send_to_api" %2$s/> %1$s</label>',
 				__( 'Send to NPR API', 'nprapi' ),
 				checked( $nprapi, '1', false )
 				// @see nprstory_save_send_to_api for a historical note on this metadata name
 			);
+
+			echo '<ul>';
 
 			// send to npr dot org
 			printf(
@@ -61,6 +67,7 @@ function nprstory_publish_meta_box( $post ) {
 					checked( get_post_meta( $post->ID, '_nprone_featured', true ), '1', false )
 				)
 			);
+			echo '</li>'; // end the "Send to NPR API" list item
 
 		?>
 		</ul>
@@ -82,10 +89,17 @@ function nprstory_publish_meta_box( $post ) {
 /**
  * Register stylesheet for the NPR Story API publishing options metabox
  */
-function nprstory_publish_meta_box_styles() {
+function nprstory_publish_meta_box_assets() {
 	wp_register_style(
 		'nprstory_publish_meta_box_stylesheet',
 		NPRSTORY_PLUGIN_URL . 'assets/css/meta-box.css'
 	);
+	wp_register_script(
+		'nprstory_publish_meta_box_script',
+		NPRSTORY_PLUGIN_URL . 'assets/js/meta-box.js',
+		array( 'jquery' ),
+		null,
+		true
+	);
 }
-add_action( 'admin_enqueue_scripts', 'nprstory_publish_meta_box_styles' );
+add_action( 'admin_enqueue_scripts', 'nprstory_publish_meta_box_assets' );
