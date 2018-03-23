@@ -7,3 +7,28 @@
 #ds_npr_document_meta ul ul ul {
   padding-left: 24px;
 }
+#nprone-expiry {
+  border-top: 1px solid #eee;
+  padding-top: 6px;
+}
+#nprone-expiry-form,
+#nprone-expiry-form select,
+#nprone-expiry-form input {
+  font-size: 12px;
+  padding-left: 0;
+  padding-right: 0;
+}
+#nprone-expiry-form .row {
+  clear: both;
+  margin-top: 6px;
+  line-height: 28px;
+}
+button.link-effect {
+  border: none;
+  color: #0073aa;
+  text-decoration: underline;
+}
+#nprone-expiry-month {
+  vertical-align: baseline;
+  margin: 0;
+}

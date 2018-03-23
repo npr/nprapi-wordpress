@@ -34,4 +34,26 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		});
 	}
+
+	// edit the time selector
+	$( '#nprone-expiry-edit' ).on( 'click', function( event ) {
+		event.preventDefault();
+		$( '#nprone-expiry-form' ).toggleClass( 'hidden' );
+		$( this ).toggleClass( 'hidden' );
+	});
+	// close the time selector
+	$( '#nprone-expiry-cancel' ).on( 'click', function( event ) {
+		event.preventDefault();
+		$( '#nprone-expiry-form' ).toggleClass( 'hidden' );
+		$( '#nprone-expiry-edit' ).toggleClass( 'hidden' );
+	});
+	// save the time selector
+	$( '#nprone-expiry-save' ).on( 'click', function( event ) {
+		event.preventDefault();
+		$( '#nprone-expiry-form' ).toggleClass( 'hidden' );
+		$( '#nprone-expiry-edit' ).toggleClass( 'hidden' );
+
+		// but then it needs to update the displayed data in #nprone-expiry-display. How is it to do that?
+		// Is there an underscore template that we can fill with the data?
+	});
 });

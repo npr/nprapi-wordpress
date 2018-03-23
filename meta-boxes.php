@@ -93,19 +93,18 @@ function nprstory_publish_meta_box( $post ) {
 				<option value="8">8-Aug</option>
 				<option value="9">9-Sept</option>
 				<option value="10">10-Oct</option>
-				<option value="11">11-Nov</option>
+				<option selected value="11">11-Nov</option>
 				<option value="12">12-Dec</option>
 			</select>
-			<input id="nprone-expiry-day" name="nprone-expiry-day" type="number" min="1" max="32" />
-			,
-			<input id="nprone-expiry-year" name="nprone-expiry-year" type="number" min="1970" />
+			<input id="nprone-expiry-day" name="nprone-expiry-day" type="number" min="1" max="32" value="30" style="width:2.5em;" />,
+			<input id="nprone-expiry-year" name="nprone-expiry-year" type="number" min="1970" value="2018" style="width:4em;"/>
 			@
-			<input id="nprone-expiry-hour" name="nprone-expiry-hour" type="number" min="0" max="25" />
-			:
-			<input id="nprone-expiry-minute" name="nprone-expiry-minute" type="number" min="0" max="60" />
+			<input id="nprone-expiry-hour" name="nprone-expiry-hour" type="number" min="0" max="25" value="20" style="width:2.5em;"/>:<input id="nprone-expiry-minute" name="nprone-expiry-minute" type="number" min="0" max="60" value="45" style="width:2.5em;"/>
 
-			<button id="nprone-expiry-ok" class="button"><?php esc_html_e( 'OK', 'nprapi' ); ?></button>
-			<button id="nprone-expiry-cancel" class="link-effect"><?php esc_html_e( 'cancel', 'nprapi' ); ?></button>
+			<div class="row">
+				<button id="nprone-expiry-ok" class="button"><?php esc_html_e( 'OK', 'nprapi' ); ?></button>
+				<button id="nprone-expiry-cancel" class="link-effect"><?php esc_html_e( 'cancel', 'nprapi' ); ?></button>
+			</div>
 		</div>
 	</div>
 <?php
