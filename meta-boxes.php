@@ -121,7 +121,7 @@ function nprstory_publish_meta_box_assets() {
 	wp_register_script(
 		'nprstory_publish_meta_box_script',
 		NPRSTORY_PLUGIN_URL . 'assets/js/meta-box.js',
-		array( 'jquery' ),
+		array( 'jquery', 'jquery-ui-datepicker' ),
 		null,
 		true
 	);
