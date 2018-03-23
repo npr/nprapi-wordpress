@@ -43,7 +43,7 @@ Push requires an Organization ID in the NPR API, which is typically given out to
 
 = Where can I find NPR's documentation on the NPR API? =
 
-There is some documentation in the NPR API site: [http://www.npr.org/api/index.php](http://www.npr.org/api/index.php).
+There is some documentation in the NPR API site: [https://www.npr.org/api/index.php](https://www.npr.org/api/index.php).
 
 = Is there an easy way to directly query the NPR API? =
 
