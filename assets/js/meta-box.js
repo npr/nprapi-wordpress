@@ -56,4 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		// but then it needs to update the displayed data in #nprone-expiry-display. How is it to do that?
 		// Is there an underscore template that we can fill with the data?
 	});
+
+
+	// Activate the date picker
+	$( '#nprone-expiry-datepicker' ).datepicker({
+		dateFormat: 'yy-mm-dd'
+	});
 });

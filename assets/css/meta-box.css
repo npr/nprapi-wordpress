@@ -32,3 +32,32 @@ button.link-effect {
   vertical-align: baseline;
   margin: 0;
 }
+
+/*
+ * Minimal Datepicker styles
+ */
+#ui-datepicker-div {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  padding: 6px;
+  box-shadow: 0 3px 5px rgba(0,0,0,.2);
+}
+.ui-datepicker .ui-datepicker-header {
+  border: none;
+}
+.ui-datepicker-calendar .ui-state-default {
+  text-decoration: none;
+  background-color: transparent;
+}
+.ui-datepicker .ui-datepicker-current-day a {
+  border-color: #0073aa #006799 #006799;
+  background: #0085ba;
+  color: #fff;
+  font-weight: bold;
+}
+.ui-datepicker .ui-datepicker-today a {
+  background: #fff;
+  border: 1px solid #c5c5c5;
+  font-weight: bold;
+  color: #000;
+}

@@ -25,6 +25,7 @@ function nprstory_publish_meta_box( $post ) {
 		$attrs['disabled'] = 'disabled';
 	}
 
+	wp_enqueue_style( 'jquery-ui' );
 	wp_enqueue_style( 'nprstory_publish_meta_box_stylesheet' );
 	wp_enqueue_script( 'nprstory_publish_meta_box_script' );
 
@@ -82,22 +83,7 @@ function nprstory_publish_meta_box( $post ) {
 			<button id="nprone-expiry-edit" class="link-effect"><?php esc_html_e( 'Edit', 'nprapi' ); ?></button>
 		</div>
 		<div id="nprone-expiry-form" class="hidden">
-			<select id="nprone-expiry-month" name="nprone-expiry-month">
-				<option value="1">1-Jan</option>
-				<option value="2">2-Feb</option>
-				<option value="3">3-Mar</option>
-				<option value="4">4-Apr</option>
-				<option value="5">5-May</option>
-				<option value="6">6-Jun</option>
-				<option value="7">7-Jul</option>
-				<option value="8">8-Aug</option>
-				<option value="9">9-Sept</option>
-				<option value="10">10-Oct</option>
-				<option selected value="11">11-Nov</option>
-				<option value="12">12-Dec</option>
-			</select>
-			<input id="nprone-expiry-day" name="nprone-expiry-day" type="number" min="1" max="32" value="30" style="width:2.5em;" />,
-			<input id="nprone-expiry-year" name="nprone-expiry-year" type="number" min="1970" value="2018" style="width:4em;"/>
+			<input type="text" id="nprone-expiry-datepicker" size="10" />
 			@
 			<input id="nprone-expiry-hour" name="nprone-expiry-hour" type="number" min="0" max="25" value="20" style="width:2.5em;"/>:<input id="nprone-expiry-minute" name="nprone-expiry-minute" type="number" min="0" max="60" value="45" style="width:2.5em;"/>
 
@@ -117,6 +103,10 @@ function nprstory_publish_meta_box_assets() {
 	wp_register_style(
 		'nprstory_publish_meta_box_stylesheet',
 		NPRSTORY_PLUGIN_URL . 'assets/css/meta-box.css'
+	);
+	wp_register_style(
+		'jquery-ui',
+		NPRSTORY_PLUGIN_URL . 'assets/css/jquery-ui.css'
 	);
 	wp_register_script(
 		'nprstory_publish_meta_box_script',
