@@ -11,6 +11,8 @@
  * @see nprstory_save_send_to_org
  * @see nprstory_save_send_to_one
  * @see nprstory_save_nprone_featured
+ *
+ * @todo When there is better browser support for input type="datetime-local", replace the jQuery UI and weird forms with the html5 solution. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
  */
 function nprstory_publish_meta_box( $post ) {
 	$helper_text = __( 'Push this story to NPR:', 'nprapi' );
@@ -83,9 +85,9 @@ function nprstory_publish_meta_box( $post ) {
 			<button id="nprone-expiry-edit" class="link-effect"><?php esc_html_e( 'Edit', 'nprapi' ); ?></button>
 		</div>
 		<div id="nprone-expiry-form" class="hidden">
-			<input type="text" id="nprone-expiry-datepicker" size="10" />
+			<input type="date" id="nprone-expiry-datepicker" size="10" placeholder="YYYY-MM-DD" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" />
 			@
-			<input id="nprone-expiry-hour" name="nprone-expiry-hour" type="number" min="0" max="25" value="20" style="width:2.5em;"/>:<input id="nprone-expiry-minute" name="nprone-expiry-minute" type="number" min="0" max="60" value="45" style="width:2.5em;"/>
+			<input id="nprone-expiry-hour" name="nprone-expiry-hour" type="time" size="5" placeholder="HH:MM"/>
 
 			<div class="row">
 				<button id="nprone-expiry-ok" class="button"><?php esc_html_e( 'OK', 'nprapi' ); ?></button>

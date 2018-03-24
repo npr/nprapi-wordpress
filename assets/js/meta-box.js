@@ -58,8 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 
-	// Activate the date picker
-	$( '#nprone-expiry-datepicker' ).datepicker({
-		dateFormat: 'yy-mm-dd'
-	});
+	// Activate the date picker, if and only if the browser doesn't have a native datepicker
+	// @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/date#JavaScript
+	var test = document.createElement( 'input' );
+	test.type = 'date';
+	if ( test.type !== 'date' ) {
+		$( '#nprone-expiry-datepicker' ).attr('type', 'text').css('width', '8em').datepicker({
+			dateFormat: 'yy-mm-dd'
+		});
+	}
 });
