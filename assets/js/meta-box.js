@@ -2,10 +2,11 @@
  * NPR Story API meta box functions and features
  */
 document.addEventListener('DOMContentLoaded', () => {
-	$ = jQuery;
+	'use strict';
+	var $ = jQuery;
 
 	// contains the inputs
-	$container = $( '#ds-npr-publish-actions' );
+	var $container = $( '#ds-npr-publish-actions' );
 
 	// initialize the form
 	$container.find( 'input' ).on( 'change', li_checking );
@@ -18,19 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
 	 * If a checkbox in an li gets checked, enable its child li
 	 */
 	function li_checking( event ) {
-		checked = this.checked;
-		$results = $( this ).closest( 'li' ).children( 'ul' ).children( 'li' ); // Only get the first level of list.
+		var checked =  $( this ).prop('checked');
+		var $results = $( this ).closest( 'li' ).children( 'ul' ).children( 'li' ); // Only get the first level of list.
 		$results.each( function( element ) {
+			// Triggering the change event on the child does not work.
 			if ( checked ) {
-				$( this ).children( 'label' ).children( 'input' ).prop( 'disabled', false );
-				// In this case there is no need to trigger the change event on the input,
-				// because the children will be updated when the parent's box is checked.
+				var recurse = $( this ).children( 'label' ).children( 'input' ).prop( 'disabled', false );
+				li_checking.call( recurse );
 			} else {
 				recurse = $( this ).children( 'label' ).children( 'input' ).prop( 'disabled', true ).prop( 'checked', false );
 				li_checking.call( recurse );
-				// Here, though, we need to invalidate the children when their parent changes,
-				// so here we call this function on the appropriate child.
-				// Triggering the change event on the child does not work.
 			}
 		});
 	}
