@@ -1,4 +1,7 @@
 <?php
+/**
+ * Functions related to the user interface for fetching stories from the API
+ */
 
 /**
  * This will turn on the update story column for all posts

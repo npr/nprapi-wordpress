@@ -1,4 +1,7 @@
 <?php
+/**
+ * Functions relating to pushing content to the NPR API
+ */
 
 require_once ( NPRSTORY_PLUGIN_DIR . 'classes/NPRAPIWordpress.php' );
 
