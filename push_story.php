@@ -56,10 +56,10 @@ function nprstory_api_push ( $post_ID, $post ) {
 
 		// Abort pushing to NPR if the post has no content
 		if ( empty( $content ) ) {
-			update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $body_field . ' is required for a post to be pushed to the NPR API.' );
+			update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, esc_html( $body_field ) . ' is required for a post to be pushed to the NPR API.' );
 			return;
 		} else {
-			delete_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $body_field . ' is required for a post to be pushed to the NPR API.' );
+			delete_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, esc_html( $body_field ) . ' is required for a post to be pushed to the NPR API.' );
 		}
 
 		$api = new NPRAPIWordpress();
