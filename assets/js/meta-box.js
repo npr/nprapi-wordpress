@@ -56,20 +56,25 @@ document.addEventListener('DOMContentLoaded', () => {
 		// - the YYYY-MM-DD value of #nprone-expiry-datepicker
 		// - the HH:MM value of #nprone-expiry-hour
 		// and output a string in the format Apr 1, 2020 @ 09:01 / Nov 1, 2018 @ 23:59
-		var pickedyear = new Date($( '#nprone-expiry-datepicker' ).val());
-		var timeinput  = $( '#nprone-expiry-hour' ).val().split(":");
-		var pickedtime = new Date();
-		pickedtime.setHours( timeinput[0] );
-		pickedtime.setMinutes( timeinput[1] );
-		var string = pickedyear.toLocaleString("en-us", { month: "short" })
+		var d = new Date();
+		var dateinput = $( '#nprone-expiry-datepicker' ).val().split('-');
+		var timeinput = $( '#nprone-expiry-hour' ).val().split(':');
+
+		d.setFullYear(dateinput[0]);
+		d.setMonth(dateinput[1] - 1); // because this is zero-indexed?
+		d.setDate(dateinput[2]);
+		d.setHours(timeinput[0]);
+		d.setMinutes(timeinput[1]);
+
+		var string = d.toLocaleString("en-us", { month: "short" })
 		           + " "
-		           + pickedyear.getDate()
+		           + d.getDate()
 		           + ", "
-		           + pickedyear.getFullYear()
+		           + d.getFullYear()
 		           + " @ "
-		           + pickedtime.getHours()
+		           + d.getHours()
 		           + ":"
-		           + pickedtime.getMinutes();
+		           + (d.getMinutes() < 10? '0' : '') + d.getMinutes();
 
 		$( '#nprone-expiry-display time' ).text( string );
 	});
