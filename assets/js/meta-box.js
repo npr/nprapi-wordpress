@@ -46,13 +46,18 @@ document.addEventListener('DOMContentLoaded', () => {
 		$( '#nprone-expiry-edit' ).toggleClass( 'hidden' );
 	});
 	// save the time selector
-	$( '#nprone-expiry-save' ).on( 'click', function( event ) {
+	$( '#nprone-expiry-ok' ).on( 'click', function( event ) {
 		event.preventDefault();
 		$( '#nprone-expiry-form' ).toggleClass( 'hidden' );
 		$( '#nprone-expiry-edit' ).toggleClass( 'hidden' );
 
 		// but then it needs to update the displayed data in #nprone-expiry-display. How is it to do that?
-		// Is there an underscore template that we can fill with the data?
+		// This needs to take:
+		// - the YYYY-MM-DD value of #nprone-expiry-datepicker
+		// - the HH:MM value of #nprone-expiry-time
+		// and output a string in the format Apr 1, 2020 @ 09:01 / Nov 1, 2018 @ 23:59
+		var string = '';
+		$( '#nprone-expiry-display time' ).text( string );
 	});
 
 
