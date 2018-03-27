@@ -641,6 +641,67 @@ function nprstory_save_nprone_featured( $post_ID ) {
 add_action( 'save_post', 'nprstory_save_nprone_featured');
 
 /**
+ * Save the NPR One expiry datetime
+ *
+ * The meta name here is '_nprone_expiry_8601', and is saved in the ISO 8601 format for ease of conversion, not including the datetime.
+ *
+ * @param Int $post_ID The post ID of the post we're saving
+ * @since 1.7
+ * @see nprstory_publish_meta_box
+ * @link https://en.wikipedia.org/wiki/ISO_8601
+ */
+function nprstory_save_datetime( $post_ID ) {
+	// safety checks
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
+	if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
+	if ( empty( $post_ID ) ) return false;
+
+	global $post;
+
+	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
+
+	$date = ( isset( $_POST['nprone-expiry-datepicker'] ) ) ? sanitize_text_field( $_POST['nprone-expiry-datepicker'] ): '';
+	$time = ( isset( $_POST['nprone-expiry-time'] ) ) ? sanitize_text_field( $_POST['nprone-expiry-time'] ): '00:00';
+
+	// If the post is not published and values are not set, save an empty post meta
+	if ( isset( $date ) && 'publish' === $post->status ) {
+		$timezone = get_option( 'gmt_offset' );
+		$datetime = date_create( $date, new DateTimeZone( $timezone ) );
+		$time = explode( ':', $time );
+		$datetime->setTime( $time[0], $time[1] );
+		$value = date_format( $datetime , DATE_ATOM );
+		update_post_meta( $post_ID, '_nprone_expiry_8601', $value );
+	} else {
+		delete_post_meta( $post_ID, '_nprone_expiry_8601' );
+	}
+}
+add_action( 'save_post', 'nprstory_save_datetime');
+
+/**
+ * Helper function to get the post expiry datetime
+ *
+ * The datetime is stored in post meta _nprone_expiry_8601
+ *
+ * @param WP_Post|int $post the post ID or WP_Post object
+ * @return DateTime the DateTime object created from the post expiry date
+ * @see note on DATE_ATOM and DATE_ISO8601 https://secure.php.net/manual/en/class.datetime.php#datetime.constants.types
+ */
+function nprstory_get_post_expiry_datetime( $post ) {
+	$post = ( $post instanceof WP_Post ) ? $post->ID : $post ;
+	$iso_8601 = get_post_meta( $post, '_nprone_expiry_8601', true );
+	$timezone = get_option( 'gmt_offset' );
+
+	if( empty( $iso_8601 ) ) {
+		// return DateTime for the publish date plus seven days
+		$future = get_the_date( DATE_ATOM, $post ); // publish date
+		return date_add( date_create( $future, new DateTimeZone( $timezone ) ), new DateInterval( 'P7D' ) );
+	} else {
+		// return DateTime for the expiry date
+		return date_create( $iso_8601, new DateTimeZone( $timezone ) );
+	}
+}
+
+/**
  * Add an admin notice to the post editor with the post's error message if it exists
  */
 function nprstory_post_admin_message_error() {

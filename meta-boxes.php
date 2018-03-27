@@ -75,19 +75,36 @@ function nprstory_publish_meta_box( $post ) {
 		?>
 		</ul>
 	</div>
-	<!--
-		this section is only enabled if "include for listening in NPR One" is checked!
-	-->
+	<?php
+	/*
+	 * this section is only enabled if "include for listening in NPR One" is checked!
+	 * This section does not use https://developer.wordpress.org/reference/functions/touch_time/ because there does not seem to be a way to pass it a custom element
+	 */
+	
+	$datetime = nprstory_get_post_expiry_datetime( $post );
+	?>
 	<div id="nprone-expiry">
 		<div id="nprone-expiry-display">
 			<span >Expires on:</span>
-			<time style="font-weight: bold;">Nov 30, 2017 @ 20:45</time>
+			<?php
+				printf(
+					'<time style="font-weight: bold;">%1$s</time>',
+					date_format( $datetime, 'M j, Y @ H:i' ) // Nov 30, 2017 @ 20:45
+				);
+			?>
 			<button id="nprone-expiry-edit" class="link-effect"><?php esc_html_e( 'Edit', 'nprapi' ); ?></button>
 		</div>
 		<div id="nprone-expiry-form" class="hidden">
-			<input type="date" id="nprone-expiry-datepicker" size="10" placeholder="YYYY-MM-DD" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" />
-			@
-			<input id="nprone-expiry-hour" name="nprone-expiry-hour" type="time" size="5" placeholder="HH:MM"/>
+			<?php
+				printf(
+					'<input type="date" id="nprone-expiry-datepicker" size="10" placeholder="YYYY-MM-DD" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" value="%1$s"/>',
+					date_format( $datetime, 'Y-m-d' ) // 2017-01-01
+				);
+				printf(
+					'<input type="time" id="nprone-expiry-hour" size="5" placeholder="HH:MM" pattern="[0-9]{2}:[0-9]{2}" value="%1$s"/>',
+					date_format( $datetime, 'H:i' ) // 2017-01-01
+				);
+			?>
 
 			<div class="row">
 				<button id="nprone-expiry-ok" class="button"><?php esc_html_e( 'OK', 'nprapi' ); ?></button>
