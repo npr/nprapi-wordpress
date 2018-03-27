@@ -31,25 +31,28 @@ function nprstory_api_push ( $post_ID, $post ) {
 	$push_url = get_option( 'ds_npr_api_push_url' );
 
 	if ( ! empty ( $push_url ) ) {
-		// For now, only submit regular posts, and only on publish.
+		// For now, only submit the sort of post that is the push post type, and then only if published
 		if ( $post->post_type != $push_post_type || $post->post_status != 'publish' ) {
 			return;
 		}
 
-		//we may be able to have a custom body, so we need to check for that.
+		/*
+		 * If there's a custom mapping for the post content,
+		 * use that content instead of the post's post_content
+		 */
 		$content = $post->post_content;
 		$use_custom = get_option( 'dp_npr_push_use_custom_map' );
 		$body_field = 'Body';
-        if ($use_custom) {
-	       //get the list of metas available for this post
-	       $post_metas = get_post_custom_keys( $post->ID );
+		if ( $use_custom ) {
+			// Get the list of post meta keys available for this post.
+			$post_metas = get_post_custom_keys( $post->ID );
 
-	       $custom_content_meta = get_option( 'ds_npr_api_mapping_body' );
-	       $body_field = $custom_content_meta;
-	           if ( ! empty( $custom_content_meta ) && $custom_content_meta != '#NONE#' && in_array( $custom_content_meta, $post_metas ) ) {
-	           $content = get_post_meta( $post->ID, $custom_content_meta, true );
-	       }
-        }
+			$custom_content_meta = get_option( 'ds_npr_api_mapping_body' );
+			$body_field = $custom_content_meta;
+				if ( ! empty( $custom_content_meta ) && $custom_content_meta !== '#NONE#' && in_array( $custom_content_meta, $post_metas, true ) ) {
+				$content = get_post_meta( $post->ID, $custom_content_meta, true );
+			}
+		}
 
 		// Abort pushing to NPR if the post has no content
 		if ( empty( $content ) ) {
