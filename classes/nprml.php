@@ -164,14 +164,47 @@ function nprstory_post_to_nprml_story( $post ) {
 	}
 
 	/*
-	 * NPR One
+	 * Send to NPR One
+	 *
 	 * If the box is checked, the value here is '1'
+	 * @see nprstory_save_send_to_one
 	 */
-	if ( ! empty( $_POST['send_to_nprone'] ) ) {
+	$nprapi = get_post_meta( $post->ID, '_send_to_one', true ); // 0 or 1
+	if ( ! empty( $nprapi ) && ( '1' === $nprapi || 1 === $nprapi ) ) {
 		$story[] = array(
 			'tag' => 'parent',
 			'attr' => array( 'id' => '319418027', 'type' => 'collection' ),
 		);
+	}
+
+	/*
+	 * This story should be featured in NPR One
+	 *
+	 * @see nprstory_save_nprone_featured
+	 */
+	$nprapi = get_post_meta( $post->ID, '_nprone_featured', true ); // 0 or 1
+	if ( ! empty( $nprapi ) && ( '1' === $nprapi || 1 === $nprapi ) ) {
+		$story[] = array(
+			'tag' => 'parent',
+			'attr' => array( 'id' => '500549367', 'type' => 'collection' ),
+		);
+	}
+
+	/*
+	 * Send to NPR dot org
+	 *
+	 * If the box is checked, the value here is '1'
+	 * @see nprstory_save_send_to_org
+	 * @todo: what's the parent ID?
+	 */
+	$nprapi = get_post_meta( $post->ID, '_send_to_org', true ); // 0 or 1
+	if ( ! empty( $nprapi ) && ( '1' === $nprapi || 1 === $nprapi ) ) {
+		/*
+		$story[] = array(
+			'tag' => 'parent',
+			'attr' => array( 'id' => '', 'type' => 'collection' ),
+		);
+		*/
 	}
 
 	/*
