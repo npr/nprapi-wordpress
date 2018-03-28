@@ -46,7 +46,7 @@ function nprstory_post_to_nprml_story( $post ) {
 		$use_custom
 		&& ! empty( $custom_content_meta )
 		&& $custom_content_meta != '#NONE#'
-		&& in_array( $custom_content_meta,$post_metas )
+		&& in_array( $custom_content_meta, $post_metas )
 	){
 		$content = get_post_meta( $post->ID, $custom_content_meta, true);
 		$post_for_teaser = $post;
