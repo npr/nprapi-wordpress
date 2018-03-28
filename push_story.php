@@ -684,17 +684,19 @@ add_action( 'save_post', 'nprstory_save_datetime');
  * Helper function to get the post expiry datetime
  *
  * The datetime is stored in post meta _nprone_expiry_8601
+ * This assumes that the post has been published
  *
  * @param WP_Post|int $post the post ID or WP_Post object
  * @return DateTime the DateTime object created from the post expiry date
  * @see note on DATE_ATOM and DATE_ISO8601 https://secure.php.net/manual/en/class.datetime.php#datetime.constants.types
+ * @todo rewrite this to use fewer queries, so it's using the WP_Post internally instead of the post ID
  */
 function nprstory_get_post_expiry_datetime( $post ) {
 	$post = ( $post instanceof WP_Post ) ? $post->ID : $post ;
 	$iso_8601 = get_post_meta( $post, '_nprone_expiry_8601', true );
 	$timezone = get_option( 'gmt_offset' );
 
-	if( empty( $iso_8601 ) ) {
+	if ( empty( $iso_8601 ) ) {
 		// return DateTime for the publish date plus seven days
 		$future = get_the_date( DATE_ATOM, $post ); // publish date
 		return date_add( date_create( $future, new DateTimeZone( $timezone ) ), new DateInterval( 'P7D' ) );

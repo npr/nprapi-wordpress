@@ -233,6 +233,15 @@ function nprstory_post_to_nprml_story( $post ) {
 		'tag' => 'partnerId',
 		'text' => $post->guid,
 	);
+	// NPR One audio run-by date
+	$datetime = nprstory_get_post_expiry_datetime( $post ); // if expiry date is not set, returns publication date plus 7 days
+	if ( $datetime instanceof DateTime ) {
+		$story[] = array(
+			'tag' => 'audioRunByDate',
+			'text' => date_format( $datetime, 'j M Y H:i:00 O' ) // 1 Oct 2017 01:00:00 -0400, 29 Feb 2020 23:59:00 -0500
+		);
+	}
+
 
 	/*
 	 * @TODO:  When the API accepts sending both text and textWithHTML, send a totally bare text.
