@@ -1,7 +1,7 @@
 {
   "name"       : "nprds/nprapi-wordpress",
   "description": "Access the NPR API from within Wordpress",
-  "homepage"   : "http://digitalservices.npr.org/",
+  "homepage"   : "https://digitalservices.npr.org/",
   "type"       : "wordpress-plugin",
   "license"    : "GPL-2.0+"
 }

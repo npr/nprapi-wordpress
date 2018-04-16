@@ -233,6 +233,7 @@ function nprstory_post_to_nprml_story( $post ) {
 		'tag' => 'partnerId',
 		'text' => $post->guid,
 	);
+
 	// NPR One audio run-by date
 	$datetime = nprstory_get_post_expiry_datetime( $post ); // if expiry date is not set, returns publication date plus 7 days
 	if ( $datetime instanceof DateTime ) {
@@ -246,6 +247,7 @@ function nprstory_post_to_nprml_story( $post ) {
 	/*
 	 * @TODO:  When the API accepts sending both text and textWithHTML, send a totally bare text.
 	 * Don't do do_shortcode().
+	 *
 	 * For now (using the npr story api) we can either send text or textWithHTML, not both.
 	 * It would be nice to send text after we strip all html and shortcodes, but we need the html
 	 * and sending both will duplicate the data in the API
@@ -315,7 +317,7 @@ function nprstory_post_to_nprml_story( $post ) {
 		// Is the image in the content?  If so, tell the API with a flag that CorePublisher knows.
 		// WordPress may add something like "-150X150" to the end of the filename, before the extension.
 		// Isn't that nice? Let's remove that.
-		$image_name_parts = split( ".", $image_guid );
+		$image_name_parts = explode( ".", $image_guid );
 		$image_regex = "/" . $image_name_parts[0] . "\-[a-zA-Z0-9]*" . $image_name_parts[1] . "/"; 
 		$in_body = "";
 		if ( preg_match( $image_regex, $content ) ) {
@@ -517,7 +519,6 @@ function nprstory_nprml_item_to_xml( $item, $xml ) {
     return $elem;
 }
 
-
 /**
  * Retrieves the excerpt of any post.
  *
@@ -553,3 +554,4 @@ function nprstory_nai_get_excerpt( $post, $word_count = 30 ) {
     }
     return $text;
 }
+
