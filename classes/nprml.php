@@ -226,7 +226,7 @@ function nprstory_post_to_nprml_story( $post ) {
 			
         //is the image in the content?  If so, tell the APi with a flag that CorePublisher knows
         //WP may add something like "-150X150" to the end of the filename, before the extension.  Isn't that nice?
-        $image_name_parts = split( ".", $image_guid );
+        $image_name_parts = explode( ".", $image_guid );
         $image_regex = "/" . $image_name_parts[0] . "\-[a-zA-Z0-9]*" . $image_name_parts[1] . "/"; 
         $in_body = "";
         if ( preg_match( $image_regex, $content ) ) {
