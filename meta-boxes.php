@@ -15,13 +15,8 @@
  * @todo When there is better browser support for input type="datetime-local", replace the jQuery UI and weird forms with the html5 solution. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
  */
 function nprstory_publish_meta_box( $post ) {
-	$helper_text = __( 'Push this story to NPR:', 'nprapi' );
 	$is_disabled = ( 'publish' !== $post->post_status );
 	$attrs = array( 'id' => 'ds-npr-update-push' );
-
-	if ( $is_disabled ) {
-		$helper_text = __( 'Publish this story in order to push it to NPR.', 'nprapi' );
-	}
 
 	if (  $is_disabled ) {
 		$attrs['disabled'] = 'disabled';
