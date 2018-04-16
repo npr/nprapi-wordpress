@@ -1,12 +1,12 @@
 === NPR Story API ===
 Contributors: nprds, inn_nerds
-Donate link: http://www.npr.org/series/750002/support-public-radio
+Donate link: https://www.npr.org/series/750002/support-public-radio
 Tags: npr, news, public radio, api
 Requires at least: 3.8.14
 Tested up to: 4.5.2
 Stable tag: 1.6
 License: GPLv2
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A collection of tools for reusing content from NPR.org supplied by Digital Services.
 
@@ -16,9 +16,9 @@ The NPR Story API Plugin provides push and pull functionality with the NPR API a
 
 NPR's API is a content API, which essentially provides a structured way for other computer applications to get NPR stories in a predictable, flexible and powerful way. The content that is available includes audio from most NPR programs dating back to 1995 as well as text, images and other web-only content from NPR and NPR member stations. This archive consists of over 250,000 stories that are grouped into more than 5,000 different aggregations.
 
-Access to the NPR API requires an API Key which you can get by [registering for an NPR account](http://www.npr.org/account/signup).
+Access to the NPR API requires an API Key which you can get by [registering for an NPR account](https://secure.npr.org/oauth2/login).
 
-The WordPress plugin is being developed as an Open Source plugin by NPR Digital Services. If you would like to suggest features or bug fixes, or better yet if you would like to contribute new features or bug fixes please contact Digital Services through our support page at [http://info.ds.npr.org/support.html](http://info.ds.npr.org/support.html).
+The WordPress plugin is being developed as an Open Source plugin by NPR Digital Services. If you would like to suggest features or bug fixes, or better yet if you would like to contribute new features or bug fixes please contact Digital Services through our support page at [https://info.ds.npr.org/support.html](https://info.ds.npr.org/support.html).
 
 == Installation ==
 
@@ -31,7 +31,7 @@ The WordPress plugin is being developed as an Open Source plugin by NPR Digital 
 
 = Can anyone get an NPR API Key? =
 
-That's up to NPR but you can [register for an account here](http://www.npr.org/account/signup).
+That's up to NPR but you can [register for an account here](https://secure.npr.org/oauth2/login).
 
 = Can anyone push content into the NPR API using this plugin? =
 
@@ -41,11 +41,11 @@ Push requires an Organization ID in the NPR API, which is typically given out to
 
 The best resource for general information about the NPR API is here: [https://nprsupport.desk.com/customer/en/portal/topics/783619-api/articles](https://nprsupport.desk.com/customer/en/portal/topics/783619-api/articles).
 
-There's also the documentation in the NPR API site: [http://www.npr.org/api/index.php](http://www.npr.org/api/index.php).
+There's also the documentation in the NPR API site: [https://www.npr.org/api/index.php](https://www.npr.org/api/index.php).
 
 = Is there an easy way to directly query the NPR API? =
 
-You bet, just visit the NPR Query Generator: [http://www.npr.org/api/queryGenerator.php](http://www.npr.org/api/queryGenerator.php)
+You bet, just visit the NPR Query Generator: [https://www.npr.org/api/queryGenerator.php](https://www.npr.org/api/queryGenerator.php)
 
 == Screenshots ==
 
@@ -102,7 +102,7 @@ NPR Stories having got gotten
 * Multiple Bylines for pulled stories -  When an API story has multiple bylines, we will now populate a meta field `npr_multi_byline` with a pipe (|) deliminated list of names.  If the author also has a link for thier byline then there'll be a tilde (~) separating the author's name and the link.
   - An example of data for multiple bylines:
 
-		Ari Shapiro~http://www-s2.npr.org/people/2101154/ari-shapiro|kmoylan@npr.org|Tommy Writer
+		Ari Shapiro~https://www.npr.org/people/2101154/ari-shapiro|kmoylan@npr.org|Tommy Writer
 
   - Here there are three authors for this story, Ari Shapiro (and his bio link), then "kmoylan@npr.org" and a third author "Tommy Writer". Single author stories will not be changed. (This fix came from Ryan Tainter at KERA. Thanks, Ryan!)
 
@@ -112,7 +112,7 @@ NPR Stories having got gotten
 
 * Reversed the order of images and audio that are being pushed to the NPR API.  We're now sending them in the order the file was created.
 * Mapping of media credit and agency - If you have a field that you are storing image credit and agency, you can now send these to the NPR API. In making this change we needed to expose meta fields that begin with an underscore.  So you may see more meta fields visable on the mapping page.
-* Multiple bylines are now being pushed to the NPR API if you use the plugin co-author-plus (<http://wordpress.org/plugins/co-authors-plus/>) We insert a byline row for each of the co-authors of a post when we push. You can still use a custom byline field if you want to use that along with the co-authors plugin.
+* Multiple bylines are now being pushed to the NPR API if you use the plugin co-author-plus (<https://wordpress.org/plugins/co-authors-plus/>) We insert a byline row for each of the co-authors of a post when we push. You can still use a custom byline field if you want to use that along with the co-authors plugin.
 * Retrieved story dates -  Now when you retrieve a story from the NPR API the published date for WordPress will be the date from the <storyDate> field in the NPR API. This will better allow stories to fall into their natural order when publishing from the Get Multi page. It's always possible to edit the date by hand when pulling single stories from the NPR API. Do remember though that you are contractually obligated to show the original date when rendering a story from the NPR API.
 * Retrieved story order -  When you retrieve stories from the API, if you do not include a `sort` parameter in your query, we will insure that the order of the stories is in reverse cron for any stories that have the same storyDate in the API. Often some aggregate groups in the API will publish stories with the same storyDate. Shows like Morning Edition do this often, and prior to this fix stories would appear to be published in reverse order from what the API shows.  Now if you do not include `sort` in your query, the stories with the same time will be published in the same order as the API shows them.
 * Configurable Cron interval -  When you use the Get Multi page, which fires off of wp-cron, you can now set the interval for the wp-cron to fire. This is on the Get Multi configuration page, and allows you to enter a number of minutes you want as your wp-cron interval. If you enter any thing that is not a number, or a number less than 1, we will resolve that to 60 minutes...because, well, that's a resonable interval, and the wp-cron doesn't understand 'every now and then' as an interval.
@@ -135,7 +135,7 @@ NPR Stories having got gotten
 
 = V1.3 =
 
-* Permissions - If you have created any NPR API Permissions Groups you can select which (if any) group you would like to use as your default group when pushing content to the NPR API.  Learn more about NPR API Permissions Groups here: <http://digitalservices.npr.org/post/npr-api-content-permissions-control>
+* Permissions - If you have created any NPR API Permissions Groups you can select which (if any) group you would like to use as your default group when pushing content to the NPR API.  Learn more about NPR API Permissions Groups here: <https://digitalservices.npr.org/post/npr-api-content-permissions-control>
 * Multi-Site - Cron set up and other activation tasks will now happen on every site in a multi-site configuration.
 * Cron queries - We won't try to query for any of the configured queries on the Get Multi page if the field isn't filled in with data.
 * Content and short codes - Instead of blindly removing all shortcodes from a story's content, we are now trying to let any plugins replace the shortcodes with HTML, and then if there are any leftover shortcodes (we delete those?).
@@ -152,10 +152,10 @@ This version will allow admins to configure their WordPress site to retrieve mul
 
 * From the Admin -> Settings -> NPR API Get Multi page (wp-admin/options-general.php?page=ds_npr_api_get_multi_settings) an admin can add a number of queries.
 * These query entries can contain an API ID for a single story, or an ID for a specific category, program, topic, etc.
-* The query can also contain the full query string can be created from the NPR API Query Generator: <http://www.npr.org/api/queryGenerator.php>
+* The query can also contain the full query string can be created from the NPR API Query Generator: <https://www.npr.org/api/queryGenerator.php>
 * You can also enter the URL for a story you found on npr.org.
 * The entered queries will be executed via the Wordpress cron functionality, hourly.
-* Any new stories that are available will be automatically published.  You can find a list of query filters at the npr.org's API documentation page: <http://www.npr.org/api/inputReference.php>
+* Any new stories that are available will be automatically published.  You can find a list of query filters at the npr.org's API documentation page: <https://www.npr.org/api/inputReference.php>
 * Stories retrieved from the NPR API will be created as Posts in WordPress.  Each post will have a number of meta fields associated with the post.  These meta fields will all begin with `npr_` and can be viewed on a post edit screen with Custom Fields option enabled through Screen Options. A story from the API that has a primary image defined will have that image set as the featured image of the Wordpress post.  Any bylines for the NPR Story will be stored in the meta field `npr_byline`. The list of npr_ meta fields is:
 
 		npr_api_link
@@ -176,11 +176,11 @@ This version will allow admins to configure their WordPress site to retrieve mul
 As not a lot of users have installed the V1.0 of the NPR API Plugin, there are a couple of things to keep in mind.
 
 * On the NPR API settings page (wp-admin/options-general.php?page=ds_npr_api) there are 4 fields.
-  - API KEY - This is your NPR API Key that you can get from NPR.  If you wish to push stories to the NPR API you'll need to have your key configured by NPR Digital Services.  Please contact Digital Services with a support request at <http://info.ds.npr.org//support.html>
-  - Pull URL - This is the root url for retrieving stories.  For testing purposes, you should configure this to be `http://api-s1.npr.org`. NOTE: this url should not contain a trailing slash.
-  - Push URL - Much like the pull url, this url is used to pushing stories to the NPR API. Again, for testing purposes, you can utilize NPR's staging server  at `http://api-s1.npr.org`. If you do not wish to push your content, or your NPR API has not been authorized, you should leave this field empty and the WordPress plugin will not attempt to push you content to the NPR API.
-  - Org ID - This is your organization's ID assigned by NPR.  If you don't know your Org ID, please contact Digital Services at: <http://info.ds.npr.org/support.html>
-* You can pull stories one at a time from the NPR API by using the Get NPR Stories page under admin Posts menu (wp-admin/edit.php?page=get-npr-stories). This can be story ID from the API, or the URL for the story from npr.org. For help in finding possible query options, please use the Query Generator at <http://www.npr.org/api/queryGenerator.php> Documentation is at: <http://www.npr.org/api/inputReference.php>
+  - API KEY - This is your NPR API Key that you can get from NPR.  If you wish to push stories to the NPR API you'll need to have your key configured by NPR Digital Services.  Please contact Digital Services with a support request at <https://info.ds.npr.org//support.html>
+  - Pull URL - This is the root url for retrieving stories.  For testing purposes, you should configure this to be `https://api-s1.npr.org`. NOTE: this url should not contain a trailing slash.
+  - Push URL - Much like the pull url, this url is used to pushing stories to the NPR API. Again, for testing purposes, you can utilize NPR's staging server  at `https://api-s1.npr.org`. If you do not wish to push your content, or your NPR API has not been authorized, you should leave this field empty and the WordPress plugin will not attempt to push you content to the NPR API.
+  - Org ID - This is your organization's ID assigned by NPR.  If you don't know your Org ID, please contact Digital Services at: <https://info.ds.npr.org/support.html>
+* You can pull stories one at a time from the NPR API by using the Get NPR Stories page under admin Posts menu (wp-admin/edit.php?page=get-npr-stories). This can be story ID from the API, or the URL for the story from npr.org. For help in finding possible query options, please use the Query Generator at <https://www.npr.org/api/queryGenerator.php> Documentation is at: <https://www.npr.org/api/inputReference.php>
 
 == Upgrade Notice ==
 

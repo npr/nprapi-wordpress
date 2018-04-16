@@ -32,17 +32,24 @@ class DS_NPR_API {
 			$q = 'ds_npr_query_' . $i;
 			$query_string = get_option( $q );
 			if ( ! empty( $query_string ) ) {
-				nprstory_error_log('Cron '. $i . ' querying NPR API for ' . $query_string);
+				nprstory_error_log( 'Cron '. $i . ' querying NPR API for ' . $query_string );
 				//if the query string contains the pull url and 'query', just make request from the API
 				if ( stristr( $query_string, get_option( 'ds_npr_api_pull_url' ) ) && stristr( $query_string,'query' ) ) {
 					$api->query_by_url( $query_string );
 				} else {
-				    //if the string doesn't contain the base url, try to query using an ID
-					if ( stristr( $query_string, 'http:' ) ) {
-						error_log('Not going to run query because the query string contains http and is not pointing to the pullURL: ' . $query_string ); // debug use
+					/*
+					 * If the string doesn't contain the base URL, try to query using an ID
+					 * but only if the query string is not a URL in its own right.
+					 */
+					if ( stristr( $query_string, 'http:' ) || stristr( $query_string, 'https:' ) ) {
+						error_log( sprintf(
+							'Not going to run query because the query string %1$s contains http: or https: and is not pointing to the pullURL %2$s',
+							var_export( $query_string, true ),
+							var_export( get_option( 'ds_npr_api_pull_url' ), true )
+						) ); // debug use
 					} else {
 						$params = array ('id' => $query_string, 'apiKey' => get_option( 'ds_npr_api_key' ));
-                        $api->request( $params, 'query', get_option( 'ds_npr_api_pull_url' ) );
+						$api->request( $params, 'query', get_option( 'ds_npr_api_pull_url' ) );
 					}
 				}
 				$api->parse();
@@ -109,10 +116,10 @@ class DS_NPR_API {
             } else {
                 // url format: /yyyy/mm/dd/id
 				// url format: /blogs/name/yyyy/mm/dd/id
-				$story_id = preg_replace( '/http\:\/\/[^\s\/]*npr\.org\/((([^\/]*\/){3,5})([0-9]{8,12}))\/.*/', '$4', $story_id );
+				$story_id = preg_replace( '/https?\:\/\/[^\s\/]*npr\.org\/((([^\/]*\/){3,5})([0-9]{8,12}))\/.*/', '$4', $story_id );
 				if ( ! is_numeric( $story_id ) ) {
 				    // url format: /templates/story/story.php?storyId=id
-				    $story_id = preg_replace( '/http\:\/\/[^\s\/]*npr\.org\/([^&\s\<]*storyId\=([0-9]+)).*/', '$2', $story_id );
+					$story_id = preg_replace( '/https?\:\/\/[^\s\/]*npr\.org\/([^&\s\<]*storyId\=([0-9]+)).*/', '$2', $story_id );
 				}
             }
 		}
