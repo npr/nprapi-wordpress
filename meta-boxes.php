@@ -33,7 +33,7 @@ function nprstory_publish_meta_box( $post ) {
 			// send to the npr api
 			// The meta name here is '_send_to_nprone' for backwards compatibility with plugin versions 1.6 and prior
 			$nprapi = get_post_meta( $post->ID, '_send_to_nprone', true ); // 0 or 1
-			if ( '0' !== $nprapi && '1' !== $nprapi ) { $nprapi = 1; } // defaults to checked; unset on new posts
+			if ( '0' !== $nprapi && '1' !== $nprapi ) { $nprapi = '1'; } // defaults to checked; unset on new posts
 
 			// this list item contains all other list items, because their enabled/disabled depends on this checkbox
 			echo '<li>';
