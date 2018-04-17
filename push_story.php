@@ -560,33 +560,6 @@ function nprstory_save_send_to_api( $post_ID ) {
 add_action( 'save_post', 'nprstory_save_send_to_api');
 
 /**
- * Save the "send to NPR.org" metadata
- *
- * If the send_to_api value is falsy, then this should not be saved as truthy
- *
- * @param Int $post_ID The post ID of the post we're saving
- * @since 1.7
- */
-function nprstory_save_send_to_org( $post_ID ) {
-	// safety checks
-	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
-	if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
-	if ( empty( $post_ID ) ) return false;
-
-	global $post;
-
-	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
-	$value = (
-		isset( $_POST['send_to_org'] )
-		&& $_POST['send_to_org'] == 1
-		&& isset( $_POST['send_to_api'] )
-		&& $_POST['send_to_api'] == 1
-	) ? 1 : 0;
-	update_post_meta( $post_ID, '_send_to_org', $value );
-}
-add_action( 'save_post', 'nprstory_save_send_to_org');
-
-/**
  * Save the "Send to NPR One" metadata
  *
  * If the send_to_api value is falsy, then this should not be saved as truthy

@@ -8,7 +8,6 @@
  *
  * @param WP_Post $post the WordPress post object.
  * @see nprstory_save_send_to_api
- * @see nprstory_save_send_to_org
  * @see nprstory_save_send_to_one
  * @see nprstory_save_nprone_featured
  *
@@ -45,13 +44,6 @@ function nprstory_publish_meta_box( $post ) {
 			);
 
 			echo '<ul>';
-
-			// send to npr dot org
-			printf(
-				'<li><label><input value="1" type="checkbox" name="send_to_org" id="send_to_org" %2$s/> %1$s</label></li>',
-				__( 'Include for reading on NPR.org', 'nprapi' ),
-				checked( get_post_meta( $post->ID, '_send_to_org', true ), '1', false )
-			);
 
 			// send to nprone
 			printf(

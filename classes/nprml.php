@@ -191,23 +191,6 @@ function nprstory_post_to_nprml_story( $post ) {
 	}
 
 	/*
-	 * Send to NPR dot org
-	 *
-	 * If the box is checked, the value here is '1'
-	 * @see nprstory_save_send_to_org
-	 * @todo: what's the parent ID?
-	 */
-	$nprapi = get_post_meta( $post->ID, '_send_to_org', true ); // 0 or 1
-	if ( ! empty( $nprapi ) && ( '1' === $nprapi || 1 === $nprapi ) ) {
-		/*
-		$story[] = array(
-			'tag' => 'parent',
-			'attr' => array( 'id' => '', 'type' => 'collection' ),
-		);
-		*/
-	}
-
-	/*
 	 * Mini Teaser (not yet implemented)
 	 * Slug (not yet implemented)
 	 */
