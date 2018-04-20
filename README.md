@@ -8,7 +8,7 @@ Requires at least: 3.8.14
 
 Tested up to: 4.5.2
 
-Stable tag: 1.6
+Stable tag: 1.7
 
 License: GPLv2
 
@@ -30,7 +30,6 @@ The WordPress plugin is being developed as an Open Source plugin by NPR. If you 
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. Use the Settings->NPR API screen to configure the plugin. Begin by entering your API Key, then add your Push URL and Org ID.
 
-
 == Frequently Asked Questions ==
 
 = Can anyone get an NPR API Key? =
@@ -43,11 +42,11 @@ Push requires an Organization ID in the NPR API, which is typically given out to
 
 = Where can I find NPR's documentation on the NPR API? =
 
-There is some documentation in the NPR API site: [https://www.npr.org/api/index.php](https://www.npr.org/api/index.php).
+There is some documentation in the NPR API site: [www.npr.org/api/index.php](https://www.npr.org/api/index.php).
 
 = Is there an easy way to directly query the NPR API? =
 
-You bet, just visit the NPR Query Generator: [https://www.npr.org/api/queryGenerator.php](https://www.npr.org/api/queryGenerator.php)
+You bet, just visit the NPR Query Generator: [www.npr.org/api/queryGenerator.php](https://www.npr.org/api/queryGenerator.php)
 
 == Screenshots ==
 
@@ -73,6 +72,17 @@ NPR Stories having got gotten
 
 
 == Changelog ==
+
+= V1.7 =
+
+* The Story API box that appears in the post editor has been refreshed:
+	* Instead of requiring a separate action to push the story to the Story API, the content will be pushed whenever the content is saved in WordPress, if the "Send to NPR API" box is checked.
+	* The box now includes options to include the story for listening in NPR One, and to set the story as "featured" in NPR One. This feature includes the option to set an expiration date, after which time the story will not appear in NPR One.
+* HTTPS is now supported for accessing the Story API. ([#44](https://github.com/npr/nprapi-wordpress/pull/44))
+* The push and pull post types are now respected, thanks to [#41](https://github.com/npr/nprapi-wordpress/pull/41) from [@chrisenterey](https://github.com/chrisentery).
+* PHP 7 is now supported, thanks to [#42](https://github.com/npr/nprapi-wordpress/pull/42) from [@tjuddill](https://github.com/tjuddill).
+* Several broken links in the documentation have been repaired. ([#44](https://github.com/npr/nprapi-wordpress/pull/44))
+* Automated tests are now run against an expanded list of WordPress and PHP versions, as described [in pull request #46](https://github.com/npr/nprapi-wordpress/pull/46).
 
 = V1.6 =
 
