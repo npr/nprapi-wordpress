@@ -1,0 +1,63 @@
+/**
+ * Styles for the NPR Story API meta box
+ */
+#ds_npr_document_meta ul ul {
+  margin-top: 6px;
+}
+#ds_npr_document_meta ul ul ul {
+  padding-left: 24px;
+}
+#nprone-expiry {
+  border-top: 1px solid #eee;
+  padding-top: 6px;
+}
+#nprone-expiry-form,
+#nprone-expiry-form select,
+#nprone-expiry-form input {
+  font-size: 12px;
+  padding-left: 0;
+  padding-right: 0;
+}
+#nprone-expiry-form .row {
+  clear: both;
+  margin-top: 6px;
+  line-height: 28px;
+}
+button.link-effect {
+  border: none;
+  color: #0073aa;
+  text-decoration: underline;
+}
+#nprone-expiry-month {
+  vertical-align: baseline;
+  margin: 0;
+}
+
+/*
+ * Minimal Datepicker styles
+ */
+#ui-datepicker-div {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  padding: 6px;
+  box-shadow: 0 3px 5px rgba(0,0,0,.2);
+}
+.ui-datepicker .ui-datepicker-header {
+  border: none;
+}
+.ui-datepicker-calendar .ui-state-default {
+  text-decoration: none;
+  background-color: transparent;
+}
+.ui-datepicker .ui-datepicker-current-day a {
+  border-color: #0073aa #006799 #006799;
+  background: #0085ba;
+  color: #fff;
+  font-weight: bold;
+}
+.ui-datepicker .ui-datepicker-today a {
+  background: #fff;
+  border: 1px solid #c5c5c5;
+  font-weight: bold;
+  color: #000;
+}

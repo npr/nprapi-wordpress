@@ -1,8 +1,14 @@
 <?php
+/**
+ * NPR API Settings Page and related control methods
+ *
+ * Also includes the cron jobs.
+ */
+
 require_once( NPRSTORY_PLUGIN_DIR . 'settings_ui.php' );
 
-/*
- * NPR API Settings Page and related control methods.
+/**
+ * add the options page
  */
 function nprstory_add_options_page() {
     add_options_page( 'NPR API', 'NPR API', 'manage_options', 'ds_npr_api', 'nprstory_api_options_page' );

@@ -1,4 +1,8 @@
 <?php
+/**
+ * The class DS_NPR_API and related functions for getting stories from the API
+ */
+
 require_once( NPRSTORY_PLUGIN_DIR . 'get_stories_ui.php' );
 require_once( NPRSTORY_PLUGIN_DIR . 'classes/NPRAPIWordpress.php');
 

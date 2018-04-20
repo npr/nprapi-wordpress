@@ -1,4 +1,7 @@
 <?php
+/**
+ * Functions relating to pushing content to the NPR API
+ */
 
 require_once ( NPRSTORY_PLUGIN_DIR . 'classes/NPRAPIWordpress.php' );
 
@@ -7,14 +10,14 @@ require_once ( NPRSTORY_PLUGIN_DIR . 'classes/NPRAPIWordpress.php' );
  *
  * Limited to users that can publish posts
  *
- * @param unknown_type $post_ID
- * @param unknown_type $post
+ * @param Int $post_ID
+ * @param WP_Post $post
  */
 function nprstory_api_push ( $post_ID, $post ) {
 	if ( ! current_user_can( 'publish_posts' ) ) {
 		wp_die(
-			__('You do not have permission to publish posts, and therefore you do not have permission to push posts to the NPR API.'),
-			__('NPR Story API Error'),
+			__( 'You do not have permission to publish posts, and therefore you do not have permission to push posts to the NPR API.', 'nprapi' ),
+			__( 'NPR Story API Error', 'nprapi' ),
 			403
 		);
 	}
@@ -28,32 +31,35 @@ function nprstory_api_push ( $post_ID, $post ) {
 	$push_url = get_option( 'ds_npr_api_push_url' );
 
 	if ( ! empty ( $push_url ) ) {
-		// For now, only submit regular posts, and only on publish.
+		// For now, only submit the sort of post that is the push post type, and then only if published
 		if ( $post->post_type != $push_post_type || $post->post_status != 'publish' ) {
 			return;
 		}
 
-		//we may be able to have a custom body, so we need to check for that.
+		/*
+		 * If there's a custom mapping for the post content,
+		 * use that content instead of the post's post_content
+		 */
 		$content = $post->post_content;
 		$use_custom = get_option( 'dp_npr_push_use_custom_map' );
 		$body_field = 'Body';
-        if ($use_custom) {
-	       //get the list of metas available for this post
-	       $post_metas = get_post_custom_keys( $post->ID );
+		if ( $use_custom ) {
+			// Get the list of post meta keys available for this post.
+			$post_metas = get_post_custom_keys( $post->ID );
 
-	       $custom_content_meta = get_option( 'ds_npr_api_mapping_body' );
-	       $body_field = $custom_content_meta;
-	           if ( ! empty( $custom_content_meta ) && $custom_content_meta != '#NONE#' && in_array( $custom_content_meta, $post_metas ) ) {
-	           $content = get_post_meta( $post->ID, $custom_content_meta, true );
-	       }
-        }
+			$custom_content_meta = get_option( 'ds_npr_api_mapping_body' );
+			$body_field = $custom_content_meta;
+				if ( ! empty( $custom_content_meta ) && $custom_content_meta !== '#NONE#' && in_array( $custom_content_meta, $post_metas, true ) ) {
+				$content = get_post_meta( $post->ID, $custom_content_meta, true );
+			}
+		}
 
 		// Abort pushing to NPR if the post has no content
 		if ( empty( $content ) ) {
-			update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $body_field . ' is required for a post to be pushed to the NPR API.' );
+			update_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, esc_html( $body_field ) . ' is required for a post to be pushed to the NPR API.' );
 			return;
 		} else {
-			delete_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, $body_field . ' is required for a post to be pushed to the NPR API.' );
+			delete_post_meta( $post_ID, NPR_PUSH_STORY_ERROR, esc_html( $body_field ) . ' is required for a post to be pushed to the NPR API.' );
 		}
 
 		$api = new NPRAPIWordpress();
@@ -528,25 +534,149 @@ function nprstory_bulk_action_push_action() {
     //exit();
 }
 
-add_action( 'post_submitbox_misc_actions', 'nprstory_submitbox_send_to_nprone' );
-function nprstory_submitbox_send_to_nprone() {
-    global $post;
-    if ( get_post_type( $post ) == get_option( 'ds_npr_push_post_type' ) ) {
-        $value = get_post_meta( $post->ID, '_send_to_nprone', true );
-        $checked = ! empty( $value ) ? ' checked="checked" ' : '';
-        echo '<div class="misc-pub-section misc-pub-section-last"><input type="checkbox"' . $checked . 'value="1" name="send_to_nprone" /><label for="send_to_nprone">Send to NPR One</label></div>';
-    }
-}
+/**
+ * Save the "send to the API" metadata
+ *
+ * The meta name here is '_send_to_nprone' for backwards compatibility with plugin versions 1.6 and prior
+ *
+ * @param Int $post_ID The post ID of the post we're saving
+ * @since 1.6 at least
+ * @see nprstory_publish_meta_box
+ */
+function nprstory_save_send_to_api( $post_ID ) {
+	// safety checks
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
+	if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
+	if ( empty( $post_ID ) ) return false;
 
-add_action( 'save_post', 'nprstory_save_send_to_nprone');
-function nprstory_save_send_to_nprone( $post_ID ) {
-    global $post;
-    if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
-    if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
-    if ( empty( $post_ID ) ) return false;
-    $value = ( isset( $_POST['send_to_nprone'] ) && $_POST['send_to_nprone'] == 1 ) ? 1 : 0;
-    update_post_meta( $post_ID, '_send_to_nprone', $value );
+	global $post;
+
+	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
+	$value = ( isset( $_POST['send_to_api'] ) && $_POST['send_to_api'] == 1 ) ? 1 : 0;
+
+	// see historical note
+	update_post_meta( $post_ID, '_send_to_nprone', $value );
+}
+add_action( 'save_post', 'nprstory_save_send_to_api');
+
+/**
+ * Save the "Send to NPR One" metadata
+ *
+ * If the send_to_api value is falsy, then this should not be saved as truthy
+ *
+ * @param Int $post_ID The post ID of the post we're saving
+ * @since 1.7
+ */
+function nprstory_save_send_to_one( $post_ID ) {
+	// safety checks
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
+	if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
+	if ( empty( $post_ID ) ) return false;
+
+	global $post;
+
+	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
+	$value = (
+		isset( $_POST['send_to_one'] )
+		&& $_POST['send_to_one'] == 1
+		&& isset( $_POST['send_to_api'] )
+		&& $_POST['send_to_api'] == 1
+	) ? 1 : 0;
+	update_post_meta( $post_ID, '_send_to_one', $value );
+}
+add_action( 'save_post', 'nprstory_save_send_to_one');
+
+/**
+ * Save the "NPR One Featured" metadata
+ *
+ * If the send_to_one value is falsy, then this should not be saved as truthy
+ * And thus, if the send_to_api value is falsy, then this should not be saved as truthy
+ *
+ * @param Int $post_ID The post ID of the post we're saving
+ * @since 1.7
+ */
+function nprstory_save_nprone_featured( $post_ID ) {
+	// safety checks
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
+	if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
+	if ( empty( $post_ID ) ) return false;
+
+	global $post;
+
+	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
+	$value = (
+		isset( $_POST['nprone_featured'] )
+		&& $_POST['nprone_featured'] == 1
+		&& isset( $_POST['send_to_api'] )
+		&& $_POST['send_to_api'] == 1
+		&& isset( $_POST['send_to_one'] )
+		&& $_POST['send_to_one'] == 1
+	) ? 1 : 0;
+	update_post_meta( $post_ID, '_nprone_featured', $value );
+}
+add_action( 'save_post', 'nprstory_save_nprone_featured');
+
+/**
+ * Save the NPR One expiry datetime
+ *
+ * The meta name here is '_nprone_expiry_8601', and is saved in the ISO 8601 format for ease of conversion, not including the datetime.
+ *
+ * @param Int $post_ID The post ID of the post we're saving
+ * @since 1.7
+ * @see nprstory_publish_meta_box
+ * @link https://en.wikipedia.org/wiki/ISO_8601
+ */
+function nprstory_save_datetime( $post_ID ) {
+	// safety checks
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return false;
+	if ( ! current_user_can( 'edit_page', $post_ID ) ) return false;
+	if ( empty( $post_ID ) ) return false;
+
+	global $post;
+
+	if ( get_post_type($post) != get_option('ds_npr_push_post_type') ) return false;
+
+	$date = ( isset( $_POST['nprone-expiry-datepicker'] ) ) ? sanitize_text_field( $_POST['nprone-expiry-datepicker'] ): '';
+	$time = ( isset( $_POST['nprone-expiry-time'] ) ) ? sanitize_text_field( $_POST['nprone-expiry-time'] ): '00:00';
+
+	// If the post is not published and values are not set, save an empty post meta
+	if ( isset( $date ) && 'publish' === $post->status ) {
+		$timezone = get_option( 'gmt_offset' );
+		$datetime = date_create( $date, new DateTimeZone( $timezone ) );
+		$time = explode( ':', $time );
+		$datetime->setTime( $time[0], $time[1] );
+		$value = date_format( $datetime , DATE_ATOM );
+		update_post_meta( $post_ID, '_nprone_expiry_8601', $value );
+	} else {
+		delete_post_meta( $post_ID, '_nprone_expiry_8601' );
+	}
+}
+add_action( 'save_post', 'nprstory_save_datetime');
+
+/**
+ * Helper function to get the post expiry datetime
+ *
+ * The datetime is stored in post meta _nprone_expiry_8601
+ * This assumes that the post has been published
+ *
+ * @param WP_Post|int $post the post ID or WP_Post object
+ * @return DateTime the DateTime object created from the post expiry date
+ * @see note on DATE_ATOM and DATE_ISO8601 https://secure.php.net/manual/en/class.datetime.php#datetime.constants.types
+ * @todo rewrite this to use fewer queries, so it's using the WP_Post internally instead of the post ID
+ */
+function nprstory_get_post_expiry_datetime( $post ) {
+	$post = ( $post instanceof WP_Post ) ? $post->ID : $post ;
+	$iso_8601 = get_post_meta( $post, '_nprone_expiry_8601', true );
+	$timezone = get_option( 'gmt_offset' );
+
+	if ( empty( $iso_8601 ) ) {
+		// return DateTime for the publish date plus seven days
+		$future = get_the_date( DATE_ATOM, $post ); // publish date
+		return date_add( date_create( $future, new DateTimeZone( $timezone ) ), new DateInterval( 'P7D' ) );
+	} else {
+		// return DateTime for the expiry date
+		return date_create( $iso_8601, new DateTimeZone( $timezone ) );
+	}
 }
 
 /**
