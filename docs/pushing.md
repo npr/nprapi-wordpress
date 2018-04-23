@@ -1,6 +1,6 @@
 # Pushing Stories to the NPR API
 
-You can push any of your posts to the NPR API by simply using the **Push to NPR** button in the post edit screen:
+You can push any of your posts to the NPR API by checking the "Send to NPR API" box in the "NPR Story API" meta box in the post editor. Once this box is checked, publishing the post or saving an updated version of a published post will send the post to the NPR API.
 
 ![Push to NPR button in the post edit screen](assets/img/push-to-npr-api.png)
 
@@ -24,7 +24,7 @@ If you don't see these custom fields in the post edit screen, click **Screen Opt
 
 ## Pushing Story Updates to the NPR API
 
-If you edit a story that's previously been pushed to the NPR API, you can use the **Push to NPR** button in the post editor to update the post in the NPR API.
+If you edit a story that's previously been pushed to the NPR API, the changes will be pushed to the NPR API.
 
 ## Deleting Posts from the NPR API
 
