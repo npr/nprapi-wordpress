@@ -662,6 +662,7 @@ add_action( 'save_post', 'nprstory_save_datetime');
  * @param WP_Post|int $post the post ID or WP_Post object
  * @return DateTime the DateTime object created from the post expiry date
  * @see note on DATE_ATOM and DATE_ISO8601 https://secure.php.net/manual/en/class.datetime.php#datetime.constants.types
+ * @since 1.7
  * @todo rewrite this to use fewer queries, so it's using the WP_Post internally instead of the post ID
  */
 function nprstory_get_post_expiry_datetime( $post ) {
