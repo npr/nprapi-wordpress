@@ -1,5 +1,7 @@
 /**
  * NPR Story API meta box functions and features
+ *
+ * @since 1.7
  */
 document.addEventListener('DOMContentLoaded', () => {
 	'use strict';

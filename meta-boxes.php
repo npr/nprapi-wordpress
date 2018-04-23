@@ -10,6 +10,8 @@
  * @see nprstory_save_send_to_api
  * @see nprstory_save_send_to_one
  * @see nprstory_save_nprone_featured
+ * @see nprstory_publish_meta_box_assets
+ * @since 1.7
  *
  * @todo When there is better browser support for input type="datetime-local", replace the jQuery UI and weird forms with the html5 solution. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
  */
@@ -105,6 +107,9 @@ function nprstory_publish_meta_box( $post ) {
 
 /**
  * Register stylesheet for the NPR Story API publishing options metabox
+ *
+ * @since 1.7
+ * @see nprstory_publish_meta_box
  */
 function nprstory_publish_meta_box_assets() {
 	wp_register_style(
