@@ -73,6 +73,17 @@ NPR Stories having got gotten
 
 == Changelog ==
 
+= V1.7 =
+
+* The Story API box that appears in the post editor has been refreshed:
+	* Instead of requiring a separate action to push the story to the Story API, the content will be pushed whenever the content is saved in WordPress, if the "Send to NPR API" box is checked.
+	* The box now includes options to include the story for listening in NPR One, and to set the story as "featured" in NPR One. This feature includes the option to set an expiration date, after which time the story will not appear in NPR One.
+* HTTPS is now supported for accessing the Story API. ([#44](https://github.com/npr/nprapi-wordpress/pull/44))
+* The push and pull post types are now respected, thanks to [#41](https://github.com/npr/nprapi-wordpress/pull/41) from [@chrisenterey](https://github.com/chrisentery).
+* PHP 7 is now supported, thanks to [#42](https://github.com/npr/nprapi-wordpress/pull/42) from [@tjuddill](https://github.com/tjuddill).
+* Several broken links in the documentation have been repaired. ([#44](https://github.com/npr/nprapi-wordpress/pull/44))
+* Automated tests are now run against an expanded list of WordPress and PHP versions, as described [in pull request #46](https://github.com/npr/nprapi-wordpress/pull/46).
+
 = V1.6 =
 
 * Added meta box to post edit page to explicitly push a story to NPR One
