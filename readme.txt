@@ -3,8 +3,8 @@ Contributors: nprds, inn_nerds
 Donate link: https://www.npr.org/series/750002/support-public-radio
 Tags: npr, news, public radio, api
 Requires at least: 3.8.14
-Tested up to: 4.5.2
-Stable tag: 1.6
+Tested up to: 4.9
+Stable tag: 1.7
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: nprapi
