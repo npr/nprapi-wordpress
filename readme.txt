@@ -4,7 +4,7 @@ Donate link: https://www.npr.org/series/750002/support-public-radio
 Tags: npr, news, public radio, api
 Requires at least: 3.8.14
 Tested up to: 4.9
-Stable tag: 1.7
+Stable tag: 1.7.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: nprapi
@@ -72,6 +72,11 @@ NPR Stories having got gotten
 
 
 == Changelog ==
+
+= V1.7.1 =
+
+* Fixes version numbers in the plugin for the plugin, WordPress "tested up to", and the stable tag.
+* Does not affect plugin functionality; this is purely a WordPress.org metadata update.
 
 = V1.7 =
 

@@ -5,7 +5,7 @@ A collection of tools for publishing from and to NPR's Story API. [Find this plu
 Contributors: nprds, inn_nerds  
 Requires at least: 3.8.14  
 Tested up to: 4.9  
-Stable tag: 1.7  
+Stable tag: 1.7.1  
 License: GPLv2  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
