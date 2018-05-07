@@ -76,7 +76,7 @@ NPR Stories having got gotten
 = V1.7.1 =
 
 * Fixes version numbers in the plugin for the plugin, WordPress "tested up to", and the stable tag.
-* Does not affect plugin functionality; this is purely a WordPress.org metadata update.
+* This release fixes some WordPress.org metadata. For a list of new features, see the version 1.7 changelog.
 
 = V1.7 =
 
