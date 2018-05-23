@@ -706,7 +706,6 @@ function nprstory_get_datetimezone() {
 	try {
 		$return = new DateTimeZone( $offset );
 	} catch( Exception $e ) {
-		error_log(var_export( $e->getMessage(), true));
 		nprstory_error_log( $e->getMessage() );
 		$return = new DateTimeZone( '+0000' ); // The default timezone when WordPress does not have a configured timezone. This will also trigger when the gmt_offset is '0', which is the case when the GMT time is Greenwich Mean Time.
 	}
