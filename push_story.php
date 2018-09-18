@@ -699,7 +699,7 @@ function nprstory_get_datetimezone() {
 	if ( is_numeric( $timezone ) ) {
 		// Because PHP handles timezone offsets for this purpose in seconds,
 		// (at least, according to https://secure.php.net/manual/en/datetimezone.getoffset.php)
-		// we must convert the WordPress-stored decimal hours into seconds. THis value can be positive, negative, or zero.
+		// we must convert the WordPress-stored decimal hours into seconds. This value can be positive, negative, or zero.
 		$offset = floatval( $timezone ) * HOUR_IN_SECONDS;
 	} // It could also be '' empty string, which is a valid offset for the purposes of DateTimeZone::__construct().
 
