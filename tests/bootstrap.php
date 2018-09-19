@@ -29,7 +29,7 @@ tests_add_filter( 'muplugins_loaded', '_manually_load_environment' );
  * Manually load the plugin being tested.
  */
 function _manually_load_plugin() {
-	require dirname( dirname( __FILE__ ) ) . '/sample-plugin.php';
+	require dirname( dirname( __FILE__ ) ) . '/ds-npr-api.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
