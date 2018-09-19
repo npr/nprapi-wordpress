@@ -160,7 +160,7 @@ class Test_PushStory extends WP_UnitTestCase {
 			update_option( 'gmt_offset', $offset );
 			$DateTimeZone = nprstory_get_datetimezone();
 			$this->assertInstanceOf(
-				DateTimeZone,
+				DateTimeZone::class,
 				$DateTimeZone,
 				sprintf(
 					'%1$s is not an instance of DateTimeZone when DateTimeZone::__construct was called with the timezone %2$s as the wp_options option_key gmt_offset.',
