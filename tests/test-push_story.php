@@ -121,4 +121,56 @@ class Test_PushStory extends WP_UnitTestCase {
 		$this->markTestIncomplete('This test has not been implemented yet.');
 	}
 
+	function test_nprstory_get_datetimezone_all() {
+
+		/*
+		 * Get a list of time zones' UTC offsets.
+		 *
+		 * Yes, http://infiniteundo.com/post/25509354022/more-falsehoods-programmers-believe-about-time has been read.
+		 * Yes, https://secure.php.net/manual/en/datetimezone.listabbreviations.php returns some canonically ~weird~ time zones.
+		 * We'll mitigate those later in this test.
+		 */
+		$tzdata = DateTimeZone::listAbbreviations();
+		$zones = array();
+
+		// The format of $tzdata groups time zones by general zones.
+		foreach ( $tzdata as $general => $specific_zones ) {
+
+			// We want the offset of each specific zone.
+			$zones_each = wp_list_pluck( $specific_zones, 'offset' );
+
+			// Calculate the string offset format.
+			foreach ( $zones_each as $seconds ) {
+				if ( $seconds % 60 === 0 ) { // no fractional minutes
+					// no 20- or 40-minute offsets; they're valid but WordPress does not consider them.
+					if ( ( $seconds / 60 ) % 15 === 0 ) {
+						$zones[] = $seconds / 3600; // WordPress saves time zones as a decimal
+					}
+				}
+			}
+		}
+		$zones = array_unique( $zones );
+		asort( $zones );
+
+		// Other test cases
+		$zones[] = '';
+
+		// Run every single test case
+		foreach ( $zones as $offset ) {
+			update_option( 'gmt_offset', $offset );
+			$DateTimeZone = nprstory_get_datetimezone();
+			$this->assertInstanceOf(
+				DateTimeZone::class,
+				$DateTimeZone,
+				sprintf(
+					'%1$s is not an instance of DateTimeZone when DateTimeZone::__construct was called with the timezone %2$s as the wp_options option_key gmt_offset.',
+					var_export( $DateTimeZone ),
+					var_export( $offset )
+				)
+			);
+		}
+
+		// reset
+		delete_option( 'gmt_offset' );
+	}
 }

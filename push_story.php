@@ -624,6 +624,7 @@ add_action( 'save_post', 'nprstory_save_nprone_featured');
  * @param Int $post_ID The post ID of the post we're saving
  * @since 1.7
  * @see nprstory_publish_meta_box
+ * @uses nprstory_get_datetimezone
  * @link https://en.wikipedia.org/wiki/ISO_8601
  */
 function nprstory_save_datetime( $post_ID ) {
@@ -642,7 +643,7 @@ function nprstory_save_datetime( $post_ID ) {
 	// If the post is not published and values are not set, save an empty post meta
 	if ( isset( $date ) && 'publish' === $post->status ) {
 		$timezone = get_option( 'gmt_offset' );
-		$datetime = date_create( $date, new DateTimeZone( $timezone ) );
+		$datetime = date_create( $date, nprstory_get_datetimezone() );
 		$time = explode( ':', $time );
 		$datetime->setTime( $time[0], $time[1] );
 		$value = date_format( $datetime , DATE_ATOM );
@@ -662,22 +663,54 @@ add_action( 'save_post', 'nprstory_save_datetime');
  * @param WP_Post|int $post the post ID or WP_Post object
  * @return DateTime the DateTime object created from the post expiry date
  * @see note on DATE_ATOM and DATE_ISO8601 https://secure.php.net/manual/en/class.datetime.php#datetime.constants.types
+ * @uses nprstory_get_datetimezone
  * @since 1.7
  * @todo rewrite this to use fewer queries, so it's using the WP_Post internally instead of the post ID
  */
 function nprstory_get_post_expiry_datetime( $post ) {
 	$post = ( $post instanceof WP_Post ) ? $post->ID : $post ;
 	$iso_8601 = get_post_meta( $post, '_nprone_expiry_8601', true );
-	$timezone = get_option( 'gmt_offset' );
+	$timezone = nprstory_get_datetimezone();
 
 	if ( empty( $iso_8601 ) ) {
 		// return DateTime for the publish date plus seven days
 		$future = get_the_date( DATE_ATOM, $post ); // publish date
-		return date_add( date_create( $future, new DateTimeZone( $timezone ) ), new DateInterval( 'P7D' ) );
+		return date_add( date_create( $future, $timezone ), new DateInterval( 'P7D' ) );
 	} else {
 		// return DateTime for the expiry date
-		return date_create( $iso_8601, new DateTimeZone( $timezone ) );
+		return date_create( $iso_8601, $timezone );
 	}
+}
+
+/**
+ * Helper for getting WordPress GMT offset
+ *
+ * It turns out we don't need to do anything with regards to get_option( 'timezone_string' ),
+ * because WordPress includes wp_timezone_override_offset as a default filter upon
+ * the filter pre_option_gmt_offset
+ *
+ * @since 1.7.2
+ * @link https://github.com/npr/nprapi-wordpress/issues/52
+ * @return DateTimeZone
+ */
+function nprstory_get_datetimezone() {
+	$timezone = get_option( 'gmt_offset' );
+
+	if ( is_numeric( $timezone ) ) {
+		// Because PHP handles timezone offsets for this purpose in seconds,
+		// (at least, according to https://secure.php.net/manual/en/datetimezone.getoffset.php)
+		// we must convert the WordPress-stored decimal hours into seconds. This value can be positive, negative, or zero.
+		$offset = floatval( $timezone ) * HOUR_IN_SECONDS;
+	} // It could also be '' empty string, which is a valid offset for the purposes of DateTimeZone::__construct().
+
+	try {
+		$return = new DateTimeZone( $offset );
+	} catch( Exception $e ) {
+		nprstory_error_log( $e->getMessage() );
+		$return = new DateTimeZone( '+0000' ); // The default timezone when WordPress does not have a configured timezone. This will also trigger when the gmt_offset is '0', which is the case when the GMT time is Greenwich Mean Time.
+	}
+
+	return $return;
 }
 
 /**

@@ -14,7 +14,7 @@ class Test_MetaBoxes extends WP_UnitTestCase {
 
 		# Simple test of output to verify some part of the expected markup is present
 		$this->expectOutputRegex('/<div id\="ds-npr-publish-actions"/');
-		nprstory_publish_meta_box();
+		nprstory_publish_meta_box( $post );
 
 		/*
 		 * @todo:

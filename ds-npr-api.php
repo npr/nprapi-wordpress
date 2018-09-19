@@ -68,17 +68,17 @@ register_deactivation_hook( NPRSTORY_PLUGIN_DIR . 'ds-npr-api.php', 'nprstory_de
 function nprstory_activation() {
 	global $wpdb;
 	if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-	  // check if it is a network activation - if so, run the activation function for each blog id
-        $old_blog = $wpdb->blogid;
+		// check if it is a network activation - if so, run the activation function for each blog id
+		$old_blog = $wpdb->blogid;
 		// Get all blog ids
 		$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM $wpdb->blogs" ) );
 		foreach ( $blogids as $blog_id ) {
-            switch_to_blog( $blog_id );
-            nprstory_activate();
+			switch_to_blog( $blog_id );
+			nprstory_activate();
 		}
 		switch_to_blog( $old_blog );
 	} else {
-        nprstory_activate();
+		nprstory_activate();
 	}
 }
 
@@ -99,13 +99,12 @@ function nprstory_activate() {
 	if ( empty( $pull_url ) ) {
 		update_option( 'ds_npr_api_pull_url', $def_url );
 	}
-	
 }
 
 function nprstory_deactivation() {
 	global $wpdb;
 	if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-	  // check if it is a network activation - if so, run the activation function for each blog id
+		// check if it is a network activation - if so, run the activation function for each blog id
 		$old_blog = $wpdb->blogid;
 		// Get all blog ids
 		$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM $wpdb->blogs" ) );
@@ -150,11 +149,11 @@ function nprstory_create_post_type() {
 			'labels' => array(
 				'name' => __( 'NPR Stories' ),
 				'singular_name' => __( 'NPR Story' ),
-        ),
-		'public' => true,
-		'has_archive' => true,
-		'menu_position' => 5,
-		'supports' => array( 'title', 'editor', 'thumbnail', 'custom-fields' ),
+			),
+			'public' => true,
+			'has_archive' => true,
+			'menu_position' => 5,
+			'supports' => array( 'title', 'editor', 'thumbnail', 'custom-fields' ),
 		)
 	);
 }
