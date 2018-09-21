@@ -158,18 +158,36 @@ function nprstory_create_post_type() {
 	);
 }
 
+/**
+ * Register the meta box and enqueue its scripts
+ *
+ * If the API Push URL option is not set, instead register a prompt to set it.
+ *
+ * @link https://github.com/npr/nprapi-wordpress/issues/51
+ */
 function nprstory_add_meta_boxes() {
 	$screen = get_current_screen();
 	$push_post_type = get_option( 'ds_npr_push_post_type' ) ?: 'post';
 	$push_url = get_option( 'ds_npr_api_push_url' );
-	if ( $screen->id == $push_post_type && ! empty( $push_url ) ) {
-		global $post;
-		add_meta_box(
-			'ds_npr_document_meta',
-			'NPR Story API',
-			'nprstory_publish_meta_box',
-			$push_post_type, 'side'
-		);
+	if ( $screen->id == $push_post_type ) {
+		if ( ! empty( $push_url ) ) {
+			global $post;
+			add_meta_box(
+				'ds_npr_document_meta',
+				'NPR Story API',
+				'nprstory_publish_meta_box',
+				$push_post_type, 'side'
+			);
+			add_action( 'admin_enqueue_scripts', 'nprstory_publish_meta_box_assets' );
+		} else {
+			global $post;
+			add_meta_box(
+				'ds_npr_document_meta',
+				'NPR Story API',
+				'nprstory_publish_meta_box_prompt',
+				$push_post_type, 'side'
+			);
+		}
 	}
 }
 add_action('add_meta_boxes', 'nprstory_add_meta_boxes');

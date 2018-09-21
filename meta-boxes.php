@@ -128,4 +128,34 @@ function nprstory_publish_meta_box_assets() {
 		true
 	);
 }
-add_action( 'admin_enqueue_scripts', 'nprstory_publish_meta_box_assets' );
+
+/**
+ * Alternate meta box output if the API Push URL option is not set
+ *
+ * Propmts the user to set that option.
+ * @link https://github.com/npr/nprapi-wordpress/issues/51
+ *
+ * @param WP_Post $post the WordPress post object.
+ * @since 1.8
+ * @see nprstory_add_options_page
+ */
+function nprstory_publish_meta_box_prompt( $post ) {
+	if ( current_user_can( 'manage_options' ) ) { // this should match the value in nprstory_add_options_page
+		printf(
+			'<p>%1$s</p>',
+			__( 'You must set the NPR Story API Push URL in the NPR Story API plugin\'s settings in order to push to the NPR Story API.', 'nprapi' )
+		);
+
+		$url = menu_page_url( 'ds_npr_api', false ); // this should match the value in nprstory_add_options_page
+		printf(
+			'<a href="%2$s" class="button button-primary button-large">%1$s</a>',
+			__( 'Configure the plugin', 'nprapi' ),
+			esc_attr( $url )
+		);
+	} else {
+		printf(
+			'<p>%1$s</p>',
+			__( 'Your site administrator must set the NPR Story API Push URL in the NPR Story API plugin\'s settings in order to push to the NPR API.', 'nprapi' )
+		);
+	}
+}
