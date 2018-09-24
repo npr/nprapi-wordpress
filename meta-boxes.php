@@ -143,19 +143,19 @@ function nprstory_publish_meta_box_prompt( $post ) {
 	if ( current_user_can( 'manage_options' ) ) { // this should match the value in nprstory_add_options_page
 		printf(
 			'<p>%1$s</p>',
-			__( 'You must set the NPR Story API Push URL in the NPR Story API plugin\'s settings in order to push to the NPR Story API.', 'nprapi' )
+			wp_kses_post( __( 'The NPR API plugin\'s settings must be configured to push stories to the NPR API. Instructions are <a href="https://github.com/npr/nprapi-wordpress/blob/master/docs/settings.md">here</a>.', 'nprapi' ) )
 		);
 
 		$url = menu_page_url( 'ds_npr_api', false ); // this should match the value in nprstory_add_options_page
 		printf(
 			'<a href="%2$s" class="button button-primary button-large">%1$s</a>',
-			__( 'Configure the plugin', 'nprapi' ),
+			wp_kses_post( __( 'Configure the Plugin', 'nprapi' ) ),
 			esc_attr( $url )
 		);
 	} else {
 		printf(
 			'<p>%1$s</p>',
-			__( 'Your site administrator must set the NPR Story API Push URL in the NPR Story API plugin\'s settings in order to push to the NPR API.', 'nprapi' )
+			wp_kses_post( __( 'Your site administrator must set the NPR Story API Push URL in the NPR Story API plugin\'s settings in order to push to the NPR API.', 'nprapi' ) )
 		);
 	}
 }
