@@ -1,10 +1,10 @@
 === NPR Story API ===
-Contributors: nprds, inn_nerds
+Contributors: nprds, innlabs
 Donate link: https://www.npr.org/series/750002/support-public-radio
 Tags: npr, news, public radio, api
 Requires at least: 3.8.14
 Tested up to: 4.9
-Stable tag: 1.7.1
+Stable tag: 1.8
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: nprapi
@@ -73,7 +73,7 @@ NPR Stories having got gotten
 
 == Changelog ==
 
-= [unreleased](https://github.com/npr/nprapi-wordpress/compare/1.7.1...HEAD) =
+= V1.8 =
 
 * Fixes invalid GMT offset error when creating new DateTimeZone object in post metabox. [PR #53](https://github.com/npr/nprapi-wordpress/pull/53) for [issue #52](https://github.com/npr/nprapi-wordpress/issues/52).
 * When interacting with a site using the plugin in an unconfigured state, users will be prompted to set the NPR API Push URL. [PR #56](https://github.com/npr/nprapi-wordpress/pull/56) for [issue #51](https://github.com/npr/nprapi-wordpress/issues/51).

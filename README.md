@@ -2,10 +2,10 @@
 
 A collection of tools for publishing from and to NPR's Story API. [Find this plugin on the Wordpress.org Plugin Repository](https://wordpress.org/plugins/npr-story-api/).
 
-Contributors: nprds, inn_nerds  
+Contributors: nprds, innlabs  
 Requires at least: 3.8.14  
 Tested up to: 4.9  
-Stable tag: 1.7.1  
+Stable tag: 1.8  
 License: GPLv2  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -68,7 +68,7 @@ NPR Stories having got gotten
 
 == Changelog ==
 
-= [unreleased](https://github.com/npr/nprapi-wordpress/compare/1.7.1...HEAD) =
+= V1.8 =
 
 * Fixes invalid GMT offset error when creating new DateTimeZone object in post metabox. [PR #53](https://github.com/npr/nprapi-wordpress/pull/53) for [issue #52](https://github.com/npr/nprapi-wordpress/issues/52).
 * When interacting with a site using the plugin in an unconfigured state, users will be prompted to set the NPR API Push URL. [PR #56](https://github.com/npr/nprapi-wordpress/pull/56) for [issue #51](https://github.com/npr/nprapi-wordpress/issues/51).
@@ -171,13 +171,13 @@ This version will allow admins to configure their WordPress site to retrieve mul
 * Stories retrieved from the NPR API will be created as Posts in WordPress.  Each post will have a number of meta fields associated with the post.  These meta fields will all begin with `npr_` and can be viewed on a post edit screen with Custom Fields option enabled through Screen Options. A story from the API that has a primary image defined will have that image set as the featured image of the Wordpress post.  Any bylines for the NPR Story will be stored in the meta field `npr_byline`. The list of npr_ meta fields is:
 
 		npr_api_link
-    	npr_byline
-    	npr_html_link
-    	npr_last_modified_date
-    	npr_pub_date
-    	npr_retrieved_story
-    	npr_story_content
-    	npr_story_id
+		npr_byline
+		npr_html_link
+		npr_last_modified_date
+		npr_pub_date
+		npr_retrieved_story
+		npr_story_content
+		npr_story_id
 
 * On the All Posts admin screen we've made a couple of modification/additions to help you manage your NPR API content.
   - There is a new Bulk Action available, 'Update NPR Story'.  When one or many NPR API Stories are selected and the Update NPR Story action is applied, this plugin will re-query the NPR API for those stories, and if the story's content has changed it will update the post in WordPress.
