@@ -76,6 +76,7 @@ NPR Stories having got gotten
 = [unreleased](https://github.com/npr/nprapi-wordpress/compare/1.7.1...HEAD) =
 
 * Fixes invalid GMT offset error when creating new DateTimeZone object in post metabox. [PR #53](https://github.com/npr/nprapi-wordpress/pull/53) for [issue #52](https://github.com/npr/nprapi-wordpress/issues/52).
+* When interacting with a site using the plugin in an unconfigured state, users will be prompted to set the NPR API Push URL. [PR #56](https://github.com/npr/nprapi-wordpress/pull/56) for [issue #51](https://github.com/npr/nprapi-wordpress/issues/51).
 
 = V1.7.1 =
 

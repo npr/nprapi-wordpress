@@ -9,6 +9,8 @@ require_once( NPRSTORY_PLUGIN_DIR . 'settings_ui.php' );
 
 /**
  * add the options page
+ *
+ * @see nprstory_publish_meta_box_prompt
  */
 function nprstory_add_options_page() {
     add_options_page( 'NPR API', 'NPR API', 'manage_options', 'ds_npr_api', 'nprstory_api_options_page' );
