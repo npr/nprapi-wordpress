@@ -452,7 +452,7 @@ function nprstory_get_push_post_type() {
 }
 
 function nprstory_get_permission_groups(){
-    $perm_groups = '';
+	$perm_groups = array();
 	//query the API for the lists for this org.
 	$perm_url = get_option( 'ds_npr_api_push_url' ) . '/orgs/' . get_option( 'ds_npr_api_org_id' ) . '/groups' . '?apiKey=' . get_option('ds_npr_api_key');
 	$http_result = wp_remote_get( $perm_url );
