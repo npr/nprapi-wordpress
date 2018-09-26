@@ -334,7 +334,7 @@ class NPRAPIWordpress extends NPRAPI {
                             }
 
                             // do the validation and storage stuff
-                            require_once( ABSPATH . 'wp-admin/includes/media.php'); // needed for media_handle_sideload during cron
+                            require_once( ABSPATH . 'wp-admin/includes/image.php'); // needed for wp_read_image_metadata used by media_handle_sideload during cron
                             $id = media_handle_sideload( $file_array, $post_id, $image->title->value );
                             // If error storing permanently, unlink
                             if ( is_wp_error($id) ) {
