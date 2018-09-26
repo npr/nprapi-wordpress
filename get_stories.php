@@ -129,7 +129,7 @@ class DS_NPR_API {
 		}
 
 		// Don't do anything if $story_id isn't an ID
-		if ( is_numeric( $story_id ) ) {
+		if ( isset( $story_id ) && is_numeric( $story_id ) ) {
 			// start the API class
             // todo: check that the API key is actually set
             $api = new NPRAPIWordpress();
