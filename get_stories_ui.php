@@ -110,7 +110,6 @@ function nprstory_get_stories() {
     $pull_url = get_option( 'ds_npr_api_pull_url' );
 ?>
         <div class="wrap">
-            <?php screen_icon(); ?>
             <h2>Get NPR Stories</h2>
             <?php if ( ! $api_key ) : nprstory_show_message ('You do not currently have an API Key set.  <a href="' . admin_url('options-general.php?page=ds_npr_api') . '">Set your API Key here.</a>', TRUE);?>
             <?php endif;

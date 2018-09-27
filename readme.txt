@@ -75,8 +75,11 @@ NPR Stories having got gotten
 
 = V1.8 =
 
+* Fixes issue preventing pushing to the API, introduced in V1.7. [PR #60](https://github.com/npr/nprapi-wordpress/pull/60) for [issue #57](https://github.com/npr/nprapi-wordpress/issues/57).
+* Fixes issue where images were not properly sideloaded. [PR #60](https://github.com/npr/nprapi-wordpress/pull/60) for [issue #59](https://github.com/npr/nprapi-wordpress/issues/59).
 * Fixes invalid GMT offset error when creating new DateTimeZone object in post metabox. [PR #53](https://github.com/npr/nprapi-wordpress/pull/53) for [issue #52](https://github.com/npr/nprapi-wordpress/issues/52).
 * When interacting with a site using the plugin in an unconfigured state, users will be prompted to set the NPR API Push URL. [PR #56](https://github.com/npr/nprapi-wordpress/pull/56) for [issue #51](https://github.com/npr/nprapi-wordpress/issues/51).
+* Miscellaneous code quality improvements.
 
 = V1.7.1 =
 
