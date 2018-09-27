@@ -200,8 +200,8 @@ As not a lot of users have installed the V1.0 of the NPR API Plugin, there are a
   - Org ID - This is your organization's ID assigned by NPR.  If you don't know your Org ID, please contact Digital Services at: <https://info.ds.npr.org/support.html>
 * You can pull stories one at a time from the NPR API by using the Get NPR Stories page under admin Posts menu (wp-admin/edit.php?page=get-npr-stories). This can be story ID from the API, or the URL for the story from npr.org. For help in finding possible query options, please use the Query Generator at <https://www.npr.org/api/queryGenerator.php> Documentation is at: <https://www.npr.org/api/inputReference.php>
 
-== Upgrade Notice ==
+## Upgrade Notice
 
-= 1.5.2 =
+### 1.5.2
 
 This version adds export functionality for the NPR One mobile app, in addition to assorted bug fixes.
