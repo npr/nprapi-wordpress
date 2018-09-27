@@ -96,7 +96,12 @@ function nprstory_api_delete ( $post_ID ) {
 	}
 
 	$api_id_meta = get_post_meta( $post_ID, NPR_STORY_ID_META_KEY );
-	$api_id = $api_id_meta[0];
+	if ( isset( $api_id_meta[0] ) ) {
+		$api_id = $api_id_meta[0];
+	} else {
+		$api_id = null;
+	}
+
 	$post = get_post( $post_ID );
 	//if the push url isn't set, don't even try to delete.
 	$push_url = get_option( 'ds_npr_api_push_url' );
@@ -121,7 +126,7 @@ function nprstory_api_delete ( $post_ID ) {
  * Register nprstory_npr_push and nprstory_npr_delete on appropriate hooks
  * this is where the magic happens
  */
-if ( isset( $_POST['ds_npr_update_push'] ) ) {
+if ( isset( $_POST['send_to_api'] ) ) {
 	// No need to validate the ds_npr_update_push contents; we're checking only for its existence
 	// permissions check is handled by nprstory_api_push
 	add_action( 'save_post', 'nprstory_api_push', 10, 2 );
@@ -447,7 +452,7 @@ function nprstory_get_push_post_type() {
 }
 
 function nprstory_get_permission_groups(){
-    $perm_groups = '';
+	$perm_groups = array();
 	//query the API for the lists for this org.
 	$perm_url = get_option( 'ds_npr_api_push_url' ) . '/orgs/' . get_option( 'ds_npr_api_org_id' ) . '/groups' . '?apiKey=' . get_option('ds_npr_api_key');
 	$http_result = wp_remote_get( $perm_url );

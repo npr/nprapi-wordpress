@@ -173,7 +173,7 @@ function nprstory_api_query_publish_callback($i) {
 		echo $option_string;
 	}
 	$option_string .= wp_nonce_field( 'nprstory_nonce_ds_npr_query_publish_' . $i, 'nprstory_nonce_ds_npr_query_publish_' . $i . '_name', true, false );
-    echo "</select> </div><p><hr></p>";
+    echo "</select> </div>";
 }
 
 function nprstory_api_query_callback( $i ) {

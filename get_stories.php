@@ -9,6 +9,11 @@ require_once( NPRSTORY_PLUGIN_DIR . 'classes/NPRAPIWordpress.php');
 class DS_NPR_API {
 	var $created_message = '';
 
+	/**
+	 * What is the post type that pulled stories should be created as?
+	 *
+	 * @return string The post type
+	 */
 	public static function nprstory_get_pull_post_type() {
 		$pull_post_type = get_option( 'ds_npr_pull_post_type' );
 		if ( empty( $pull_post_type ) ) {
@@ -17,6 +22,9 @@ class DS_NPR_API {
 		return $pull_post_type;
 	}
 
+	/**
+	 * The cron job to pull stories from the API
+	 */
 	public static function nprstory_cron_pull() {
 		// here we should get the list of IDs/full urls that need to be checked hourly
 		//because this is run on cron, and may be fired off by an non-admin, we need to load a bunch of stuff
@@ -79,7 +87,10 @@ class DS_NPR_API {
 		}
 	}
 
-    function load_page_hook() {
+	/**
+	 * Function to convert an alleged NPR story URL or ID into a story ID, then request it
+	 */
+    public function load_page_hook() {
 		// find the input that is allegedly a story id
 		// We validate these later
         if ( isset( $_POST ) && isset( $_POST[ 'story_id' ] ) ) {
@@ -129,7 +140,7 @@ class DS_NPR_API {
 		}
 
 		// Don't do anything if $story_id isn't an ID
-		if ( is_numeric( $story_id ) ) {
+		if ( isset( $story_id ) && is_numeric( $story_id ) ) {
 			// start the API class
             // todo: check that the API key is actually set
             $api = new NPRAPIWordpress();
@@ -156,16 +167,22 @@ class DS_NPR_API {
         }
     }
 
-    function __construct() {
+	/**
+	 * Class constructor that hooks up the menu and the "Get NPR Stories" page action.
+	 */
+    public function __construct() {
         if ( ! is_admin() ) {
             return;
         }
         add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
-        add_action( 'load-posts_page_get-npr-stories', array( 'DS_NPR_API', 'load_page_hook' ) );
+        add_action( 'load-posts_page_get-npr-stories', array( $this, 'load_page_hook' ) );
     }
 
-    function admin_menu() {
-        add_posts_page( 'Get NPR DS Stories', 'Get NPR Stories', 'edit_posts', 'get-npr-stories',   'nprstory_get_stories' );
+	/**
+	 * Register the admin menu for "Get NPR Stories"
+	 */
+    public function admin_menu() {
+        add_posts_page( 'Get NPR Stories', 'Get NPR Stories', 'edit_posts', 'get-npr-stories',   'nprstory_get_stories' );
     }
 
 }

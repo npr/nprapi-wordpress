@@ -47,7 +47,7 @@ class Test_DS_NPR_API_Class extends WP_UnitTestCase {
 		# Re-create the $test_obj after setting admin context
 		$test_obj = new DS_NPR_API;
 
-		$this->assertTrue( (bool) has_action( 'load-posts_page_get-npr-stories', array( 'DS_NPR_API', 'load_page_hook' ) ) );
+		$this->assertTrue( (bool) has_action( 'load-posts_page_get-npr-stories', array( $test_obj, 'load_page_hook' ) ) );
 		$this->assertTrue( (bool) has_action( 'admin_menu', array( &$test_obj, 'admin_menu' ) ) );
 
 		# Restore globals
