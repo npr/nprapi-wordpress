@@ -9,7 +9,7 @@ Stable tag: 1.8
 License: GPLv2  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
-== Description ==
+## Description
 
 The NPR Story API Plugin provides push and pull functionality with the NPR API along with a user-friendly administrative interface.
 
@@ -19,31 +19,31 @@ Access to the NPR API requires an API Key to NPR's legacy APIs. If you are an NP
 
 The WordPress plugin is being developed as an Open Source plugin by NPR. If you would like to suggest features or bug fixes, or better yet if you would like to contribute new features or bug fixes please contact [NPR station relations](https://nprsupport.desk.com/customer/login?return_to=%2Fcustomer%2Fportal%2Femails%2Fnew).
 
-== Installation ==
+## Installation
 
 1. Upload the plugin files to the `/wp-content/plugins/plugin-name` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. Use the Settings->NPR API screen to configure the plugin. Begin by entering your API Key, then add your Push URL and Org ID.
 
-== Frequently Asked Questions ==
+## Frequently Asked Questions
 
-= Can anyone get an NPR API Key? =
+### Can anyone get an NPR API Key?
 
 We are no longer provisioning public API key for our legacy APIs. If you are an NPR member station or are working with an NPR member station and do not know your key, please [ask NPR station relations for help](https://nprsupport.desk.com/customer/login?return_to=%2Fcustomer%2Fportal%2Femails%2Fnew).
 
-= Can anyone push content into the NPR API using this plugin? =
+### Can anyone push content into the NPR API using this plugin?
 
 Push requires an Organization ID in the NPR API, which is typically given out to only NPR stations and approved content providers. If that's you, you probably already have an Organization ID.
 
-= Where can I find NPR's documentation on the NPR API? =
+### Where can I find NPR's documentation on the NPR API?
 
 There is some documentation in the NPR API site: [www.npr.org/api/index.php](https://www.npr.org/api/index.php).
 
-= Is there an easy way to directly query the NPR API? =
+### Is there an easy way to directly query the NPR API?
 
 You bet, just visit the NPR Query Generator: [www.npr.org/api/queryGenerator.php](https://www.npr.org/api/queryGenerator.php)
 
-== Screenshots ==
+## Screenshots
 
 NPR API Plugin Settings screen
 
@@ -66,11 +66,11 @@ NPR Stories having got gotten
 ![NPR Stories having got gotten](docs/assets/img/npr-stories.png)
 
 
-== Changelog ==
+## Changelog
 
 <!-- copy from readme.txt to here -->
 
-= V1.8 =
+### V1.8
 
 * Fixes issue preventing pushing to the API, introduced in V1.7. [PR #60](https://github.com/npr/nprapi-wordpress/pull/60) for [issue #57](https://github.com/npr/nprapi-wordpress/issues/57).
 * Fixes issue where images were not properly sideloaded. [PR #60](https://github.com/npr/nprapi-wordpress/pull/60) for [issue #59](https://github.com/npr/nprapi-wordpress/issues/59).
@@ -78,7 +78,7 @@ NPR Stories having got gotten
 * When interacting with a site using the plugin in an unconfigured state, users will be prompted to set the NPR API Push URL. [PR #56](https://github.com/npr/nprapi-wordpress/pull/56) for [issue #51](https://github.com/npr/nprapi-wordpress/issues/51).
 * Miscellaneous code quality improvements.
 
-= V1.7 =
+### V1.7
 
 * The Story API box that appears in the post editor has been refreshed:
 	* Instead of requiring a separate action to push the story to the Story API, the content will be pushed whenever the content is saved in WordPress, if the "Send to NPR API" box is checked.
@@ -89,7 +89,7 @@ NPR Stories having got gotten
 * Several broken links in the documentation have been repaired. ([#44](https://github.com/npr/nprapi-wordpress/pull/44))
 * Automated tests are now run against an expanded list of WordPress and PHP versions, as described [in pull request #46](https://github.com/npr/nprapi-wordpress/pull/46).
 
-= V1.6 =
+### V1.6
 
 * Added meta box to post edit page to explicitly push a story to NPR One
 * Added [documentation](https://github.com/nprds/nprapi-wordpress/tree/master/docs)
@@ -107,14 +107,14 @@ NPR Stories having got gotten
 * `DS_NPR_API` class now uses new-style `__construct()` constructor.
 * Removed `/wp-admin/includes/admin.php`, `/wp-load.php`, `/wp-includes/class-wp-error.php` from the cron job function, see [4b3d65a](https://github.com/nprds/nprapi-wordpress/pull/19/commits/4b3d65a19122b0da5215997939db94c7accf3e5e) and [cf2dfa3](https://github.com/nprds/nprapi-wordpress/pull/19/commits/cf2dfa39c1f118d0ca0c836d7967e09baec63bd6) - the cron job works without them.
 
-= V1.5.2 =
+### V1.5.2
 
 * Adding support for enclosures created as metadata by the PowerPress plugin.
 * Added NPR One checkbox that makes pushed stories available to the NPR One app (unchecked by default).
 * Users were getting a whitescreen when attempting to push posts. The default byline element -- when used with no mapping or co-authors plugin -- was being sent without a tag name, causing a fatal error.)
 * General clean up; small doc tweaks; bug fixes.
 
-= V1.5.1 =
+### V1.5.1
 
 * Multiple Bylines for pulled stories -  When an API story has multiple bylines, we will now populate a meta field `npr_multi_byline` with a pipe (|) deliminated list of names.  If the author also has a link for thier byline then there'll be a tilde (~) separating the author's name and the link.
   - An example of data for multiple bylines:
@@ -125,7 +125,7 @@ NPR Stories having got gotten
 
 * Do not re-pull stories that are already in draft status - The get multi process would repleatedly re-pull stories into draft mode if there is already a draft copy. This fix will check for `status=any` when checking to see if a story already exists in the WordPress database.
 
-= V1.5 =
+### V1.5
 
 * Reversed the order of images and audio that are being pushed to the NPR API.  We're now sending them in the order the file was created.
 * Mapping of media credit and agency - If you have a field that you are storing image credit and agency, you can now send these to the NPR API. In making this change we needed to expose meta fields that begin with an underscore.  So you may see more meta fields visable on the mapping page.
@@ -143,14 +143,14 @@ NPR Stories having got gotten
 
 * When pushing a story with Audio, the audio description will be pushed as well, provided there is one.
 
-= V1.4 =
+### V1.4
 
 * Filters for Shortcodes - We've now implemented a hook to a filter that will be used to alter any short codes that a plugin may own in a post before pushing that post to the NPR API. The filter (`npr_ds_shortcode_filter`) will fire before we remove shortcodes when we're pushing the post. Any plugin that has shortcodes should alter those shortcodes via this filter to something that's more HTML-friendly, so that other clients can access that information. As an example of what needs to be done in a plugin to take advantage of this new filter please see the branch for the following plugin: <https://github.com/argoproject/navis-documentcloud/tree/kmoylan-filter> What we've done here is write a function `my_documentCloud_filter` that is linked to the filter `npr_ds_shortcode_filter` (all near the bottom of the PHP file).  This function will turn any shortcode created by this plugin into an HTML `<a>` tag to link to what was an embedded document. As with any other filter in WordPress, nothing will happen if you do not have any plugins installed that have implemented the filter. It will be up to any other plugin's maintainer to implement the filter correctly if they wish to take advantage of this functionality.
 * Bulk Push - From the post list page for you NPR Push post type you can now select multiple posts and using the bulk operation dropdown on that page, push the selected posts to the NPR API. This should helpful for posts that have been living on a site before the NPR API plugin was installed. Note that this will only push a maximum 20 posts at one time.   
 * Publish or Draft for Get Multi -  It's now possible for an admin to select Draft or Publish for the posts that come from a query on the get multi page. This way, the return from each query can be reviewed before it's published to a site.
 * Run Get Multi on Demand -  An admin can now select a checkbox if they would like the get multi queries to run when the page is saved. This will allow admins to immediately check queries instead of having to wait for the cron to run.
 
-= V1.3 =
+### V1.3
 
 * Permissions - If you have created any NPR API Permissions Groups you can select which (if any) group you would like to use as your default group when pushing content to the NPR API.  Learn more about NPR API Permissions Groups here: <https://digitalservices.npr.org/post/npr-api-content-permissions-control>
 * Multi-Site - Cron set up and other activation tasks will now happen on every site in a multi-site configuration.
@@ -158,12 +158,12 @@ NPR Stories having got gotten
 * Content and short codes - Instead of blindly removing all shortcodes from a story's content, we are now trying to let any plugins replace the shortcodes with HTML, and then if there are any leftover shortcodes (we delete those?).
 * Byline URL - We are now saving any links to the author of a story's bio page in the meta field `npr_byline_link`. This should allow you to supply a link for any author who has a biography registered with the NPR API.
 
-= V1.2 =
+### V1.2
 
 * Enhance error messages when there are connectivity or permissions issues with your NPR API work. We have also included the ability for admins to map custom Meta fields to certain Post fields that are pushed to the NPR API. And finally, we've add the ability to retrieve transcripts for stories that have transcripts associated with them. Along with these changes we've added the the ability to save urls for the .m3u files attached to NPR stories.
 
 
-= V1.1 =
+### V1.1
 
 This version will allow admins to configure their WordPress site to retrieve multiple NPR API stories that will be automatically published (via cron) to their site.
 
@@ -189,7 +189,8 @@ This version will allow admins to configure their WordPress site to retrieve mul
   - There is also a new column added to this page titled "Update Story".  For any Post retrieved from the NPR API there will be a link to "Update" the story. Pressing this link will bring the user to the query NPR API page with the story ID pre-filled. Pressing "Publish" on this screen will re-query the NPR API for the story and update the Post with any changes that may have taken place on the NPR API for that story.
 * Update and Delete of pushed stories - A story that was written in your Wordpress site and pushed to the NPR API will be automatically be updated in the API when your story is updated in Wordpress.  When your Post is moved to the Trash in Wordpress, your story will be deleted from the NPR API.  If a Trashed Post is resorted, your story will be made available to the NPR API again.
 
-= V1.0 =
+### V1.0
+
 As not a lot of users have installed the V1.0 of the NPR API Plugin, there are a couple of things to keep in mind.
 
 * On the NPR API settings page (wp-admin/options-general.php?page=ds_npr_api) there are 4 fields.
