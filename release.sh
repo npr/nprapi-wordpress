@@ -1,4 +1,4 @@
-#!/usr/bin/env bas
+#!/usr/bin/env bash
 #
 # This file is a WordPress.org plugin release script.
 # For more about how it works, see the documentation at
