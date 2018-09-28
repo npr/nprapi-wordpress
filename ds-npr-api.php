@@ -2,7 +2,7 @@
 /**
  * Plugin Name: NPR Story API
  * Description: A collection of tools for reusing content from NPR.org supplied by Digital Services.
- * Version: 1.7.1
+ * Version: 1.8
  * Author: NPR Digital Services
  * License: GPLv2
 */

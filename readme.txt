@@ -1,10 +1,10 @@
 === NPR Story API ===
-Contributors: nprds, inn_nerds
+Contributors: nprds, innlabs
 Donate link: https://www.npr.org/series/750002/support-public-radio
 Tags: npr, news, public radio, api
 Requires at least: 3.8.14
 Tested up to: 4.9
-Stable tag: 1.7.1
+Stable tag: 1.8
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: nprapi
@@ -13,11 +13,11 @@ A collection of tools for reusing content from NPR.org supplied by Digital Servi
 
 == Description ==
 
-The NPR Story API Plugin provides push and pull functionality with the NPR API along with a user-friendly administrative interface.
+The NPR Story API Plugin provides push and pull functionality with the NPR Story API along with a user-friendly administrative interface.
 
 NPR's API is a content API, which essentially provides a structured way for other computer applications to get NPR stories in a predictable, flexible and powerful way. The content that is available includes audio from most NPR programs dating back to 1995 as well as text, images and other web-only content from NPR and NPR member stations. This archive consists of over 250,000 stories that are grouped into more than 5,000 different aggregations.
 
-Access to the NPR API requires an API Key which you can get by [registering for an NPR account](https://secure.npr.org/oauth2/login).
+Access to the NPR Story API requires an API Key which you can get by [registering for an NPR account](https://secure.npr.org/oauth2/login).
 
 The WordPress plugin is being developed as an Open Source plugin by NPR Digital Services. If you would like to suggest features or bug fixes, or better yet if you would like to contribute new features or bug fixes please contact Digital Services through our support page at [https://info.ds.npr.org/support.html](https://info.ds.npr.org/support.html).
 
@@ -25,38 +25,38 @@ The WordPress plugin is being developed as an Open Source plugin by NPR Digital 
 
 1. Upload the plugin files to the `/wp-content/plugins/plugin-name` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
-3. Use the Settings->NPR API screen to configure the plugin. Begin by entering your API Key, then add your Push URL and Org ID.
+3. Use the **Settings > NPR API** screen to configure the plugin. Begin by entering your API Key, then add your Push URL and Org ID.
 
 
 == Frequently Asked Questions ==
 
-= Can anyone get an NPR API Key? =
+= Can anyone get an NPR Story API Key? =
 
 That's up to NPR but you can [register for an account here](https://secure.npr.org/oauth2/login).
 
-= Can anyone push content into the NPR API using this plugin? =
+= Can anyone push content into the NPR Story API using this plugin? =
 
-Push requires an Organization ID in the NPR API, which is typically given out to only NPR stations and approved content providers. If that's you, you probably already have an Organization ID.
+Push requires an Organization ID in the NPR Story API, which is typically given out to only NPR stations and approved content providers. If that's you, you probably already have an Organization ID.
 
-= Where can I find NPR's documentation on the NPR API? =
+= Where can I find NPR's documentation on the NPR Story API? =
 
-The best resource for general information about the NPR API is here: [https://nprsupport.desk.com/customer/en/portal/topics/783619-api/articles](https://nprsupport.desk.com/customer/en/portal/topics/783619-api/articles).
+The best resource for general information about the NPR Story API is here: [https://nprsupport.desk.com/customer/en/portal/topics/783619-api/articles](https://nprsupport.desk.com/customer/en/portal/topics/783619-api/articles).
 
-There's also the documentation in the NPR API site: [https://www.npr.org/api/index.php](https://www.npr.org/api/index.php).
+There's also the documentation in the NPR Story API site: [https://www.npr.org/api/index.php](https://www.npr.org/api/index.php).
 
-= Is there an easy way to directly query the NPR API? =
+= Is there an easy way to directly query the NPR Story API? =
 
 You bet, just visit the NPR Query Generator: [https://www.npr.org/api/queryGenerator.php](https://www.npr.org/api/queryGenerator.php)
 
 == Screenshots ==
 
-NPR API Plugin Settings screen
+NPR Story API Plugin Settings screen
 
-![NPR API Plugin Settings screen](docs/assets/img/npr-api-wp-plugin-settings.png)
+![NPR Story API Plugin Settings screen](docs/assets/img/npr-api-wp-plugin-settings.png)
 
-NPR API multiple get settings
+NPR Story API multiple get settings
 
-![NPR API multiple get settings](docs/assets/img/npr-api-multiple-get-settings.png)
+![NPR Story API multiple get settings](docs/assets/img/npr-api-multiple-get-settings.png)
 
 Get NPR Stories link in the dashboard
 
@@ -73,12 +73,12 @@ NPR Stories having got gotten
 
 == Changelog ==
 
-= [unreleased](https://github.com/npr/nprapi-wordpress/compare/1.7.1...HEAD) =
+= V1.8 =
 
 * Fixes issue preventing pushing to the API, introduced in V1.7. [PR #60](https://github.com/npr/nprapi-wordpress/pull/60) for [issue #57](https://github.com/npr/nprapi-wordpress/issues/57).
 * Fixes issue where images were not properly sideloaded. [PR #60](https://github.com/npr/nprapi-wordpress/pull/60) for [issue #59](https://github.com/npr/nprapi-wordpress/issues/59).
 * Fixes invalid GMT offset error when creating new DateTimeZone object in post metabox. [PR #53](https://github.com/npr/nprapi-wordpress/pull/53) for [issue #52](https://github.com/npr/nprapi-wordpress/issues/52).
-* When interacting with a site using the plugin in an unconfigured state, users will be prompted to set the NPR API Push URL. [PR #56](https://github.com/npr/nprapi-wordpress/pull/56) for [issue #51](https://github.com/npr/nprapi-wordpress/issues/51).
+* When interacting with a site using the plugin in an unconfigured state, users will be prompted to set the NPR Story API Push URL. [PR #56](https://github.com/npr/nprapi-wordpress/pull/56) for [issue #51](https://github.com/npr/nprapi-wordpress/issues/51).
 * Miscellaneous code quality improvements.
 
 = V1.7.1 =
@@ -175,7 +175,7 @@ NPR Stories having got gotten
 
 This version will allow admins to configure their WordPress site to retrieve multiple NPR API stories that will be automatically published (via cron) to their site.
 
-* From the Admin -> Settings -> NPR API Get Multi page (wp-admin/options-general.php?page=ds_npr_api_get_multi_settings) an admin can add a number of queries.
+* From the **Settings -> NPR API Get Multi** page (wp-admin/options-general.php?page=ds_npr_api_get_multi_settings) an admin can add a number of queries.
 * These query entries can contain an API ID for a single story, or an ID for a specific category, program, topic, etc.
 * The query can also contain the full query string can be created from the NPR API Query Generator: <https://www.npr.org/api/queryGenerator.php>
 * You can also enter the URL for a story you found on npr.org.
