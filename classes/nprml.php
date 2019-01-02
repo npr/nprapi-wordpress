@@ -300,11 +300,14 @@ function nprstory_post_to_nprml_story( $post ) {
 		// Is the image in the content?  If so, tell the API with a flag that CorePublisher knows.
 		// WordPress may add something like "-150X150" to the end of the filename, before the extension.
 		// Isn't that nice? Let's remove that.
-		$image_name_parts = explode( ".", $image_guid );
-		$image_regex = "/" . $image_name_parts[0] . "\-[a-zA-Z0-9]*" . $image_name_parts[1] . "/"; 
+		$image_guid = wp_get_attachment_url( $image->ID );
+		$image_url = parse_url( $image_guid );
+		$image_name_parts = pathinfo( $image_url['path'] );
+
+		$image_regex = "/" . $image_name_parts['filename'] . "\-[a-zA-Z0-9]*" . $image_name_parts['extension'] . "/"; 
 		$in_body = "";
 		if ( preg_match( $image_regex, $content ) ) {
-			if ( strstr( $image->guid, '?') ) {
+			if ( strstr( $image_guid, '?') ) {
 				$in_body = "&origin=body";
 			} else {
 				$in_body = "?origin=body";
@@ -312,7 +315,7 @@ function nprstory_post_to_nprml_story( $post ) {
 		}
 		$story[] = array(
 			'tag' => 'image',
-			'attr' => array( 'src' => $image->guid . $in_body, 'type' => $image_type ),
+			'attr' => array( 'src' => $image_guid . $in_body, 'type' => $image_type ),
 			'children' => array(
 				array(
 					'tag' => 'title',
@@ -347,6 +350,7 @@ function nprstory_post_to_nprml_story( $post ) {
 		'post_type' => 'attachment'
 	);
 	$audios = get_children( $args );
+	$audio_files = [];
 
 	foreach ( $audios as $audio ) {
 		$audio_meta = wp_get_attachment_metadata( $audio->ID );
@@ -355,6 +359,8 @@ function nprstory_post_to_nprml_story( $post ) {
 		if ( empty( $caption ) ) {
 			$caption = $audio->post_content;
 		}
+		$audio_guid = wp_get_attachment_url( $audio->ID );
+		$audio_files[] = $audio->ID;
 
 		$story[] = array(
 			'tag' => 'audio',
@@ -364,7 +370,7 @@ function nprstory_post_to_nprml_story( $post ) {
 					'children' => array (
 						array(
 							'tag' => 'mp3',
-							'text' => $audio->guid,
+							'text' => $audio_guid,
 						)
 					),
 				),
@@ -390,28 +396,42 @@ function nprstory_post_to_nprml_story( $post ) {
 	if ( $enclosures = get_metadata( 'post', $post->ID, 'enclosure' ) ) {
 		foreach( $enclosures as $enclosure ) {
 			$pieces = explode( "\n", $enclosure );
-			if ( !empty( $pieces[3] ) ) {
-				$metadata = unserialize( $pieces[3] );
-				$duration = ( ! empty($metadata['duration'] ) ) ? nprstory_convert_duration_to_seconds( $metadata['duration'] ) : NULL;
-			}
-			$story[] = array(
-				'tag' => 'audio',
-				'children' => array(
-					array(
-						'tag' => 'duration',
-						'text' => ( !empty($duration) ) ? $duration : 0,
-					),
-					array(
-						'tag' => 'format',
-						'children' => array(
-							array(
-							'tag' => 'mp3',
-							'text' => $pieces[0],
+
+			$audio_guid = trim( $pieces[0] );
+			$attach_id = attachment_url_to_postid( $audio_guid );
+			if ( !in_array( $attach_id, $audio_files ) ) :
+				$audio_files[] = $attach_id;
+				
+				$audio_meta = wp_get_attachment_metadata( $attach_id );
+				$duration = 0;
+				if ( !empty( $audio_meta['length'] ) ) :
+					$duration = $audio_meta['length'];
+				elseif ( !empty( $audio_meta['length_formatted'] ) ) :
+					$duration = nprstory_convert_duration_to_seconds( $audio_meta['length_formatted'] );
+				elseif ( !empty( $pieces[3] ) ) :
+					$metadata = unserialize( trim( $pieces[3] ) );
+					$duration = ( !empty($metadata['duration'] ) ) ? nprstory_convert_duration_to_seconds( $metadata['duration'] ) : 0;
+				endif;
+
+				$story[] = array(
+					'tag' => 'audio',
+					'children' => array(
+						array(
+							'tag' => 'duration',
+							'text' => $duration,
+						),
+						array(
+							'tag' => 'format',
+							'children' => array(
+								array(
+								'tag' => 'mp3',
+								'text' => wp_get_attachment_url( $attach_id ),
+								),
 							),
 						),
 					),
-				),
-			);
+				);
+			endif;
 		}
 	}
 
