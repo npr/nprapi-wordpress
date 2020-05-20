@@ -244,6 +244,34 @@ class NPRAPIWordpress extends NPRAPI {
                         $metas[NPR_AUDIO_META_KEY] = implode( ',', $mp3_array );
                         $metas[NPR_AUDIO_M3U_META_KEY] = implode( ',', $m3u_array );
                     }
+                    //get exernal assets like youtube
+                    if (isset($story->externalAsset) ) {
+                      $oembeds_array = array();
+                      if (isset($story->externalAsset->type)) {
+                        $oembeds_array[] = $story->externalAsset;
+                      } else {
+                        // sometimes there are multiple objects
+                        foreach ( (array) $story->externalAsset as $extasset ) {
+                          if (isset($extasset->type)) {
+                            $oembeds_array[] = $extasset;
+                          }
+                        }
+                      }
+                      // parse those external assets into sub-arrays by type
+                      foreach ($oembeds_array as $embed) {
+                        if (!empty($embed->type)) {
+                          $embed_type = strtolower($embed->type);
+                          unset($embed->type);
+                          unset($embed->id);
+                          $translated_embed = array();
+                          foreach ( (array) $embed as $k => $v) {
+                            $translated_embed[$k] = $v->value;
+                          }
+                          $metas[NPR_OEMBED_META_KEY_PREFIX . $embed_type][] = $translated_embed;
+                        }
+                      }                     
+                    }
+
                     if ( $existing ) {
                         $created = false;
                         $args[ 'ID' ] = $existing->ID;

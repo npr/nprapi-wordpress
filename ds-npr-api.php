@@ -43,6 +43,8 @@ define( 'NPR_IMAGE_CREDIT_META_KEY', 'npr_image_credit');
 define( 'NPR_IMAGE_AGENCY_META_KEY', 'npr_image_agency');
 define( 'NPR_IMAGE_CAPTION_META_KEY', 'npr_image_caption');
 
+define( 'NPR_OEMBED_META_KEY_PREFIX', 'npr_ds_oembeds_');
+
 define( 'NPR_PUSH_STORY_ERROR', 'npr_push_story_error');
 
 define( 'NPR_MAX_QUERIES', 10 );
