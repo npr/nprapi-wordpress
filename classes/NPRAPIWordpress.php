@@ -272,6 +272,23 @@ class NPRAPIWordpress extends NPRAPI {
                       }                     
                     }
 
+                    // get htmlAssets -- typically interactives -- and append to the story body
+                    if (isset($story->htmlAsset) ) {
+                      $htmls_array = array();
+                      if (isset($story->htmlAsset->id)) {
+                        $story->body .= $story->htmlAsset->value;
+                      } else {
+                        // sometimes there are multiple objects
+                        foreach ( (array) $story->htmlAsset as $hasset ) {
+                          if (isset($hasset->id)) {
+                            $story->body .= $hasset->value;
+                          }
+                        }
+                      }
+                    }
+
+
+
 
                     if ( $existing ) {
                         $created = false;
