@@ -275,9 +275,20 @@ class NPRAPIWordpress extends NPRAPI {
 	                 * @param NPRMLEntity $story Story object created during import
 	                 * @param bool $created true if not pre-existing, false otherwise
 	                 */
+
+                  if ($use_npr_layout) {
+                    // keep WP from stripping content from NPR posts
+                    kses_remove_filters();
+                  }
+
 	                $args = apply_filters( 'npr_pre_insert_post', $args, $post_id, $story, $created );
 
 	                $post_id = wp_insert_post( $args );
+
+                  if ($use_npr_layout) {
+                    // re-enable the built-in content stripping
+                    kses_init_filters();
+                  }
 
                     //now that we have an id, we can add images
                     //this is the way WP seems to do it, but we couldn't call media_sideload_image or media_ because that returned only the URL
@@ -452,9 +463,20 @@ class NPRAPIWordpress extends NPRAPI {
 	                 * @param int $post_id Post ID or NULL if no post ID.
 	                 * @param NPRMLEntity $story Story object created during import
 	                 */
+
+                  if ($use_npr_layout) {
+                    // keep WP from stripping content from NPR posts
+                    kses_remove_filters();
+                  }
+
 	                $args = apply_filters( 'npr_pre_update_post', $args, $post_id, $story );
 
 	                $post_id = wp_insert_post( $args );
+
+                  if ($use_npr_layout) {
+                    // re-enable content stripping
+                    kses_init_filters();
+                  }
                 }
 
                 //set categories for story
