@@ -91,8 +91,14 @@ function nprstory_settings_init() {
     add_settings_field( 'dp_npr_query_run_multi', 'Run the queries on saving changes', 'nprstory_query_run_multi_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
     register_setting( 'ds_npr_api_get_multi_settings', 'dp_npr_query_run_multi' , 'nprstory_validation_callback_checkbox');
 
+
     add_settings_field( 'dp_npr_query_multi_cron_interval', 'Interval to run Get Multi cron', 'nprstory_query_multi_cron_interval_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
     register_setting( 'ds_npr_api_get_multi_settings', 'dp_npr_query_multi_cron_interval', 'intval' );
+
+
+    add_settings_field( 'dp_npr_query_use_layout', 'Use rich layout on pulled posts if available', 'nprstory_query_use_layout_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings' );
+    register_setting( 'ds_npr_api_get_multi_settings', 'dp_npr_query_use_layout' , 'nprstory_validation_callback_checkbox');
+
 
     add_settings_field( 'ds_npr_pull_post_type', 'NPR Pull Post Type', 'nprstory_pull_post_type_callback', 'ds_npr_api', 'ds_npr_api_settings' );
     register_setting( 'ds_npr_api', 'ds_npr_pull_post_type', 'nprstory_validation_callback_select' );
@@ -149,6 +155,19 @@ function nprstory_query_run_multi_callback() {
 
 	echo $check_box_string;
 	wp_nonce_field( 'nprstory_nonce_ds_npr_query_run_multi', 'nprstory_nonce_ds_npr_query_run_multi_name', true, true );
+}
+
+function nprstory_query_use_layout_callback() {
+  $use_layout = get_option('dp_npr_query_use_layout');
+  $check_box_string = "<input id='dp_npr_query_use_layout' name='dp_npr_query_use_layout' type='checkbox' value='true'";
+
+  if ( $use_layout ) {
+    $check_box_string .= ' checked="checked" ';
+  }
+  $check_box_string .= "/>";
+
+  echo $check_box_string . "<p>If layout is available will render any YouTube, Tweets, images, or JavaScript-based widgets within the post in the order they appear. CAUTION: This will allow the 'admin' user to post unfiltered content such as JavaScript.</p>";
+  wp_nonce_field( 'nprstory_nonce_ds_npr_query_use_layout', 'nprstory_nonce_ds_npr_query_use_layout_name', true, true );
 }
 
 function nprstory_query_multi_cron_interval_callback() {

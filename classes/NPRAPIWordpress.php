@@ -102,6 +102,7 @@ class NPRAPIWordpress extends NPRAPI {
 		if ( empty( $pull_post_type ) ) {
 			$pull_post_type = 'post';
 		}
+    $use_npr_layout = !empty(get_option( 'dp_npr_query_use_layout' )) ? TRUE : FALSE;
 
 	    $post_id = null;
 
