@@ -139,7 +139,16 @@ class NPRAPIWordpress extends NPRAPI {
                 } else {
                     $existing = $existing_status = null;
                 }
-    
+
+                $has_npr_layout = FALSE;
+                if ($use_npr_layout) { 
+                  // get the "NPR layout" version if available and the "use rich layout" option checked in settings
+                  $body_with_layout = $this->get_body_with_layout($story);
+                  if (!empty($body_with_layout)) {
+                    $story->body = $body_with_layout;
+                    $has_npr_layout = TRUE;
+                  }
+                }
                 //add the transcript
                 $story->body .= $this->get_transcript_body($story);
 
@@ -667,4 +676,193 @@ class NPRAPIWordpress extends NPRAPI {
 
         return $transcript_body;
     }
+
+
+  /**
+   *
+   * This function will check a story to see if it has a layout object, if there is 
+   * we'll return the body with any externalAssets or htmlAssets inserted in the order they are in the layout
+   *
+   * @param string $story
+   * @return string
+   */
+    function get_body_with_layout( $story ) {
+        $body_with_layout = "";
+        if ( ! empty( $story->layout ) ) {
+          // simplify the arrangement of the storytext object
+          $layoutarry = array();
+          foreach($story->layout->storytext as $type => $elements) {
+            if (!is_array($elements)) {
+              $elements = array($elements);
+            }
+            foreach ($elements as $element) {
+              $num = $element->num;
+              $reference = $element->refId;
+              if ($type == 'text') {
+                $reference = $element->paragraphNum;
+              }
+              $layoutarry[(int)$num] = array('type'=>$type, 'reference' => $reference);
+            }
+          }
+          ksort($layoutarry);
+          
+          $paragraphs = array();
+          $num = 1;
+          foreach ($story->textWithHtml->paragraphs as $paragraph) {
+            $partext = (string) $paragraph->value;
+            $paragraphs[$num] = $partext;
+            $num++;
+          }
+         
+          $storyimages = array();
+          if (isset($story->image) ) {
+            $storyimages_array = array();
+            if (isset($story->image->id)) {
+              $storyimages_array[] = $story->image;
+            } else {
+              // sometimes there are multiple objects
+              foreach ( (array) $story->image as $stryimage ) {
+                if (isset($stryimage->id)) {
+                  $storyimages_array[] = $stryimage;
+                }
+              }
+            }
+            foreach ($storyimages_array as $image) {
+              if ( ! empty( $image->enlargement ) ) {
+                $image_url = $image->enlargement->src;
+              } else {
+                if ( ! empty( $image->crop ) && is_array( $image->crop ) ) {
+                  foreach ( $image->crop as $crop ) {
+                    if ( empty( $crop->type ) ) {
+                      continue;
+                    }
+                    if ( 'enlargement' === $crop->type ) {
+                      $image_url = $crop->src;
+                    }
+                  }
+                  if ( empty( $image_url ) ) {
+                    foreach ( $image->crop as $crop ) {
+                      if ( empty( $crop->type ) ) {
+                        continue;
+                      }
+                      if ( 'standard' === $crop->type ) {
+                        $image_url = $crop->src;
+                      }
+                    }
+                  }
+                }
+              }
+              if ( empty( $image_url ) && ! empty( $image->src ) ) {
+                $image_url = $image->src;
+              }
+              // add resizing to any npr-hosted image
+              if (strpos($image_url, 'media.npr.org')) {
+                // remove any existing querystring 
+                if (strpos($image_url)) {
+                  $image_url = substr($image_url, strpos($image_url, 0, '?'));
+                }
+                $image_url .= '?s=6';
+              }             
+              $storyimages[$image->id] = (array) $image;
+              $storyimages[$image->id]['image_url'] = $image_url;
+            }
+          }
+
+
+ 
+          $externalAssets = array();
+          if (isset($story->externalAsset) ) {
+            $externals_array = array();
+            if (isset($story->externalAsset->type)) {
+              $externals_array[] = $story->externalAsset;
+            } else {
+              // sometimes there are multiple objects
+              foreach ( (array) $story->externalAsset as $extasset ) {
+                if (isset($extasset->type)) {
+                  $externals_array[] = $extasset;
+                }
+              }
+            }
+            foreach ($externals_array as $embed) {
+              $externalAssets[$embed->id] = (array) $embed;
+            } 
+          } 
+          $htmlAssets = array();
+          if (isset($story->htmlAsset) ) {
+            if (isset($story->htmlAsset->id)) {
+              $htmlAssets[$story->htmlAsset->id] = $story->htmlAsset->value;
+            } else {
+            // sometimes there are multiple objects
+              foreach ( (array) $story->htmlAsset as $hasset ) {
+                if (isset($hasset->id)) {
+                  $htmlAssets[$hasset->id] = $hasset->value;
+                }
+              }
+            }
+          }
+          
+          foreach ($layoutarry as $ordernum => $element) {
+            $reference = $element['reference'];
+            switch ($element['type']) {
+              case 'text':
+                if (!empty($paragraphs[$reference])) {
+                  $body_with_layout .= "<p>" . $paragraphs[$reference] . "</p>\n";
+                }
+                break;
+              case 'staticHtml':
+                if (!empty($htmlAssets[$reference])) {
+                  $body_with_layout .= $htmlAssets[$reference] . "\n\n";
+                }
+                break;
+              case 'externalAsset':
+                if (!empty($externalAssets[$reference])) {
+                  $body_with_layout .= $externalAssets[$reference]['url'] . "\n";
+                  if (!empty( (string)$externalAssets[$reference]['credit'])) {
+                    $body_with_layout .= "<cite>" . (string) $externalAssets[$reference]['credit'] . "</cite>\n";
+                  }
+                  if (!empty( (string)$externalAssets[$reference]['caption'])) {
+                    $body_with_layout .= "<p>" . (string) $externalAssets[$reference]['caption'] . "</p>\n";
+                  }
+                  $body_with_layout .= "\n";
+                }
+                break;
+              case 'image':
+                if (!empty($storyimages[$reference])) {
+                  $figclass="npr-featured-image";
+                  $thisimg = $storyimages[$reference];
+                  $fightml = !empty( (string)$thisimg['image_url']) ? '<img src="' . (string)$thisimg['image_url'] . '"' : '';
+                  $thiscaption = (string)$thisimg['caption'];
+                  $fightml .= (!empty($fightml) && !empty( $thiscaption)) ? ' alt="' . $thiscaption . '"' : '';
+                  $fightml .= !empty($fightml) ? '>' : '';
+                  $figcaption = (!empty($fightml) && !empty( $thiscaption)) ? '<figcaption>' . $thiscaption  : '';
+                  if (!empty($figcaption)) {
+                    $cites = '';
+                    foreach (array('producer', 'provider', 'copyright') as $item) {
+                      $thisitem = (string)$thisimg[$item];
+                      if (!empty($thisitem)) {
+                        $cites .= !empty($cites) ? ' | ' . $thisitem : $thisitem;
+                      }
+                    }
+                    $figcaption .= !empty($cites) ? "<cite>$cites</cite>" : '';
+                  } 
+                  $figcapton .= !empty($figcaption) ? '</figcaption>' : '';
+                  $fightml .= (!empty($fightml) && !empty($figcaption)) ? $figcaption : '';
+                  $body_with_layout .= (!empty($fightml)) ? "<figure class=\"$figclass\">$fightml</figure>\n\n" : ''; 
+                }
+                break; 
+            }
+          }
+         
+        }
+        return $body_with_layout;
+    }
+
+
+
+
+
+
+
+
+
 }
