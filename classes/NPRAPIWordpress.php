@@ -245,50 +245,6 @@ class NPRAPIWordpress extends NPRAPI {
                         $metas[NPR_AUDIO_META_KEY] = implode( ',', $mp3_array );
                         $metas[NPR_AUDIO_M3U_META_KEY] = implode( ',', $m3u_array );
                     }
-                    //get external assets like youtube
-                    if (isset($story->externalAsset) ) {
-                      $oembeds_array = array();
-                      if (isset($story->externalAsset->type)) {
-                        $oembeds_array[] = $story->externalAsset;
-                      } else {
-                        // sometimes there are multiple objects
-                        foreach ( (array) $story->externalAsset as $extasset ) {
-                          if (isset($extasset->type)) {
-                            $oembeds_array[] = $extasset;
-                          }
-                        }
-                      }
-                      // parse those external assets into sub-arrays by type
-                      foreach ($oembeds_array as $embed) {
-                        if (!empty($embed->type)) {
-                          $embed_type = strtolower($embed->type);
-                          unset($embed->type);
-                          unset($embed->id);
-                          $translated_embed = array();
-                          foreach ( (array) $embed as $k => $v) {
-                            $translated_embed[$k] = $v->value;
-                          }
-                          $metas[NPR_OEMBED_META_KEY_PREFIX . $embed_type][] = $translated_embed;
-                        }
-                      }                     
-                    }
-
-                    // get htmlAssets -- typically interactives -- and append to the story body
-                    $html_assets = '';
-                    if (isset($story->htmlAsset) ) {
-                      if (isset($story->htmlAsset->id)) {
-                        $html_assets .= $story->htmlAsset->value;
-                      } else {
-                        // sometimes there are multiple objects
-                        foreach ( (array) $story->htmlAsset as $hasset ) {
-                          if (isset($hasset->id)) {
-                            $html_assets .= $hasset->value;
-                          }
-                        }
-                      }
-                    }
-                    $metas[NPR_HTML_ASSETS_META_KEY] = $html_assets;
-
 
 
                     if ( $existing ) {
