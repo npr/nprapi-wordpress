@@ -865,7 +865,21 @@ class NPRAPIWordpress extends NPRAPI {
                   $body_with_layout .= $fightml;
                 }
                 break;
-              case 'image':
+              default:
+              // handles both 'list' and 'image' since it will reset the type and then assign the reference 
+                if ($element['type'] == 'list') {
+                  foreach ($storyimages as $image) {
+                    if ($image['type'] != 'primary') {
+                      continue;
+                    }
+                    $reference = $image['id'];
+                    $element['type'] = 'image';
+                    break;
+                  }
+                }
+                if ($element['type'] != 'image') {
+                  break;
+                }
                 if (!empty($storyimages[$reference])) {
                   $figclass = "wp-block-image size-large"; 
                   $thisimg = $storyimages[$reference];
@@ -889,7 +903,9 @@ class NPRAPIWordpress extends NPRAPI {
                   $thiscaption .= $cites;
                   $figcaption = (!empty($fightml) && !empty( $thiscaption)) ? "<figcaption>$thiscaption</figcaption>"  : '';
                   $fightml .= (!empty($fightml) && !empty($figcaption)) ? $figcaption : '';
-                  $body_with_layout .= (!empty($fightml)) ? "<figure class=\"$figclass\">$fightml</figure>\n\n" : ''; 
+                  $body_with_layout .= (!empty($fightml)) ? "<figure class=\"$figclass\">$fightml</figure>\n\n" : '';
+                  // make sure it doesn't get reused;
+                  unset($storyimages[$reference]);
                 }
                 break; 
             }
