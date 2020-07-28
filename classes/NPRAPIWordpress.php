@@ -877,7 +877,7 @@ class NPRAPIWordpress extends NPRAPI {
                   $thisimg = $storyimages[$reference];
                   $fightml = !empty( (string)$thisimg['image_url']) ? '<img src="' . (string)$thisimg['image_url'] . '"' : '';
                   $thiscaption = !empty(trim( (string)$thisimg['caption'] )) ? trim( (string)$thisimg['caption'] ) : '';
-                  $fightml .= (!empty($fightml) && !empty( $thiscaption)) ? ' alt="' . $thiscaption . '"' : '';
+                  $fightml .= (!empty($fightml) && !empty( $thiscaption)) ? ' alt="' . strip_tags($thiscaption) . '"' : '';
                   $fightml .= !empty($fightml) ? '>' : '';
                   $figcaption = (!empty($fightml) && !empty( $thiscaption)) ? $thiscaption  : '';
                   $cites = '';
