@@ -238,6 +238,8 @@ class NPRAPIWordpress extends NPRAPI {
                         NPR_PUB_DATE_META_KEY        => $story->pubDate->value,
                         NPR_STORY_DATE_MEATA_KEY     => $story->storyDate->value,
                         NPR_LAST_MODIFIED_DATE_KEY   => $story->lastModifiedDate->value,
+                        NPR_STORY_HAS_LAYOUT_META_KEY => $npr_has_layout,
+                        NPR_STORY_HAS_VIDEO_META_KEY => $npr_has_video,
                     );
                     //get audio
                     if ( isset($story->audio) ) {

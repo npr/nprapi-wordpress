@@ -44,6 +44,9 @@ define( 'NPR_IMAGE_CREDIT_META_KEY', 'npr_image_credit');
 define( 'NPR_IMAGE_AGENCY_META_KEY', 'npr_image_agency');
 define( 'NPR_IMAGE_CAPTION_META_KEY', 'npr_image_caption');
 
+define( 'NPR_STORY_HAS_LAYOUT_META_KEY', 'npr_has_layout');
+define( 'NPR_STORY_HAS_VIDEO_META_KEY', 'npr_has_video');
+
 define( 'NPR_PUSH_STORY_ERROR', 'npr_push_story_error');
 
 define( 'NPR_MAX_QUERIES', 10 );
