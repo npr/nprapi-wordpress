@@ -758,28 +758,21 @@ class NPRAPIWordpress extends NPRAPI {
               }
             }
             foreach ($storyimages_array as $image) {
+              $image_url = FALSE;
+              $is_portrait = FALSE;
               if ( ! empty( $image->enlargement ) ) {
                 $image_url = $image->enlargement->src;
-              } else {
-                if ( ! empty( $image->crop ) && is_array( $image->crop ) ) {
-                  foreach ( $image->crop as $crop ) {
-                    if ( empty( $crop->type ) ) {
-                      continue;
-                    }
-                    if ( 'enlargement' === $crop->type ) {
-                      $image_url = $crop->src;
-                    }
+              }
+              if ( ! empty( $image->crop ) && is_array( $image->crop ) ) {
+                foreach ( $image->crop as $crop ) {
+                  if (empty($crop->primary)) {
+                    continue;
                   }
-                  if ( empty( $image_url ) ) {
-                    foreach ( $image->crop as $crop ) {
-                      if ( empty( $crop->type ) ) {
-                        continue;
-                      }
-                      if ( 'standard' === $crop->type ) {
-                        $image_url = $crop->src;
-                      }
-                    }
+                  $image_url = $crop->src;
+                  if ($crop->type == 'custom' || ((int)$crop->height > (int)$crop->width)) {
+                    $is_portrait = TRUE;
                   }
+                  break;
                 }
               }
               if ( empty( $image_url ) && ! empty( $image->src ) ) {
@@ -791,10 +784,11 @@ class NPRAPIWordpress extends NPRAPI {
                 if (strpos($image_url)) {
                   $image_url = substr($image_url, strpos($image_url, 0, '?'));
                 }
-                $image_url .= '?s=6';
+                $image_url .= !$is_portrait ? '?s=6' : '?s=12';
               }             
               $storyimages[$image->id] = (array) $image;
               $storyimages[$image->id]['image_url'] = $image_url;
+              $storyimages[$image->id]['is_portrait'] = $is_portrait;
             }
           }
 
@@ -876,6 +870,10 @@ class NPRAPIWordpress extends NPRAPI {
                   $figclass = "wp-block-image size-large"; 
                   $thisimg = $storyimages[$reference];
                   $fightml = !empty( (string)$thisimg['image_url']) ? '<img src="' . (string)$thisimg['image_url'] . '"' : '';
+                  if (!empty($thisimg['is_portrait'])) {
+                    $figclass .= ' alignright';
+                    $fightml .= " width=200";
+                  }
                   $thiscaption = !empty(trim( (string)$thisimg['caption'] )) ? trim( (string)$thisimg['caption'] ) : '';
                   $fightml .= (!empty($fightml) && !empty( $thiscaption)) ? ' alt="' . strip_tags($thiscaption) . '"' : '';
                   $fightml .= !empty($fightml) ? '>' : '';
