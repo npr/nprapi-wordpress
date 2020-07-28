@@ -840,40 +840,54 @@ class NPRAPIWordpress extends NPRAPI {
               case 'staticHtml':
                 if (!empty($htmlAssets[$reference])) {
                   $body_with_layout .= $htmlAssets[$reference] . "\n\n";
+                  $returnary['has_external'] = TRUE;
+                  if (strpos($htmlAssets[$reference], 'jwplayer.com')) {
+                    $returnary['has_video'] = TRUE;
+                  }
                 }
                 break;
               case 'externalAsset':
                 if (!empty($externalAssets[$reference])) {
-                  $body_with_layout .= $externalAssets[$reference]['url'] . "\n";
-                  if (!empty( (string)$externalAssets[$reference]['credit'])) {
-                    $body_with_layout .= "<cite>" . (string) $externalAssets[$reference]['credit'] . "</cite>\n";
+                  $figclass = "wp-block-embed";
+                  if (!empty( (string)$externalAssets[$reference]['type']) && strtolower((string)$externalAssets[$reference]['type']) == 'youtube') {
+                    $returnary['has_video'] = TRUE;
+                    $figclass .= " is-type-video";
                   }
-                  if (!empty( (string)$externalAssets[$reference]['caption'])) {
-                    $body_with_layout .= "<p>" . (string) $externalAssets[$reference]['caption'] . "</p>\n";
+                  $fightml = "<figure class=\"$figclass\"><div class=\"wp-block-embed__wrapper\">";
+                  $fightml .=  "\n" . $externalAssets[$reference]['url'] . "\n";
+                  $figcaption = '';
+                  if (!empty( (string)$externalAssets[$reference]['credit']) || !empty( (string)$externalAssets[$reference]['caption'] ) ) {
+                    if (!empty( trim((string)$externalAssets[$reference]['credit']))) {
+                      $figcaption .= "<cite>" . trim((string) $externalAssets[$reference]['credit']) . "</cite>";
+                    }
+                    if (!empty( (string)$externalAssets[$reference]['caption'])) {
+                      $figcaption .= trim((string) $externalAssets[$reference]['caption']);
+                    }
+                    $figcaption = !empty($figcaption) ? "<figcaption>$figcaption</figcaption>" : "";
                   }
-                  $body_with_layout .= "\n";
+                  $fightml .= "</div>$figcaption</figure>\n";
+                  $body_with_layout .= $fightml;
                 }
                 break;
               case 'image':
                 if (!empty($storyimages[$reference])) {
-                  $figclass="npr-featured-image";
+                  $figclass = "wp-block-image size-large"; 
                   $thisimg = $storyimages[$reference];
                   $fightml = !empty( (string)$thisimg['image_url']) ? '<img src="' . (string)$thisimg['image_url'] . '"' : '';
-                  $thiscaption = (string)$thisimg['caption'];
+                  $thiscaption = !empty(trim( (string)$thisimg['caption'] )) ? trim( (string)$thisimg['caption'] ) : '';
                   $fightml .= (!empty($fightml) && !empty( $thiscaption)) ? ' alt="' . $thiscaption . '"' : '';
                   $fightml .= !empty($fightml) ? '>' : '';
-                  $figcaption = (!empty($fightml) && !empty( $thiscaption)) ? '<figcaption>' . $thiscaption  : '';
-                  if (!empty($figcaption)) {
-                    $cites = '';
-                    foreach (array('producer', 'provider', 'copyright') as $item) {
-                      $thisitem = (string)$thisimg[$item];
-                      if (!empty($thisitem)) {
-                        $cites .= !empty($cites) ? ' | ' . $thisitem : $thisitem;
-                      }
+                  $figcaption = (!empty($fightml) && !empty( $thiscaption)) ? $thiscaption  : '';
+                  $cites = '';
+                  foreach (array('producer', 'provider', 'copyright') as $item) {
+                    $thisitem = trim( (string)$thisimg[$item] );
+                    if (!empty($thisitem)) {
+                      $cites .= !empty($cites) ? ' | ' . $thisitem : $thisitem;
                     }
-                    $figcaption .= !empty($cites) ? "<cite>$cites</cite>" : '';
-                  } 
-                  $figcapton .= !empty($figcaption) ? '</figcaption>' : '';
+                  }
+                  $cites = !empty($cites) ? "<cite>$cites</cite>" : '';
+                  $thiscaption .= $cites;
+                  $figcaption = (!empty($fightml) && !empty( $thiscaption)) ? "<figcaption>$thiscaption</figcaption>"  : '';
                   $fightml .= (!empty($fightml) && !empty($figcaption)) ? $figcaption : '';
                   $body_with_layout .= (!empty($fightml)) ? "<figure class=\"$figclass\">$fightml</figure>\n\n" : ''; 
                 }
