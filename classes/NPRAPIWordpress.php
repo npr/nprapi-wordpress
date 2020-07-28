@@ -781,8 +781,8 @@ class NPRAPIWordpress extends NPRAPI {
               // add resizing to any npr-hosted image
               if (strpos($image_url, 'media.npr.org')) {
                 // remove any existing querystring 
-                if (strpos($image_url)) {
-                  $image_url = substr($image_url, strpos($image_url, 0, '?'));
+                if (strpos($image_url, '?')) {
+                  $image_url = substr($image_url, 0, strpos($image_url, '?'));
                 }
                 $image_url .= !$is_portrait ? '?s=6' : '?s=12';
               }             
