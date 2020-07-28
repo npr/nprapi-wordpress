@@ -140,13 +140,15 @@ class NPRAPIWordpress extends NPRAPI {
                     $existing = $existing_status = null;
                 }
 
-                $has_npr_layout = FALSE;
+                $npr_has_layout = FALSE;
+                $npr_has_video = FALSE;
                 if ($use_npr_layout) { 
                   // get the "NPR layout" version if available and the "use rich layout" option checked in settings
-                  $body_with_layout = $this->get_body_with_layout($story);
-                  if (!empty($body_with_layout)) {
-                    $story->body = $body_with_layout;
-                    $has_npr_layout = TRUE;
+                  $npr_layout = $this->get_body_with_layout($story);
+                  if (!empty($npr_layout['body'])) {
+                    $story->body = $npr_layout['body'];
+                    $npr_has_layout = TRUE;
+                    $npr_has_video = $npr_layout['has_video'];
                   }
                 }
                 //add the transcript
@@ -703,12 +705,14 @@ class NPRAPIWordpress extends NPRAPI {
   /**
    *
    * This function will check a story to see if it has a layout object, if there is 
-   * we'll return the body with any externalAssets or htmlAssets inserted in the order they are in the layout
+   * we'll format the body with any images, externalAssets, or htmlAssets inserted in the order they are in the layout
+   * and return an array of the transformed body and flags for what sort of elements are returned
    *
-   * @param string $story
-   * @return string
+   * @param NPRMLEntity $story Story object created during import
+   * @return array with reconstructed body and flags describing returned elements
    */
     function get_body_with_layout( $story ) {
+        $returnary = array('body' => FALSE, 'has_layout' => FALSE, 'has_image' => FALSE, 'has_video' => FALSE, 'has_external' => FALSE);
         $body_with_layout = "";
         if ( ! empty( $story->layout ) ) {
           // simplify the arrangement of the storytext object
@@ -720,14 +724,16 @@ class NPRAPIWordpress extends NPRAPI {
             foreach ($elements as $element) {
               $num = $element->num;
               $reference = $element->refId;
-              if ($type == 'text') {
+              if ($type == 'text') { 
+                // only paragraphs don't have a refId, they use num instead
                 $reference = $element->paragraphNum;
               }
               $layoutarry[(int)$num] = array('type'=>$type, 'reference' => $reference);
             }
           }
           ksort($layoutarry);
-          
+          $returnary['has_layout'] = TRUE;          
+ 
           $paragraphs = array();
           $num = 1;
           foreach ($story->textWithHtml->paragraphs as $paragraph) {
@@ -876,7 +882,9 @@ class NPRAPIWordpress extends NPRAPI {
           }
          
         }
-        return $body_with_layout;
+        $returnary['body']= $body_with_layout;
+        
+        return $returnary;
     }
 
 
