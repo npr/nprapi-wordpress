@@ -769,7 +769,7 @@ class NPRAPIWordpress extends NPRAPI {
                     continue;
                   }
                   $image_url = $crop->src;
-                  if ($crop->type == 'custom' || ((int)$crop->height > (int)$crop->width)) {
+                  if ($crop->type == 'custom' && ((int)$crop->height > (int)$crop->width)) {
                     $is_portrait = TRUE;
                   }
                   break;
