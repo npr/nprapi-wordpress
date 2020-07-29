@@ -769,7 +769,12 @@ class NPRAPIWordpress extends NPRAPI {
               if ( ! empty( $image->enlargement ) ) {
                 $image_url = $image->enlargement->src;
               }
-              if ( ! empty( $image->crop ) && is_array( $image->crop ) ) {
+              if ( ! empty( $image->crop )) {
+                if (!is_array( $image->crop ) ) {
+                  $cropobj = $image->crop;
+                  unset($image->crop);
+                  $image->crop = array($cropobj); 
+                }
                 foreach ( $image->crop as $crop ) {
                   if (empty($crop->primary)) {
                     continue;
