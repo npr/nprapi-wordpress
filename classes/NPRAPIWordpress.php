@@ -280,7 +280,7 @@ class NPRAPIWordpress extends NPRAPI {
 	                 * @param bool $created true if not pre-existing, false otherwise
 	                 */
 
-                  if ($use_npr_layout) {
+                  if ($npr_has_layout) {
                     // keep WP from stripping content from NPR posts
                     kses_remove_filters();
                   }
@@ -289,7 +289,7 @@ class NPRAPIWordpress extends NPRAPI {
 
 	                $post_id = wp_insert_post( $args );
 
-                  if ($use_npr_layout) {
+                  if ($npr_has_layout) {
                     // re-enable the built-in content stripping
                     kses_init_filters();
                   }
@@ -314,7 +314,7 @@ class NPRAPIWordpress extends NPRAPI {
                         foreach ( (array) $story->image as $image ) {
 
                             // only sideload the primary image if using the npr layout
-                            if ( ($image->type != 'primary') && $use_npr_layout ) {
+                            if ( ($image->type != 'primary') && $npr_has_layout ) {
                               continue;
                             }
 
@@ -474,7 +474,7 @@ class NPRAPIWordpress extends NPRAPI {
 	                 * @param NPRMLEntity $story Story object created during import
 	                 */
 
-                  if ($use_npr_layout) {
+                  if ($npr_has_layout) {
                     // keep WP from stripping content from NPR posts
                     kses_remove_filters();
                   }
@@ -483,7 +483,7 @@ class NPRAPIWordpress extends NPRAPI {
 
 	                $post_id = wp_insert_post( $args );
 
-                  if ($use_npr_layout) {
+                  if ($npr_has_layout) {
                     // re-enable content stripping
                     kses_init_filters();
                   }
