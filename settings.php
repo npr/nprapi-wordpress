@@ -166,7 +166,7 @@ function nprstory_query_use_layout_callback() {
   }
   $check_box_string .= "/>";
 
-  echo $check_box_string . "<p>If layout is available will render any YouTube, Tweets, images, or JavaScript-based widgets within the post in the order they appear. CAUTION: This disables the normal 'wp_kses' filtering for imported posts that prevents any JavaScript from being included in the post.  We assume that NPR Story API posts will not have malicious scripts.</p>";
+  echo $check_box_string . "<p>If 'layout' is available in the NPR Story API output for your key, checking this box will import posts with more complex HTML to render any images, YouTube videos, Tweets, iframes, or JavaScript-based widgets within the post in the order they appeared on the NPR website. Only the 'primary' image for the story will be sideloaded into the Media Library, all other images will be linked from NPR.  CAUTION: This disables the normal 'wp_kses' filtering for imported posts that prevents any JavaScript from being included in the post.  We assume that NPR Story API posts will not have malicious scripts.</p>";
   wp_nonce_field( 'nprstory_nonce_ds_npr_query_use_layout', 'nprstory_nonce_ds_npr_query_use_layout_name', true, true );
 }
 
