@@ -175,7 +175,6 @@ class DS_NPR_API {
             return;
         }
         add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
-        add_action( 'load-posts_page_get-npr-stories', array( $this, 'load_page_hook' ) );
     }
 
 	/**
@@ -184,7 +183,8 @@ class DS_NPR_API {
     public function admin_menu() {
         $pull_post_type = $this->nprstory_get_pull_post_type();
         $slug_args = ( $pull_post_type != 'post' ) ? "?post_type=$pull_post_type" : '';
-        add_submenu_page( "edit.php$slug_args", 'Get NPR Stories', 'Get NPR Stories', 'edit_posts', 'get-npr-stories',   'nprstory_get_stories' );
+        $hook_suffix = add_submenu_page( "edit.php$slug_args", 'Get NPR Stories', 'Get NPR Stories', 'edit_posts', 'get-npr-stories',   'nprstory_get_stories' );
+        add_action( 'load-' . $hook_suffix, array( $this, 'load_page_hook' ) );
     }
 
 }
