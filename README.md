@@ -1,3 +1,5 @@
+# Note: This repository is no longer being maintained. This fork is being actively maintained: https://github.com/OpenPublicMedia/nprapi-wordpress 
+
 # NPR Story API
 
 A collection of tools for publishing from and to NPR's Story API. [Find this plugin on the Wordpress.org Plugin Repository](https://wordpress.org/plugins/npr-story-api/).
