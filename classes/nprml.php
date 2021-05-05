@@ -15,8 +15,8 @@ function nprstory_to_nprml( $post ) {
 }
 
 /**
- * 
- * Do the mapping from WP post to the array that we're going to build the NPRML from.  
+ *
+ * Do the mapping from WP post to the array that we're going to build the NPRML from.
  * This is also where we will do custom mapping if need be.
  * If a mapped custom field does not exist in a certain post, just send the default field.
  * @param  $post
@@ -210,7 +210,7 @@ function nprstory_post_to_nprml_story( $post ) {
 	);
 	$story[] = array(
 		'tag' => 'lastModifiedDate',
-		'text' => mysql2date( 'D, d M Y H:i:s +0000', $post->post_modified_gmt ), 
+		'text' => mysql2date( 'D, d M Y H:i:s +0000', $post->post_modified_gmt ),
 	);
 	$story[] = array(
 		'tag' => 'partnerId',
@@ -245,7 +245,7 @@ function nprstory_post_to_nprml_story( $post ) {
 		$story[] = array(
 			'tag' => 'permissions',
 			'children' => array (
-				array( 
+				array(
 					'tag' => 'permGroup',
 					'attr' => array( 'id' => $perms_group ),
 				)
@@ -300,14 +300,14 @@ function nprstory_post_to_nprml_story( $post ) {
 		// Is the image in the content?  If so, tell the API with a flag that CorePublisher knows.
 		// WordPress may add something like "-150X150" to the end of the filename, before the extension.
 		// Isn't that nice? Let's remove that.
-		$image_guid = wp_get_attachment_url( $image->ID );
-		$image_url = parse_url( $image_guid );
+		$image_attach_url = wp_get_attachment_url( $image->ID );
+		$image_url = parse_url( $image_attach_url );
 		$image_name_parts = pathinfo( $image_url['path'] );
 
-		$image_regex = "/" . $image_name_parts['filename'] . "\-[a-zA-Z0-9]*" . $image_name_parts['extension'] . "/"; 
+		$image_regex = "/" . $image_name_parts['filename'] . "\-[a-zA-Z0-9]*" . $image_name_parts['extension'] . "/";
 		$in_body = "";
 		if ( preg_match( $image_regex, $content ) ) {
-			if ( strstr( $image_guid, '?') ) {
+			if ( strstr( $image_attach_url, '?') ) {
 				$in_body = "&origin=body";
 			} else {
 				$in_body = "?origin=body";
@@ -315,7 +315,7 @@ function nprstory_post_to_nprml_story( $post ) {
 		}
 		$story[] = array(
 			'tag' => 'image',
-			'attr' => array( 'src' => $image_guid . $in_body, 'type' => $image_type ),
+			'attr' => array( 'src' => $image_attach_url . $in_body, 'type' => $image_type ),
 			'children' => array(
 				array(
 					'tag' => 'title',
@@ -401,7 +401,7 @@ function nprstory_post_to_nprml_story( $post ) {
 			$attach_id = attachment_url_to_postid( $audio_guid );
 			if ( !in_array( $attach_id, $audio_files ) ) :
 				$audio_files[] = $attach_id;
-				
+
 				$audio_meta = wp_get_attachment_metadata( $attach_id );
 				$duration = 0;
 				if ( !empty( $audio_meta['length'] ) ) :
@@ -449,13 +449,13 @@ function nprstory_convert_duration_to_seconds( $duration ) {
 }
 
 function nprstory_nprml_split_paragraphs( $html ) {
-    $parts = array_filter( 
-        array_map( 'trim', preg_split( "/<\/?p>/", $html ) ) 
+    $parts = array_filter(
+        array_map( 'trim', preg_split( "/<\/?p>/", $html ) )
     );
     $graphs = array();
     $num = 1;
     foreach ( $parts as $part ) {
-        $graphs[] = array( 
+        $graphs[] = array(
             'tag' => 'paragraph',
             'attr' => array( 'num' => $num ),
             'cdata' => $part,
@@ -504,17 +504,17 @@ function nprstory_nprml_item_to_xml( $item, $xml ) {
             $elem->appendChild( $childxml );
         }
     }
-    if ( array_key_exists( 'text', $item ) ) { 
+    if ( array_key_exists( 'text', $item ) ) {
         $elem->appendChild(
             $xml->createTextNode( $item[ 'text' ] )
         );
     }
-    if ( array_key_exists( 'cdata', $item ) ) { 
+    if ( array_key_exists( 'cdata', $item ) ) {
         $elem->appendChild(
             $xml->createCDATASection( $item[ 'cdata' ] )
         );
     }
-    if ( array_key_exists( 'attr', $item ) ) { 
+    if ( array_key_exists( 'attr', $item ) ) {
         foreach ( $item[ 'attr' ] as $attr => $val ) {
             $elem->setAttribute( $attr, $val );
         }
@@ -546,7 +546,7 @@ function nprstory_nai_get_excerpt( $post, $word_count = 30 ) {
     $text = strip_tags( $text );
     $excerpt_length = apply_filters( 'excerpt_length', $word_count );
     //$excerpt_more = apply_filters( 'excerpt_more', ' ' . '[...]' );
-    $words = preg_split( "/[\n\r\t ]+/", $text, $excerpt_length + 1, 
+    $words = preg_split( "/[\n\r\t ]+/", $text, $excerpt_length + 1,
                          PREG_SPLIT_NO_EMPTY );
     if ( count( $words ) > $excerpt_length ) {
         array_pop( $words );
