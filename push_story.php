@@ -82,13 +82,6 @@ function nprstory_api_push ( $post_ID, $post ) {
  * @param unknown_type $post_ID
  */
 function nprstory_api_delete ( $post_ID ) {
-	if ( ! current_user_can( 'delete_others_posts' ) ) {
-		wp_die(
-			__('You do not have permission to delete posts in the NPR API. Users that can delete other users\' posts have that ability: administrators and editors.'),
-			__('NPR Story API Error'),
-			403
-		);
-	}
 
 	$push_post_type = get_option( 'ds_npr_push_post_type' );
 	if ( empty( $push_post_type ) ) {
@@ -106,6 +99,15 @@ function nprstory_api_delete ( $post_ID ) {
 	//if the push url isn't set, don't even try to delete.
 	$push_url = get_option( 'ds_npr_api_push_url' );
 	if ( $post->post_type == $push_post_type && ! empty( $push_url ) && ! empty( $api_id ) ) {
+    // don't let a non-admin/editor push a delete to the API
+    if ( ! current_user_can( 'delete_others_posts' ) ) {
+      wp_die(
+        __('You do not have permission to delete posts in the NPR API. Users that can delete other users\' posts have that ability: administrators and editors.'),
+        __('NPR Story API Error'),
+        403
+      );
+    }
+
 		// For now, only submit regular posts, and only on publish.
 		if ( $post->post_type != 'post' || $post->post_status != 'publish' ) {
 			return;

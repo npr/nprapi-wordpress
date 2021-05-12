@@ -32,6 +32,7 @@ define( 'NPR_BYLINE_META_KEY', 'npr_byline' );
 define( 'NPR_BYLINE_LINK_META_KEY', 'npr_byline_link' );
 define( 'NPR_MULTI_BYLINE_META_KEY', 'npr_multi_byline' );
 define( 'NPR_IMAGE_GALLERY_META_KEY', 'npr_image_gallery');
+define( 'NPR_HTML_ASSETS_META_KEY', 'npr_html_assets');
 define( 'NPR_AUDIO_META_KEY', 'npr_audio');
 define( 'NPR_AUDIO_M3U_META_KEY', 'npr_audio_m3u');
 define( 'NPR_PUB_DATE_META_KEY', 'npr_pub_date');
@@ -42,6 +43,9 @@ define( 'NPR_RETRIEVED_STORY_META_KEY', 'npr_retrieved_story');
 define( 'NPR_IMAGE_CREDIT_META_KEY', 'npr_image_credit');
 define( 'NPR_IMAGE_AGENCY_META_KEY', 'npr_image_agency');
 define( 'NPR_IMAGE_CAPTION_META_KEY', 'npr_image_caption');
+
+define( 'NPR_STORY_HAS_LAYOUT_META_KEY', 'npr_has_layout');
+define( 'NPR_STORY_HAS_VIDEO_META_KEY', 'npr_has_video');
 
 define( 'NPR_PUSH_STORY_ERROR', 'npr_push_story_error');
 
