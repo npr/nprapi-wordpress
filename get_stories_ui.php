@@ -32,7 +32,9 @@ function nprstory_update_column_content ( $column_name, $post_ID ) {
 		$retrieved = get_post_meta( $post_ID, NPR_RETRIEVED_STORY_META_KEY, true );
 		if ($retrieved) {
 			$api_id = get_post_meta( $post_ID, NPR_STORY_ID_META_KEY, TRUE );
-			echo ( '<a href="' . admin_url( 'edit.php?page=get-npr-stories&story_id=' .$api_id ) . '"> Update </a>' );
+      $pull_post_type = DS_NPR_API::nprstory_get_pull_post_type();
+      $post_type_arg = ($pull_post_type != 'post') ? "&post_type=$pull_post_type" : '';
+			echo ( '<a href="' . admin_url( 'edit.php?page=get-npr-stories&story_id=' .$api_id . $post_type_arg ) . '"> Update </a>' );
 		}
 	}
 }
