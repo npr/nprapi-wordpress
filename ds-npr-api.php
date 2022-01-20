@@ -10,7 +10,7 @@
     Copyright 2012 NPR Digital Services
 
     This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as 
+    it under the terms of the GNU General Public License, version 2, as
     published by the Free Software Foundation.
 
     This program is distributed in the hope that it will be useful,
@@ -71,7 +71,7 @@ function nprstory_activation() {
 		// check if it is a network activation - if so, run the activation function for each blog id
 		$old_blog = $wpdb->blogid;
 		// Get all blog ids
-		$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM $wpdb->blogs" ) );
+		$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM %s", $wpdb->blogs ) );
 		foreach ( $blogids as $blog_id ) {
 			switch_to_blog( $blog_id );
 			nprstory_activate();
@@ -93,7 +93,7 @@ function nprstory_activate() {
 	if ( empty($num) ) {
 		update_option( 'ds_npr_num', 5 );
 	}
-	
+
 	$def_url = 'https://api.npr.org';
 	$pull_url = get_option( 'ds_npr_api_pull_url' );
 	if ( empty( $pull_url ) ) {
@@ -107,7 +107,7 @@ function nprstory_deactivation() {
 		// check if it is a network activation - if so, run the activation function for each blog id
 		$old_blog = $wpdb->blogid;
 		// Get all blog ids
-		$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM $wpdb->blogs" ) );
+		$blogids = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM %s", $wpdb->blogs ) );
 		foreach ( $blogids as $blog_id ) {
 			switch_to_blog( $blog_id );
 			nprstory_deactivate();
@@ -124,7 +124,7 @@ function nprstory_deactivate() {
 	if ( ! empty($num) ) {
 		delete_option( 'ds_npr_num' );
 	}
-	
+
 	$push_url = get_option( 'ds_npr_api_push_url' );
 	if ( ! empty( $push_url ) ) {
 		delete_option( 'ds_npr_api_push_url' );
