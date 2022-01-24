@@ -123,12 +123,13 @@ class NPRAPIWordpress extends NPRAPI {
                 //set the mod_date and pub_date to now so that for a new story we will fail the test below and do the update
                 $post_mod_date = strtotime(date('Y-m-d H:i:s'));
                 $post_pub_date = $post_mod_date;
-
+                $cats=array();
                 if ( $exists->found_posts ) {
                     $existing = $exists->post;
                     $post_id = $existing->ID;
                     $existing_status = $exists->posts[0]->post_status;
                     $post_mod_date_meta = get_post_meta( $existing->ID, NPR_LAST_MODIFIED_DATE_KEY );
+                     // to store the category ids of the existing post
                     if ( ! empty( $post_mod_date_meta[0] ) ) {
                         $post_mod_date = strtotime( $post_mod_date_meta[0] );
                     }
@@ -136,6 +137,8 @@ class NPRAPIWordpress extends NPRAPI {
                     if ( ! empty( $post_pub_date_meta[0] ) ) {
                         $post_pub_date = strtotime($post_pub_date_meta[0]);
                     }
+                    // get ids of existing categories for post
+                    $cats=wp_get_post_categories( $post_id );                 
                 } else {
                     $existing = $existing_status = null;
                 }
@@ -166,8 +169,25 @@ class NPRAPIWordpress extends NPRAPI {
 	        		'post_type'    => $pull_post_type,
                     'post_date'    => $post_date,
                 );
+                $wp_category_ids = array();
+                $wp_category_id="";
                 if( false !== $qnum ) {
                     $args['tags_input'] = get_option('ds_npr_query_tags_'.$qnum);
+                    if ($pull_post_type == 'post'){                      
+                        //Get Default category from options table and store in array for post_array
+                        $wp_category_id = intval(get_option('ds_npr_query_category_'.$qnum));
+                        $wp_category_ids[]=$wp_category_id;
+                    }
+                }else{
+                    // Assign default category to new post
+                    if ($existing === null){                       
+                        $wp_category_id = intval(get_option('default_category'));
+                        $wp_category_ids[]=$wp_category_id;
+                    }  
+                }
+                if (0 < sizeof($cats) ){
+                    // merge arrays and remove duplicate ids
+                    $wp_category_ids = array_unique(array_merge($wp_category_ids, $cats));
                 }
 				//check the last modified date and pub date (sometimes the API just updates the pub date), if the story hasn't changed, just go on
                 if ( $post_mod_date != strtotime( $story->lastModifiedDate->value ) || $post_pub_date !=  strtotime( $story->pubDate->value ) ) {
@@ -284,8 +304,8 @@ class NPRAPIWordpress extends NPRAPI {
                   }
 
 	                $args = apply_filters( 'npr_pre_insert_post', $args, $post_id, $story, $created );
-
 	                $post_id = wp_insert_post( $args );
+                    wp_set_post_terms( $post_id, $wp_category_ids, 'category', true );
 
                   if ($npr_has_layout) {
                     // re-enable the built-in content stripping
@@ -421,7 +441,7 @@ class NPRAPIWordpress extends NPRAPI {
 
 	                foreach ( $metas as $k => $v ) {
                         update_post_meta( $post_id, $k, $v );
-                    }
+                    }                  
 
                     $args = array(
                         'post_title'   => $story->title,
@@ -458,6 +478,7 @@ class NPRAPIWordpress extends NPRAPI {
                     } else {
                         //if the post existed, save its status
                         $args['post_status'] = $existing_status;
+
                     }
 
 	                /**
@@ -477,6 +498,7 @@ class NPRAPIWordpress extends NPRAPI {
                     kses_remove_filters();
                   }
 
+
 	                $args = apply_filters( 'npr_pre_update_post', $args, $post_id, $story );
 
 	                $post_id = wp_insert_post( $args );
@@ -489,6 +511,7 @@ class NPRAPIWordpress extends NPRAPI {
 
                 //set categories for story
                 $category_ids = array();
+                $category_ids = array_merge($category_ids,$wp_category_ids);
 				if ( isset( $story->parent ) ) {
 	                if ( is_array( $story->parent ) ) {
 	                    foreach ( $story->parent as $parent ) {
@@ -552,9 +575,6 @@ class NPRAPIWordpress extends NPRAPI {
 
 
 			}
-            if ( $single_story ) {
-                return isset( $post_id ) ? $post_id : 0;
-            }
         }
         return null;
     }

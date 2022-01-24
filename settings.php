@@ -26,6 +26,9 @@ function nprstory_add_query_page() {
     $opt = get_option( 'ds_npr_query_' . $k );
     while ($k < NPR_MAX_QUERIES) {
         delete_option( 'ds_npr_query_' . $k );
+		delete_option( 'ds_npr_query_category_' . $k );
+		delete_option( 'ds_npr_query_tags_' . $k );
+		delete_option( 'ds_npr_query_publish_' . $k );
         $k++;
         $opt = get_option( 'ds_npr_query_' . $k );
     }
@@ -36,6 +39,9 @@ function nprstory_add_query_page() {
         $opt = get_option( 'ds_npr_query_' . $k );
         while ( $k < NPR_MAX_QUERIES ) {
             delete_option( 'ds_npr_query_' . $k );
+			delete_option( 'ds_npr_query_category_' . $k );
+			delete_option( 'ds_npr_query_tags_' . $k );
+			delete_option( 'ds_npr_query_publish_' . $k );
             $k++;
         }
     }
@@ -75,6 +81,9 @@ function nprstory_settings_init() {
     if ( empty($num) ) {
         $num = 5;
     }
+
+	$optionType=get_option( 'ds_npr_pull_post_type' );
+
     for( $i = 0; $i < $num; $i++ ) {
         add_settings_field( 'ds_npr_query_' . $i, 'Query String ' . $i, 'nprstory_api_query_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
         register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_' . $i , 'nprstory_validation_callback_url');
@@ -82,8 +91,14 @@ function nprstory_settings_init() {
     	//ds_npr_query_publish_
         add_settings_field( 'ds_npr_query_publish_' . $i, 'Publish Stories ' . $i, 'nprstory_api_query_publish_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
         register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_publish_' . $i , 'nprstory_validation_callback_select');
-        
-        // Add tags
+
+		if ($optionType == "post"){
+			// Select Category 
+			add_settings_field( 'ds_npr_query_category_' . $i, 'Select a default Category if using Post', 'nprstory_api_select_category_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
+			register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_category_' . $i );			
+		}
+
+		// Add tags
         add_settings_field( 'ds_npr_query_tags_' . $i, 'Add Tags ' . $i, 'ds_npr_api_query_tags_callback', 'ds_npr_api_get_multi_settings', 'ds_npr_api_get_multi_settings', $i );
         register_setting( 'ds_npr_api_get_multi_settings', 'ds_npr_query_tags_' . $i );
     }
@@ -195,6 +210,25 @@ function nprstory_api_query_publish_callback($i) {
     echo "</select> </div>";
 }
 
+function nprstory_api_select_category_callback($i) {
+   $selected =get_option( 'ds_npr_query_category_' . $i );
+   settype($selected, "integer");
+    $args = array(
+        'show_option_none' => __( 'Select category', '' ),
+		'name'             => 'ds_npr_query_category_'.$i,
+		'hierarchical'      => true,
+        'show_count'       => 0,
+        'orderby'          => 'name',
+        'echo'             => 0,
+		'selected'         => $selected,
+		'hide_empty'       => 0,
+		'multiple'         => true
+    );
+     $select  = wp_dropdown_categories( $args ); 
+
+	 echo $select; 	 
+}
+
 function nprstory_api_query_callback( $i ) {
 	$option = get_option( 'ds_npr_query_' . $i );
 	$name = 'ds_npr_query_' . $i;
@@ -202,7 +236,6 @@ function nprstory_api_query_callback( $i ) {
 	wp_nonce_field( 'nprstory_nonce_ds_npr_query_' . $i, 'nprstory_nonce_ds_npr_query_' . $i . '_name', true, true );
 
 }
-
 function ds_npr_api_query_tags_callback( $i ) {
 	$name = 'ds_npr_query_tags_' . $i;
 	$option = get_option( $name );
