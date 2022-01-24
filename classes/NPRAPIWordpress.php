@@ -102,6 +102,7 @@ class NPRAPIWordpress extends NPRAPI {
 		if ( empty( $pull_post_type ) ) {
 			$pull_post_type = 'post';
 		}
+    $use_npr_layout = !empty(get_option( 'dp_npr_query_use_layout' )) ? TRUE : FALSE;
 
 	    $post_id = null;
 
@@ -138,7 +139,18 @@ class NPRAPIWordpress extends NPRAPI {
                 } else {
                     $existing = $existing_status = null;
                 }
-    
+
+                $npr_has_layout = FALSE;
+                $npr_has_video = FALSE;
+                if ($use_npr_layout) { 
+                  // get the "NPR layout" version if available and the "use rich layout" option checked in settings
+                  $npr_layout = $this->get_body_with_layout($story);
+                  if (!empty($npr_layout['body'])) {
+                    $story->body = $npr_layout['body'];
+                    $npr_has_layout = TRUE;
+                    $npr_has_video = $npr_layout['has_video'];
+                  }
+                }
                 //add the transcript
                 $story->body .= $this->get_transcript_body($story);
 
@@ -226,6 +238,8 @@ class NPRAPIWordpress extends NPRAPI {
                         NPR_PUB_DATE_META_KEY        => $story->pubDate->value,
                         NPR_STORY_DATE_MEATA_KEY     => $story->storyDate->value,
                         NPR_LAST_MODIFIED_DATE_KEY   => $story->lastModifiedDate->value,
+                        NPR_STORY_HAS_LAYOUT_META_KEY => $npr_has_layout,
+                        NPR_STORY_HAS_VIDEO_META_KEY => $npr_has_video,
                     );
                     //get audio
                     if ( isset($story->audio) ) {
@@ -263,9 +277,20 @@ class NPRAPIWordpress extends NPRAPI {
 	                 * @param NPRMLEntity $story Story object created during import
 	                 * @param bool $created true if not pre-existing, false otherwise
 	                 */
+
+                  if ($npr_has_layout) {
+                    // keep WP from stripping content from NPR posts
+                    kses_remove_filters();
+                  }
+
 	                $args = apply_filters( 'npr_pre_insert_post', $args, $post_id, $story, $created );
 
 	                $post_id = wp_insert_post( $args );
+
+                  if ($npr_has_layout) {
+                    // re-enable the built-in content stripping
+                    kses_init_filters();
+                  }
 
                     //now that we have an id, we can add images
                     //this is the way WP seems to do it, but we couldn't call media_sideload_image or media_ because that returned only the URL
@@ -285,6 +310,12 @@ class NPRAPIWordpress extends NPRAPI {
                             $attached_images = get_children( $image_args );
                         }	
                         foreach ( (array) $story->image as $image ) {
+
+                            // only sideload the primary image if using the npr layout
+                            if ( ($image->type != 'primary') && $npr_has_layout ) {
+                              continue;
+                            }
+
                             $image_url = '';
 		        		    //check the <enlargement> and then the crops, in this order "enlargement", "standard"  if they don't exist, just get the image->src
                             if ( ! empty( $image->enlargement ) ) {
@@ -440,9 +471,20 @@ class NPRAPIWordpress extends NPRAPI {
 	                 * @param int $post_id Post ID or NULL if no post ID.
 	                 * @param NPRMLEntity $story Story object created during import
 	                 */
+
+                  if ($npr_has_layout) {
+                    // keep WP from stripping content from NPR posts
+                    kses_remove_filters();
+                  }
+
 	                $args = apply_filters( 'npr_pre_update_post', $args, $post_id, $story );
 
 	                $post_id = wp_insert_post( $args );
+
+                  if ($npr_has_layout) {
+                    // re-enable content stripping
+                    kses_init_filters();
+                  }
                 }
 
                 //set categories for story
@@ -664,4 +706,273 @@ class NPRAPIWordpress extends NPRAPI {
 
         return $transcript_body;
     }
+
+
+  /**
+   *
+   * This function will check a story to see if it has a layout object, if there is 
+   * we'll format the body with any images, externalAssets, or htmlAssets inserted in the order they are in the layout
+   * and return an array of the transformed body and flags for what sort of elements are returned
+   *
+   * @param NPRMLEntity $story Story object created during import
+   * @return array with reconstructed body and flags describing returned elements
+   */
+    function get_body_with_layout( $story ) {
+        $returnary = array('body' => FALSE, 'has_layout' => FALSE, 'has_image' => FALSE, 'has_video' => FALSE, 'has_external' => FALSE);
+        $body_with_layout = "";
+        if ( ! empty( $story->layout ) ) {
+          // simplify the arrangement of the storytext object
+          $layoutarry = array();
+          foreach($story->layout->storytext as $type => $elements) {
+            if (!is_array($elements)) {
+              $elements = array($elements);
+            }
+            foreach ($elements as $element) {
+              $num = $element->num;
+              $reference = $element->refId;
+              if ($type == 'text') { 
+                // only paragraphs don't have a refId, they use num instead
+                $reference = $element->paragraphNum;
+              }
+              $layoutarry[(int)$num] = array('type'=>$type, 'reference' => $reference);
+            }
+          }
+          ksort($layoutarry);
+          $returnary['has_layout'] = TRUE;          
+ 
+          $paragraphs = array();
+          $num = 1;
+          foreach ($story->textWithHtml->paragraphs as $paragraph) {
+            $partext = (string) $paragraph->value;
+            $paragraphs[$num] = $partext;
+            $num++;
+          }
+         
+          $storyimages = array();
+          if (isset($story->image) ) {
+            $storyimages_array = array();
+            if (isset($story->image->id)) {
+              $storyimages_array[] = $story->image;
+            } else {
+              // sometimes there are multiple objects
+              foreach ( (array) $story->image as $stryimage ) {
+                if (isset($stryimage->id)) {
+                  $storyimages_array[] = $stryimage;
+                }
+              }
+            }
+            foreach ($storyimages_array as $image) {
+              $image_url = FALSE;
+              $is_portrait = FALSE;
+              if ( ! empty( $image->enlargement ) ) {
+                $image_url = $image->enlargement->src;
+              }
+              if ( ! empty( $image->crop )) {
+                if (!is_array( $image->crop ) ) {
+                  $cropobj = $image->crop;
+                  unset($image->crop);
+                  $image->crop = array($cropobj); 
+                }
+                foreach ( $image->crop as $crop ) {
+                  if (empty($crop->primary)) {
+                    continue;
+                  }
+                  $image_url = $crop->src;
+                  if ($crop->type == 'custom' && ((int)$crop->height > (int)$crop->width)) {
+                    $is_portrait = TRUE;
+                  }
+                  break;
+                }
+              }
+              if ( empty( $image_url ) && ! empty( $image->src ) ) {
+                $image_url = $image->src;
+              }
+              // add resizing to any npr-hosted image
+              if (strpos($image_url, 'media.npr.org')) {
+                // remove any existing querystring 
+                if (strpos($image_url, '?')) {
+                  $image_url = substr($image_url, 0, strpos($image_url, '?'));
+                }
+                $image_url .= !$is_portrait ? '?s=6' : '?s=12';
+              }             
+              $storyimages[$image->id] = (array) $image;
+              $storyimages[$image->id]['image_url'] = $image_url;
+              $storyimages[$image->id]['is_portrait'] = $is_portrait;
+            }
+          }
+
+
+ 
+          $externalAssets = array();
+          if (isset($story->externalAsset) ) {
+            $externals_array = array();
+            if (isset($story->externalAsset->type)) {
+              $externals_array[] = $story->externalAsset;
+            } else {
+              // sometimes there are multiple objects
+              foreach ( (array) $story->externalAsset as $extasset ) {
+                if (isset($extasset->type)) {
+                  $externals_array[] = $extasset;
+                }
+              }
+            }
+            foreach ($externals_array as $embed) {
+              $externalAssets[$embed->id] = (array) $embed;
+            } 
+          } 
+          $htmlAssets = array();
+          if (isset($story->htmlAsset) ) {
+            if (isset($story->htmlAsset->id)) {
+              $htmlAssets[$story->htmlAsset->id] = $story->htmlAsset->value;
+            } else {
+            // sometimes there are multiple objects
+              foreach ( (array) $story->htmlAsset as $hasset ) {
+                if (isset($hasset->id)) {
+                  $htmlAssets[$hasset->id] = $hasset->value;
+                }
+              }
+            }
+          }
+
+          $multimedia = array();
+          if (isset($story->multimedia) ) {
+            $multims_array = array();
+            if (isset($story->multimedia->id)) {
+              $multims_array[] = $story->multimedia;
+            } else {
+            // sometimes there are multiple objects
+              foreach ( (array) $story->multimedia as $multim ) {
+                if (isset($multim->id)) {
+                  $multims_array[] = $multim;
+                }
+              }
+            }
+            foreach($multims_array as $multim) {
+              $multimedia[$multim->id] = (array)$multim;
+            }
+          }
+          
+          foreach ($layoutarry as $ordernum => $element) {
+            $reference = $element['reference'];
+            switch ($element['type']) {
+              case 'text':
+                if (!empty($paragraphs[$reference])) {
+                  $body_with_layout .= "<p>" . $paragraphs[$reference] . "</p>\n";
+                }
+                break;
+              case 'staticHtml':
+                if (!empty($htmlAssets[$reference])) {
+                  $body_with_layout .= $htmlAssets[$reference] . "\n\n";
+                  $returnary['has_external'] = TRUE;
+                  if (strpos($htmlAssets[$reference], 'jwplayer.com')) {
+                    $returnary['has_video'] = TRUE;
+                  }
+                }
+                break;
+              case 'externalAsset':
+                if (!empty($externalAssets[$reference])) {
+                  $figclass = "wp-block-embed";
+                  if (!empty( (string)$externalAssets[$reference]['type']) && strtolower((string)$externalAssets[$reference]['type']) == 'youtube') {
+                    $returnary['has_video'] = TRUE;
+                    $figclass .= " is-type-video";
+                  }
+                  $fightml = "<figure class=\"$figclass\"><div class=\"wp-block-embed__wrapper\">";
+                  $fightml .=  "\n" . $externalAssets[$reference]['url'] . "\n";
+                  $figcaption = '';
+                  if (!empty( (string)$externalAssets[$reference]['credit']) || !empty( (string)$externalAssets[$reference]['caption'] ) ) {
+                    if (!empty( trim((string)$externalAssets[$reference]['credit']))) {
+                      $figcaption .= "<cite>" . trim((string) $externalAssets[$reference]['credit']) . "</cite>";
+                    }
+                    if (!empty( (string)$externalAssets[$reference]['caption'])) {
+                      $figcaption .= trim((string) $externalAssets[$reference]['caption']);
+                    }
+                    $figcaption = !empty($figcaption) ? "<figcaption>$figcaption</figcaption>" : "";
+                  }
+                  $fightml .= "</div>$figcaption</figure>\n";
+                  $body_with_layout .= $fightml;
+                }
+                break;
+              case 'multimedia':
+                if (!empty($multimedia[$reference])) {
+                  // check permissions
+                  $perms = $multimedia[$reference]['permissions'];
+                  if (($perms->embed->allow != false)) { 
+                    $fightml = "<figure class=\"wp-block-embed is-type-video\"><div class=\"wp-block-embed__wrapper\">";
+                    $returnary['has_video'] = TRUE;
+                    $fightml .= "<div style=\"padding-bottom: 56.25%; position:relative; height:0;\"><iframe src=\"https://www.npr.org/embedded-video?storyId=" . (int)$story->id . "&mediaId=$reference&jwMediaType=music\" frameborder=\"0\" scrolling=\"no\" style=\"position:absolute; top:0; left:0; width:100%; height:100%;\" marginwidth=0 marginheight=0 ></iframe></div>";
+                    $figcaption = '';
+                    if (!empty( (string)$multimedia[$reference]['credit']) || !empty( (string)$multimedia[$reference]['caption'] ) ) {
+                      if (!empty( trim((string)$multimedia[$reference]['credit']))) {
+                        $figcaption .= "<cite>" . trim((string) $multimedia[$reference]['credit']) . "</cite>";
+                      }
+                      if (!empty( (string)$multimedia[$reference]['caption'])) {
+                        $figcaption .= trim((string) $multimedia[$reference]['caption']);
+                      }
+                      $figcaption = !empty($figcaption) ? "<figcaption>$figcaption</figcaption>" : "";
+                    }
+                    $fightml .= "</div>$figcaption</figure>\n";
+                    $body_with_layout .= $fightml;
+                  }
+                }
+                break;
+              default:
+              // handles both 'list' and 'image' since it will reset the type and then assign the reference 
+                if ($element['type'] == 'list') {
+                  foreach ($storyimages as $image) {
+                    if ($image['type'] != 'primary') {
+                      continue;
+                    }
+                    $reference = $image['id'];
+                    $element['type'] = 'image';
+                    break;
+                  }
+                }
+                if ($element['type'] != 'image') {
+                  break;
+                }
+                if (!empty($storyimages[$reference])) {
+                  $figclass = "wp-block-image size-large"; 
+                  $thisimg = $storyimages[$reference];
+                  $fightml = !empty( (string)$thisimg['image_url']) ? '<img src="' . (string)$thisimg['image_url'] . '"' : '';
+                  if (!empty($thisimg['is_portrait'])) {
+                    $figclass .= ' alignright';
+                    $fightml .= " width=200";
+                  }
+                  $thiscaption = !empty(trim( (string)$thisimg['caption'] )) ? trim( (string)$thisimg['caption'] ) : '';
+                  $fightml .= (!empty($fightml) && !empty( $thiscaption)) ? ' alt="' . strip_tags($thiscaption) . '"' : '';
+                  $fightml .= !empty($fightml) ? '>' : '';
+                  $figcaption = (!empty($fightml) && !empty( $thiscaption)) ? $thiscaption  : '';
+                  $cites = '';
+                  foreach (array('producer', 'provider', 'copyright') as $item) {
+                    $thisitem = trim( (string)$thisimg[$item] );
+                    if (!empty($thisitem)) {
+                      $cites .= !empty($cites) ? ' | ' . $thisitem : $thisitem;
+                    }
+                  }
+                  $cites = !empty($cites) ? "<cite>$cites</cite>" : '';
+                  $thiscaption .= $cites;
+                  $figcaption = (!empty($fightml) && !empty( $thiscaption)) ? "<figcaption>$thiscaption</figcaption>"  : '';
+                  $fightml .= (!empty($fightml) && !empty($figcaption)) ? $figcaption : '';
+                  $body_with_layout .= (!empty($fightml)) ? "<figure class=\"$figclass\">$fightml</figure>\n\n" : '';
+                  // make sure it doesn't get reused;
+                  unset($storyimages[$reference]);
+                }
+                break; 
+            }
+          }
+         
+        }
+        $returnary['body']= $body_with_layout;
+        
+        return $returnary;
+    }
+
+
+
+
+
+
+
+
+
 }
