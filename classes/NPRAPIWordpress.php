@@ -82,10 +82,10 @@ class NPRAPIWordpress extends NPRAPI {
 		} else {
 			$error_text = '';
 			if ( !empty( $response->errors['http_request_failed'][0] ) ) {
-				$error_text = '<br> HTTP Error response =  '. $response->errors['http_request_failed'][0];
+				$error_text = '<br> HTTP Error response =  ' . $response->errors['http_request_failed'][0];
 			}
-			nprstory_show_message( 'Error pulling story for url='.$url . $error_text, TRUE );
-			nprstory_error_log( 'Error retrieving story for url='.$url );
+			nprstory_show_message( 'Error pulling story for url=' . $url . $error_text, TRUE );
+			nprstory_error_log( 'Error retrieving story for url=' . $url );
 		}
 	}
 
@@ -102,6 +102,7 @@ class NPRAPIWordpress extends NPRAPI {
 		if ( empty( $pull_post_type ) ) {
 			$pull_post_type = 'post';
 		}
+		$use_npr_layout = ( !empty( get_option( 'dp_npr_query_use_layout' ) ) ? TRUE : FALSE );
 
 		$post_id = null;
 
@@ -118,15 +119,16 @@ class NPRAPIWordpress extends NPRAPI {
 					'post_status' => 'any'
 				]);
 
-				//set the mod_date and pub_date to now so that for a new story we will fail the test below and do the update
+				// set the mod_date and pub_date to now so that for a new story we will fail the test below and do the update
 				$post_mod_date = strtotime( date( 'Y-m-d H:i:s' ) );
 				$post_pub_date = $post_mod_date;
-
+				$cats = [];
 				if ( $exists->found_posts ) {
 					$existing = $exists->post;
 					$post_id = $existing->ID;
 					$existing_status = $exists->posts[0]->post_status;
 					$post_mod_date_meta = get_post_meta( $existing->ID, NPR_LAST_MODIFIED_DATE_KEY );
+					// to store the category ids of the existing post
 					if ( !empty( $post_mod_date_meta[0] ) ) {
 						$post_mod_date = strtotime( $post_mod_date_meta[0] );
 					}
@@ -134,10 +136,23 @@ class NPRAPIWordpress extends NPRAPI {
 					if ( !empty( $post_pub_date_meta[0] ) ) {
 						$post_pub_date = strtotime( $post_pub_date_meta[0] );
 					}
+					// get ids of existing categories for post
+					$cats = wp_get_post_categories( $post_id );
 				} else {
 					$existing = $existing_status = null;
 				}
 
+				$npr_has_layout = FALSE;
+				$npr_has_video = FALSE;
+				if ( $use_npr_layout ) {
+					// get the "NPR layout" version if available and the "use rich layout" option checked in settings
+					$npr_layout = $this->get_body_with_layout( $story );
+					if ( !empty( $npr_layout['body'] ) ) {
+						$story->body = $npr_layout['body'];
+						$npr_has_layout = TRUE;
+						$npr_has_video = $npr_layout['has_video'];
+					}
+				}
 				//add the transcript
 				$story->body .= $this->get_transcript_body( $story );
 
@@ -146,15 +161,32 @@ class NPRAPIWordpress extends NPRAPI {
 
 				//set the story as draft, so we don't try ingesting it
 				$args = [
-					'post_title'   => $story->title,
-					'post_excerpt' => $story->teaser,
-					'post_content' => $story->body,
-					'post_status'  => 'draft',
-					'post_type'    => $pull_post_type,
-					'post_date'    => $post_date,
+					'post_title'	=> $story->title,
+					'post_excerpt'	=> $story->teaser,
+					'post_content'	=> $story->body,
+					'post_status'	=> 'draft',
+					'post_type'		=> $pull_post_type,
+					'post_date'		=> $post_date
 				];
+				$wp_category_ids = [];
+				$wp_category_id = "";
 				if ( false !== $qnum ) {
 					$args['tags_input'] = get_option( 'ds_npr_query_tags_' . $qnum );
+					if ( $pull_post_type == 'post' ) {
+						// Get Default category from options table and store in array for post_array
+						$wp_category_id = intval( get_option( 'ds_npr_query_category_' . $qnum ) );
+						$wp_category_ids[] = $wp_category_id;
+					}
+				} else {
+					// Assign default category to new post
+					if ( $existing === null ) {
+						$wp_category_id = intval( get_option( 'default_category' ) );
+						$wp_category_ids[] = $wp_category_id;
+					}
+				}
+				if ( 0 < sizeof( $cats ) ) {
+					// merge arrays and remove duplicate ids
+					$wp_category_ids = array_unique( array_merge( $wp_category_ids, $cats ) );
 				}
 				// check the last modified date and pub date (sometimes the API just updates the pub date), if the story hasn't changed, just go on
 				if ( $post_mod_date != strtotime( $story->lastModifiedDate->value ) || $post_pub_date != strtotime( $story->pubDate->value ) ) {
@@ -212,22 +244,25 @@ class NPRAPIWordpress extends NPRAPI {
 					}
 					// set the meta RETRIEVED so when we publish the post, we don't try ingesting it
 					$metas = [
-						NPR_STORY_ID_META_KEY        => $story->id,
-						NPR_API_LINK_META_KEY        => $story->link['api']->value,
-						NPR_HTML_LINK_META_KEY       => $story->link['html']->value,
-						//NPR_SHORT_LINK_META_KEY    => $story->link['short']->value,
-						NPR_STORY_CONTENT_META_KEY   => $story->body,
-						NPR_BYLINE_META_KEY          => $by_line,
-						NPR_BYLINE_LINK_META_KEY     => $byline_link,
-						NPR_MULTI_BYLINE_META_KEY    => $multi_by_line,
-						NPR_RETRIEVED_STORY_META_KEY => 1,
-						NPR_PUB_DATE_META_KEY        => $story->pubDate->value,
-						NPR_STORY_DATE_MEATA_KEY     => $story->storyDate->value,
-						NPR_LAST_MODIFIED_DATE_KEY   => $story->lastModifiedDate->value,
+						NPR_STORY_ID_META_KEY		  => $story->id,
+						NPR_API_LINK_META_KEY		  => $story->link['api']->value,
+						NPR_HTML_LINK_META_KEY		  => $story->link['html']->value,
+						//NPR_SHORT_LINK_META_KEY	  => $story->link['short']->value,
+						NPR_STORY_CONTENT_META_KEY	  => $story->body,
+						NPR_BYLINE_META_KEY			  => $by_line,
+						NPR_BYLINE_LINK_META_KEY	  => $byline_link,
+						NPR_MULTI_BYLINE_META_KEY	  => $multi_by_line,
+						NPR_RETRIEVED_STORY_META_KEY  => 1,
+						NPR_PUB_DATE_META_KEY		  => $story->pubDate->value,
+						NPR_STORY_DATE_MEATA_KEY	  => $story->storyDate->value,
+						NPR_LAST_MODIFIED_DATE_KEY	  => $story->lastModifiedDate->value,
+						NPR_STORY_HAS_LAYOUT_META_KEY => $npr_has_layout,
+						NPR_STORY_HAS_VIDEO_META_KEY  => $npr_has_video
 					];
 					//get audio
 					if ( isset( $story->audio ) ) {
 						$mp3_array = $m3u_array = [];
+						$m3u_array = [];
 						foreach ( (array)$story->audio as $n => $audio ) {
 							if ( !empty( $audio->format->mp3['mp3'] ) && $audio->permissions->download->allow == 'true' ) {
 								if ( $audio->format->mp3['mp3']->type == 'mp3' ) {
@@ -260,9 +295,20 @@ class NPRAPIWordpress extends NPRAPI {
 					 * @param NPRMLEntity $story Story object created during import
 					 * @param bool $created true if not pre-existing, false otherwise
 					 */
-					$args = apply_filters( 'npr_pre_insert_post', $args, $post_id, $story, $created );
 
+					if ( $npr_has_layout ) {
+						// keep WP from stripping content from NPR posts
+						kses_remove_filters();
+					}
+
+					$args = apply_filters( 'npr_pre_insert_post', $args, $post_id, $story, $created );
 					$post_id = wp_insert_post( $args );
+					wp_set_post_terms( $post_id, $wp_category_ids, 'category', true );
+
+					if ($npr_has_layout) {
+						// re-enable the built-in content stripping
+						kses_init_filters();
+					}
 
 					// now that we have an id, we can add images
 					// this is the way WP seems to do it, but we couldn't call media_sideload_image or media_ because that returned only the URL
@@ -282,8 +328,13 @@ class NPRAPIWordpress extends NPRAPI {
 							$attached_images = get_children( $image_args );
 						}
 						foreach ( (array)$story->image as $image ) {
+
+							// only sideload the primary image if using the npr layout
+							if ( ( $image->type != 'primary' ) && $npr_has_layout ) {
+								continue;
+							}
 							$image_url = '';
-							//check the <enlargement> and then the crops, in this order "enlargement", "standard"  if they don't exist, just get the image->src
+							// check the <enlargement> and then the crops, in this order "enlargement", "standard"  if they don't exist, just get the image->src
 							if ( !empty( $image->enlargement ) ) {
 								$image_url = $image->enlargement->src;
 							} else {
@@ -339,13 +390,20 @@ class NPRAPIWordpress extends NPRAPI {
 								$file_OK = FALSE;
 							} else {
 								$image_post = get_post( $id );
-								if ( ! empty( $attached_images ) ) {
+								if ( !empty( $attached_images ) ) {
 									foreach( $attached_images as $att_image ) {
-										//see if the filename is very similar
-										$att_guid = explode( '.', $att_image->guid );
-										//so if the already attached image name is part of the name of the file
-										//coming in, ignore the new/temp file, it's probably the same
-										if ( strstr ( $image_post->guid, $att_guid[0] ) ) {
+										// see if the filename is very similar
+										// $att_guid = explode( '.', $att_image->guid );
+										$attach_url = wp_get_attachment_url( $att_image->ID );
+										$attach_url_parse = parse_url( $attach_url );
+										$attach_url_parts = pathinfo( $attach_url_parse['path'] );
+
+										$imagep_attach_url = wp_get_attachment_url( $image_post->ID );
+										$imagep_url_parse = parse_url( $imagep_attach_url );
+										$imagep_url_parts = pathinfo( $imagep_url_parse['path'] );
+										// so if the already attached image name is part of the name of the file
+										// coming in, ignore the new/temp file, it's probably the same
+										if ( strtolower( $attach_url_parts['filename'] ) == strtolower( $imagep_url_parts['filename'] ) ) {
 											@unlink( $file_array['tmp_name'] );
 											wp_delete_attachment( $id );
 											$file_OK = FALSE;
@@ -390,12 +448,12 @@ class NPRAPIWordpress extends NPRAPI {
 					}
 
 					$args = [
-						'post_title'   => $story->title,
-						'post_content' => $story->body,
-						'post_excerpt' => $story->teaser,
-						'post_type'    => $pull_post_type,
-						'ID'   => $post_id,
-						'post_date'	=> $post_date
+						'post_title'	=> $story->title,
+						'post_content'	=> $story->body,
+						'post_excerpt'	=> $story->teaser,
+						'post_type'		=> $pull_post_type,
+						'ID'			=> $post_id,
+						'post_date'		=> $post_date
 					];
 
 					//set author
@@ -434,13 +492,24 @@ class NPRAPIWordpress extends NPRAPI {
 					 * @param int $post_id Post ID or NULL if no post ID.
 					 * @param NPRMLEntity $story Story object created during import
 					 */
-					$args = apply_filters( 'npr_pre_update_post', $args, $post_id, $story );
 
+					if ( $npr_has_layout ) {
+						// keep WP from stripping content from NPR posts
+						kses_remove_filters();
+					}
+
+					$args = apply_filters( 'npr_pre_update_post', $args, $post_id, $story );
 					$post_id = wp_insert_post( $args );
+
+					if ( $npr_has_layout ) {
+						// re-enable content stripping
+						kses_init_filters();
+					}
 				}
 
-				//set categories for story
+				// set categories for story
 				$category_ids = [];
+				$category_ids = array_merge( $category_ids, $wp_category_ids );
 				if ( isset( $story->parent ) ) {
 					if ( is_array( $story->parent ) ) {
 						foreach ( $story->parent as $parent ) {
@@ -457,7 +526,7 @@ class NPRAPIWordpress extends NPRAPI {
 								 * @param int $post_id Post ID or NULL if no post ID.
 								 * @param NPRMLEntity $story Story object created during import
 								 */
-								$term_name   = apply_filters( 'npr_resolve_category_term', $parent->title->value, $post_id, $story );
+								$term_name = apply_filters( 'npr_resolve_category_term', $parent->title->value, $post_id, $story );
 								$category_id = get_cat_ID( $term_name );
 
 								if ( !empty( $category_id ) ) {
@@ -479,11 +548,10 @@ class NPRAPIWordpress extends NPRAPI {
 						*/
 						$term_name = apply_filters( 'npr_resolve_category_term', $story->parent->title->value, $post_id, $story );
 						$category_id = get_cat_ID( $term_name );
-						if ( !empty( $category_id)  ) {
+						if ( !empty( $category_id ) ) {
 							$category_ids[] = $category_id;
 						}
 					}
-
 				}
 
 				/*
@@ -519,7 +587,7 @@ class NPRAPIWordpress extends NPRAPI {
 	 *   An NPRML string.
 	 */
 	function create_NPRML( $post ) {
-		//using some old helper code
+		// using some old helper code
 		return nprstory_to_nprml( $post );
 	}
 
@@ -555,7 +623,7 @@ class NPRAPIWordpress extends NPRAPI {
 					}
 				} else {
 					$error_text = '';
-					if ( ! empty( $result['response']['message'] ) ) {
+					if ( !empty( $result['response']['message'] ) ) {
 						$error_text = 'Error pushing story with post_id = ' . $post_ID . ' for url=' . $url . ' HTTP Error response =  ' . $result['response']['message'];
 					}
 					$body = wp_remote_retrieve_body( $result );
@@ -606,7 +674,7 @@ class NPRAPIWordpress extends NPRAPI {
 		curl_setopt( $handle, CURLOPT_RETURNTRANSFER, TRUE );
 		curl_exec( $handle );
 		curl_close( $handle );
-    }
+	}
 
 	/**
 	 *
@@ -651,5 +719,261 @@ class NPRAPIWordpress extends NPRAPI {
 
 		}
 		return $transcript_body;
+	}
+
+	/**
+	 *
+	 * This function will check a story to see if it has a layout object, if there is
+	 * we'll format the body with any images, externalAssets, or htmlAssets inserted in the order they are in the layout
+	 * and return an array of the transformed body and flags for what sort of elements are returned
+	 *
+	 * @param NPRMLEntity $story Story object created during import
+	 * @return array with reconstructed body and flags describing returned elements
+	 */
+	function get_body_with_layout( $story ) {
+		$returnary = [ 'body' => FALSE, 'has_layout' => FALSE, 'has_image' => FALSE, 'has_video' => FALSE, 'has_external' => FALSE ];
+		$body_with_layout = "";
+		if ( !empty( $story->layout ) ) {
+			// simplify the arrangement of the storytext object
+			$layoutarry = [];
+			foreach( $story->layout->storytext as $type => $elements ) {
+				if ( !is_array( $elements ) ) {
+					$elements = [ $elements ];
+				}
+				foreach ( $elements as $element ) {
+					$num = $element->num;
+					$reference = $element->refId;
+					if ( $type == 'text' ) {
+						// only paragraphs don't have a refId, they use num instead
+						$reference = $element->paragraphNum;
+					}
+					$layoutarry[ (int)$num ] = [ 'type' => $type, 'reference' => $reference ];
+				}
+			}
+			ksort($layoutarry);
+			$returnary['has_layout'] = TRUE;
+
+			$paragraphs = [];
+			$num = 1;
+			foreach ( $story->textWithHtml->paragraphs as $paragraph ) {
+				$partext = (string)$paragraph->value;
+				$paragraphs[ $num ] = $partext;
+				$num++;
+			}
+
+			$storyimages = [];
+			if ( isset($story->image ) ) {
+				$storyimages_array = [];
+				if ( isset( $story->image->id ) ) {
+					$storyimages_array[] = $story->image;
+				} else {
+					// sometimes there are multiple objects
+					foreach ( (array)$story->image as $stryimage ) {
+						if ( isset( $stryimage->id ) ) {
+							$storyimages_array[] = $stryimage;
+						}
+					}
+				}
+				foreach ( $storyimages_array as $image ) {
+					$image_url = FALSE;
+					$is_portrait = FALSE;
+					if ( !empty( $image->enlargement ) ) {
+						$image_url = $image->enlargement->src;
+					}
+					if ( !empty( $image->crop ) ) {
+						if ( !is_array( $image->crop ) ) {
+							$cropobj = $image->crop;
+							unset( $image->crop );
+							$image->crop = [ $cropobj ];
+						}
+						foreach ( $image->crop as $crop ) {
+							if ( empty( $crop->primary ) ) {
+								continue;
+							}
+							$image_url = $crop->src;
+							if ( $crop->type == 'custom' && ( (int)$crop->height > (int)$crop->width ) ) {
+								$is_portrait = TRUE;
+							}
+							break;
+						}
+					}
+					if ( empty( $image_url ) && !empty( $image->src ) ) {
+						$image_url = $image->src;
+					}
+					// add resizing to any npr-hosted image
+					if ( strpos( $image_url, 'media.npr.org' ) ) {
+						// remove any existing querystring
+						if ( strpos( $image_url, '?' ) ) {
+							$image_url = substr( $image_url, 0, strpos( $image_url, '?' ) );
+						}
+						$image_url .= ( !$is_portrait ? '?s=6' : '?s=12' );
+					}
+					$storyimages[ $image->id ] = (array)$image;
+					$storyimages[ $image->id ]['image_url'] = $image_url;
+					$storyimages[ $image->id ]['is_portrait'] = $is_portrait;
+				}
+			}
+
+			$externalAssets = [];
+			if ( isset( $story->externalAsset ) ) {
+				$externals_array = [];
+				if ( isset( $story->externalAsset->type ) ) {
+					$externals_array[] = $story->externalAsset;
+				} else {
+					// sometimes there are multiple objects
+					foreach ( (array)$story->externalAsset as $extasset ) {
+						if ( isset( $extasset->type ) ) {
+							$externals_array[] = $extasset;
+						}
+					}
+				}
+				foreach ( $externals_array as $embed ) {
+					$externalAssets[ $embed->id ] = (array)$embed;
+				}
+			}
+
+			$htmlAssets = [];
+			if ( isset( $story->htmlAsset ) ) {
+				if ( isset( $story->htmlAsset->id ) ) {
+					$htmlAssets[ $story->htmlAsset->id ] = $story->htmlAsset->value;
+				} else {
+					// sometimes there are multiple objects
+					foreach ( (array)$story->htmlAsset as $hasset ) {
+						if ( isset( $hasset->id ) ) {
+							$htmlAssets[ $hasset->id ] = $hasset->value;
+						}
+					}
+				}
+			}
+
+			$multimedia = [];
+			if ( isset( $story->multimedia ) ) {
+				$multims_array = [];
+				if ( isset( $story->multimedia->id ) ) {
+					$multims_array[] = $story->multimedia;
+				} else {
+					// sometimes there are multiple objects
+					foreach ( (array)$story->multimedia as $multim ) {
+						if ( isset( $multim->id ) ) {
+							$multims_array[] = $multim;
+						}
+					}
+				}
+				foreach( $multims_array as $multim ) {
+					$multimedia[ $multim->id ] = (array)$multim;
+				}
+			}
+
+			foreach ( $layoutarry as $ordernum => $element ) {
+				$reference = $element['reference'];
+				switch ( $element['type'] ) {
+					case 'text':
+						if ( !empty( $paragraphs[ $reference ] ) ) {
+							$body_with_layout .= "<p>" . $paragraphs[ $reference ] . "</p>\n";
+						}
+						break;
+					case 'staticHtml':
+						if ( !empty( $htmlAssets[ $reference ] ) ) {
+							$body_with_layout .= $htmlAssets[ $reference ] . "\n\n";
+							$returnary['has_external'] = TRUE;
+							if ( strpos( $htmlAssets[ $reference ], 'jwplayer.com' ) ) {
+								$returnary['has_video'] = TRUE;
+							}
+						}
+						break;
+					case 'externalAsset':
+						if ( !empty( $externalAssets[ $reference ] ) ) {
+							$figclass = "wp-block-embed";
+							if ( !empty( (string)$externalAssets[ $reference ]['type'] ) && strtolower( (string)$externalAssets[ $reference ]['type'] ) == 'youtube') {
+								$returnary['has_video'] = TRUE;
+								$figclass .= " is-type-video";
+							}
+							$fightml = "<figure class=\"$figclass\"><div class=\"wp-block-embed__wrapper\">";
+							$fightml .=  "\n" . $externalAssets[$reference]['url'] . "\n";
+							$figcaption = '';
+							if ( !empty( (string)$externalAssets[ $reference ]['credit'] ) || !empty( (string)$externalAssets[ $reference ]['caption'] ) ) {
+								if ( !empty( trim( (string)$externalAssets[ $reference ]['credit'] ) ) ) {
+									$figcaption .= "<cite>" . trim( (string)$externalAssets[ $reference ]['credit'] ) . "</cite>";
+								}
+								if ( !empty( (string)$externalAssets[ $reference ]['caption'] ) ) {
+									$figcaption .= trim( (string)$externalAssets[ $reference ]['caption'] );
+								}
+								$figcaption = !empty( $figcaption ) ? "<figcaption>$figcaption</figcaption>" : "";
+							}
+							$fightml .= "</div>$figcaption</figure>\n";
+							$body_with_layout .= $fightml;
+						}
+						break;
+					case 'multimedia':
+						if ( !empty( $multimedia[ $reference ] ) ) {
+							// check permissions
+							$perms = $multimedia[ $reference ]['permissions'];
+							if ( $perms->embed->allow != false ) {
+								$fightml = "<figure class=\"wp-block-embed is-type-video\"><div class=\"wp-block-embed__wrapper\">";
+								$returnary['has_video'] = TRUE;
+								$fightml .= "<div style=\"padding-bottom: 56.25%; position:relative; height:0;\"><iframe src=\"https://www.npr.org/embedded-video?storyId=" . (int)$story->id . "&mediaId=$reference&jwMediaType=music\" frameborder=\"0\" scrolling=\"no\" style=\"position:absolute; top:0; left:0; width:100%; height:100%;\" marginwidth=\"0\" marginheight=\"0\"></iframe></div>";
+								$figcaption = '';
+								if ( !empty( (string)$multimedia[ $reference ]['credit'] ) || !empty( (string)$multimedia[ $reference ]['caption'] ) ) {
+									if (!empty( trim( (string)$multimedia[ $reference ]['credit'] ) ) ) {
+										$figcaption .= "<cite>" . trim( (string)$multimedia[ $reference ]['credit'] ) . "</cite>";
+									}
+									if ( !empty( (string)$multimedia[ $reference ]['caption'] ) ) {
+										$figcaption .= trim( (string)$multimedia[ $reference ]['caption'] );
+									}
+									$figcaption = ( !empty( $figcaption ) ? "<figcaption>$figcaption</figcaption>" : "" );
+								}
+								$fightml .= "</div>$figcaption</figure>\n";
+								$body_with_layout .= $fightml;
+							}
+						}
+						break;
+					default:
+						// handles both 'list' and 'image' since it will reset the type and then assign the reference
+						if ( $element['type'] == 'list' ) {
+							foreach ( $storyimages as $image ) {
+								if ( $image['type'] != 'primary' ) {
+									continue;
+								}
+								$reference = $image['id'];
+								$element['type'] = 'image';
+								break;
+							}
+						}
+						if ( $element['type'] != 'image' ) {
+							break;
+						}
+						if ( !empty( $storyimages[ $reference ] ) ) {
+							$figclass = "wp-block-image size-large";
+							$thisimg = $storyimages[ $reference ];
+							$fightml = ( !empty( (string)$thisimg['image_url'] ) ? '<img src="' . (string)$thisimg['image_url'] . '"' : '' );
+							if ( !empty( $thisimg['is_portrait'] ) ) {
+								$figclass .= ' alignright';
+								$fightml .= " width=200";
+							}
+							$thiscaption = ( !empty( trim( (string)$thisimg['caption'] ) ) ? trim( (string)$thisimg['caption'] ) : '' );
+							$fightml .= ( !empty( $fightml ) && !empty( $thiscaption ) ? ' alt="' . strip_tags( $thiscaption ) . '"' : '' );
+							$fightml .= ( !empty( $fightml ) ? '>' : '' );
+							$figcaption = ( !empty( $fightml ) && !empty( $thiscaption ) ? $thiscaption  : '' );
+							$cites = '';
+							foreach ( [ 'producer', 'provider', 'copyright' ] as $item ) {
+								$thisitem = trim( (string)$thisimg[ $item ] );
+								if ( !empty( $thisitem ) ) {
+									$cites .= ( !empty( $cites ) ? ' | ' . $thisitem : $thisitem );
+								}
+							}
+							$cites = ( !empty( $cites ) ? "<cite>$cites</cite>" : '' );
+							$thiscaption .= $cites;
+							$figcaption = ( !empty( $fightml ) && !empty( $thiscaption ) ? "<figcaption>$thiscaption</figcaption>"  : '' );
+							$fightml .= ( !empty( $fightml ) && !empty( $figcaption ) ? $figcaption : '' );
+							$body_with_layout .= ( !empty( $fightml ) ? "<figure class=\"$figclass\">$fightml</figure>\n\n" : '' );
+							// make sure it doesn't get reused;
+							unset( $storyimages[ $reference ] );
+						}
+						break;
+				}
+			}
+		}
+		$returnary['body'] = $body_with_layout;
+		return $returnary;
 	}
 }

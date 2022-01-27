@@ -2,6 +2,7 @@
 /**
  * Functions relating to pushing content to the NPR API
  */
+
 require_once ( NPRSTORY_PLUGIN_DIR . 'classes/NPRAPIWordpress.php' );
 
 /**
@@ -338,12 +339,12 @@ function nprstory_api_push_settings_callback() { }
  */
 function nprstory_api_use_custom_mapping_callback() {
 	$use_custom = get_option( 'dp_npr_push_use_custom_map' );
-	$check_box_string = "<input id='dp_npr_push_use_custom_map' name='dp_npr_push_use_custom_map' type='checkbox' value='true' ";
+	$check_box_string = "<input id='dp_npr_push_use_custom_map' name='dp_npr_push_use_custom_map' type='checkbox' value='true'";
 
 	if ( $use_custom ) {
-		$check_box_string .= ' checked="checked" ';
+		$check_box_string .= ' checked="checked"';
 	}
-	$check_box_string .= "/>";
+	$check_box_string .= " />";
 	$check_box_string .= wp_nonce_field( 'nprstory_nonce_dp_npr_push_use_custom_map', 'nprstory_nonce_dp_npr_push_use_custom_map_name', true, false );
 	echo $check_box_string;
 }
@@ -489,6 +490,7 @@ function nprstory_bulk_action_push_dropdown() {
 			$('<option>').val('pushNprStory').text('<?php _e('Push Story to NPR'); ?>').appendTo("select[name='action']");
 			$('<option>').val('pushNprStory').text('<?php _e('Push Story to NPR'); ?>').appendTo("select[name='action2']");
 		});
+
 	</script>
 	<?php
 	}

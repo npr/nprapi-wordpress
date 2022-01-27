@@ -8,7 +8,7 @@ function nprstory_to_nprml( $post ) {
 	$doc = [];
 	$doc[] = [
 		'tag' => 'list',
-		'children' => [ [ 'tag' => 'story', 'children' => $story ] ],
+		'children' => [ [ 'tag' => 'story', 'children' => $story ] ]
 	];
 	$ret_xml = nprstory_nprml_array_to_xml( 'nprml', [ 'version' => '0.93' ], $doc );
 	return $ret_xml;
@@ -26,7 +26,7 @@ function nprstory_post_to_nprml_story( $post ) {
 	$story[] = [
 		'tag' => 'link',
 		'attr' => [ 'type' => 'html' ],
-		'text' => get_permalink( $post ),
+		'text' => get_permalink( $post )
 	];
 	$use_custom = get_option( 'dp_npr_push_use_custom_map' );
 
@@ -78,7 +78,7 @@ function nprstory_post_to_nprml_story( $post ) {
 
 	$story[] = [
 		'tag' => 'teaser',
-		'text' => $teaser_text,
+		'text' => $teaser_text
 	];
 
 	/*
@@ -94,12 +94,12 @@ function nprstory_post_to_nprml_story( $post ) {
 		$custom_title = get_post_meta( $post->ID, $custom_title_meta, true );
 		$story[] = [
 			'tag' => 'title',
-			'text' => $custom_title,
+			'text' => $custom_title
 		];
 	} else {
 		$story[] = [
 			'tag' => 'title',
-			'text' => $post->post_title,
+			'text' => $post->post_title
 		];
 	}
 
@@ -140,7 +140,7 @@ function nprstory_post_to_nprml_story( $post ) {
 					'children' => [
 						[
 							'tag' => 'name',
-							'text' => $co->display_name,
+							'text' => $co->display_name
 						]
 					]
 				];
@@ -471,18 +471,18 @@ function nprstory_nprml_split_paragraphs( $html ) {
  * convert a PHP array to XML
  */
 function nprstory_nprml_array_to_xml( $tag, $attrs, $data ) {
-    $xml = new DOMDocument();
-    $xml->formatOutput = true;
-    $root = $xml->createElement( $tag );
-    foreach ( $attrs as $k => $v ) {
-        $root->setAttribute( $k, $v );
-    }
-    foreach ( $data as $item ) {
-        $elemxml = nprstory_nprml_item_to_xml( $item, $xml );
-        $root->appendChild( $elemxml );
-    }
-    $xml->appendChild( $root );
-    return $xml->saveXML();
+	$xml = new DOMDocument();
+	$xml->formatOutput = true;
+	$root = $xml->createElement( $tag );
+	foreach ( $attrs as $k => $v ) {
+		$root->setAttribute( $k, $v );
+	}
+	foreach ( $data as $item ) {
+		$elemxml = nprstory_nprml_item_to_xml( $item, $xml );
+		$root->appendChild( $elemxml );
+	}
+	$xml->appendChild( $root );
+	return $xml->saveXML();
 }
 
 /**
@@ -494,33 +494,33 @@ function nprstory_nprml_array_to_xml( $tag, $attrs, $data ) {
  * @param DOMDocument $xml
  */
 function nprstory_nprml_item_to_xml( $item, $xml ) {
-    if ( !array_key_exists( 'tag', $item ) ) {
-        error_log( "Unable to convert NPRML item to XML: no tag for: " . print_r( $item, true ) ); // debug use
+	if ( !array_key_exists( 'tag', $item ) ) {
+		error_log( "Unable to convert NPRML item to XML: no tag for: " . print_r( $item, true ) ); // debug use
 		// this should actually be a serious error
-    }
-    $elem = $xml->createElement( $item['tag'] );
-    if ( array_key_exists( 'children', $item ) ) {
-        foreach ( $item['children'] as $child ) {
-            $childxml = nprstory_nprml_item_to_xml( $child, $xml );
-            $elem->appendChild( $childxml );
-        }
-    }
-    if ( array_key_exists( 'text', $item ) ) {
-        $elem->appendChild(
-            $xml->createTextNode( $item['text'] )
-        );
-    }
-    if ( array_key_exists( 'cdata', $item ) ) {
-        $elem->appendChild(
-            $xml->createCDATASection( $item['cdata'] )
-        );
-    }
-    if ( array_key_exists( 'attr', $item ) ) {
-        foreach ( $item['attr'] as $attr => $val ) {
-            $elem->setAttribute( $attr, $val );
-        }
-    }
-    return $elem;
+	}
+	$elem = $xml->createElement( $item['tag'] );
+	if ( array_key_exists( 'children', $item ) ) {
+		foreach ( $item['children'] as $child ) {
+			$childxml = nprstory_nprml_item_to_xml( $child, $xml );
+			$elem->appendChild( $childxml );
+		}
+	}
+	if ( array_key_exists( 'text', $item ) ) {
+		$elem->appendChild(
+			$xml->createTextNode( $item['text'] )
+		);
+	}
+	if ( array_key_exists( 'cdata', $item ) ) {
+		$elem->appendChild(
+			$xml->createCDATASection( $item['cdata'] )
+		);
+	}
+	if ( array_key_exists( 'attr', $item ) ) {
+		foreach ( $item['attr'] as $attr => $val ) {
+			$elem->setAttribute( $attr, $val );
+		}
+	}
+	return $elem;
 }
 
 /**
@@ -533,28 +533,28 @@ function nprstory_nprml_item_to_xml( $item, $xml ) {
  *
  * @todo replace this with wp_trim_words, see https://github.com/nprds/nprapi-wordpress/issues/20
  *
- * @param   object  $post       Post object
- * @param   int     $word_count Number of words (default 30)
+ * @param   object	$post		Post object
+ * @param   int		$word_count	Number of words (default 30)
  * @return  String
  */
 function nprstory_nai_get_excerpt( $post, $word_count = 30 ) {
-    $text = $post->post_content;
+	$text = $post->post_content;
 
-    $text = strip_shortcodes( $text );
+	$text = strip_shortcodes( $text );
 
-    $text = apply_filters( 'the_content', $text );
-    $text = str_replace( ']]>', ']]&gt;', $text );
-    $text = strip_tags( $text );
-    $excerpt_length = apply_filters( 'excerpt_length', $word_count );
-    //$excerpt_more = apply_filters( 'excerpt_more', ' ' . '[...]' );
-    $words = preg_split( "/[\n\r\t ]+/", $text, $excerpt_length + 1, sPREG_SPLIT_NO_EMPTY );
-    if ( count( $words ) > $excerpt_length ) {
-        array_pop( $words );
-        $text = implode( ' ', $words );
-        //$text = $text . $excerpt_more;
-    } else {
-        $text = implode( ' ', $words );
-    }
-    return $text;
+	$text = apply_filters( 'the_content', $text );
+	$text = str_replace( ']]>', ']]&gt;', $text );
+	$text = strip_tags( $text );
+	$excerpt_length = apply_filters( 'excerpt_length', $word_count );
+	//$excerpt_more = apply_filters( 'excerpt_more', ' ' . '[...]' );
+	$words = preg_split( "/[\n\r\t ]+/", $text, $excerpt_length + 1, PREG_SPLIT_NO_EMPTY );
+	if ( count( $words ) > $excerpt_length ) {
+		array_pop( $words );
+		$text = implode( ' ', $words );
+		//$text = $text . $excerpt_more;
+	} else {
+		$text = implode( ' ', $words );
+	}
+	return $text;
 }
 
