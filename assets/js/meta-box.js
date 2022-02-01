@@ -69,14 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		d.setMinutes(timeinput[1]);
 
 		var string = d.toLocaleString("en-us", { month: "short" })
-		           + " "
-		           + d.getDate()
-		           + ", "
-		           + d.getFullYear()
-		           + " @ "
-		           + d.getHours()
-		           + ":"
-		           + (d.getMinutes() < 10? '0' : '') + d.getMinutes();
+			+ " "
+			+ d.getDate()
+			+ ", "
+			+ d.getFullYear()
+			+ " @ "
+			+ d.getHours()
+			+ ":"
+			+ (d.getMinutes() < 10? '0' : '') + d.getMinutes();
 
 		$( '#nprone-expiry-display time' ).text( string );
 	});

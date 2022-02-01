@@ -17,9 +17,9 @@
  */
 function nprstory_publish_meta_box( $post ) {
 	$is_disabled = ( 'publish' !== $post->post_status );
-	$attrs = array( 'id' => 'ds-npr-update-push' );
+	$attrs = [ 'id' => 'ds-npr-update-push' ];
 
-	if (  $is_disabled ) {
+	if ( $is_disabled ) {
 		$attrs['disabled'] = 'disabled';
 	}
 
@@ -61,7 +61,6 @@ function nprstory_publish_meta_box( $post ) {
 				)
 			);
 			echo '</li>'; // end the "Send to NPR API" list item
-
 		?>
 		</ul>
 	</div>
@@ -70,12 +69,12 @@ function nprstory_publish_meta_box( $post ) {
 	 * this section is only enabled if "include for listening in NPR One" is checked!
 	 * This section does not use https://developer.wordpress.org/reference/functions/touch_time/ because there does not seem to be a way to pass it a custom element
 	 */
-	
+
 	$datetime = nprstory_get_post_expiry_datetime( $post );
 	?>
 	<div id="nprone-expiry">
 		<div id="nprone-expiry-display">
-			<span >Expires on:</span>
+			<span>Expires on:</span>
 			<?php
 				printf(
 					'<time style="font-weight: bold;">%1$s</time>',
@@ -123,7 +122,7 @@ function nprstory_publish_meta_box_assets() {
 	wp_register_script(
 		'nprstory_publish_meta_box_script',
 		NPRSTORY_PLUGIN_URL . 'assets/js/meta-box.js',
-		array( 'jquery', 'jquery-ui-datepicker' ),
+		[ 'jquery', 'jquery-ui-datepicker' ],
 		null,
 		true
 	);
