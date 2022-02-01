@@ -153,13 +153,13 @@ class NPRAPIWordpress extends NPRAPI {
 						$npr_has_video = $npr_layout['has_video'];
 					}
 				}
-				//add the transcript
+				// add the transcript
 				$story->body .= $this->get_transcript_body( $story );
 
 				$story_date = new DateTime( $story->storyDate->value );
 				$post_date = $story_date->format( 'Y-m-d H:i:s' );
 
-				//set the story as draft, so we don't try ingesting it
+				// set the story as draft, so we don't try ingesting it
 				$args = [
 					'post_title'	=> $story->title,
 					'post_excerpt'	=> $story->teaser,
@@ -247,7 +247,7 @@ class NPRAPIWordpress extends NPRAPI {
 						NPR_STORY_ID_META_KEY		  => $story->id,
 						NPR_API_LINK_META_KEY		  => $story->link['api']->value,
 						NPR_HTML_LINK_META_KEY		  => $story->link['html']->value,
-						//NPR_SHORT_LINK_META_KEY	  => $story->link['short']->value,
+						// NPR_SHORT_LINK_META_KEY	  => $story->link['short']->value,
 						NPR_STORY_CONTENT_META_KEY	  => $story->body,
 						NPR_BYLINE_META_KEY			  => $by_line,
 						NPR_BYLINE_LINK_META_KEY	  => $byline_link,
@@ -259,10 +259,9 @@ class NPRAPIWordpress extends NPRAPI {
 						NPR_STORY_HAS_LAYOUT_META_KEY => $npr_has_layout,
 						NPR_STORY_HAS_VIDEO_META_KEY  => $npr_has_video
 					];
-					//get audio
+					// get audio
 					if ( isset( $story->audio ) ) {
 						$mp3_array = $m3u_array = [];
-						$m3u_array = [];
 						foreach ( (array)$story->audio as $n => $audio ) {
 							if ( !empty( $audio->format->mp3['mp3'] ) && $audio->permissions->download->allow == 'true' ) {
 								if ( $audio->format->mp3['mp3']->type == 'mp3' ) {
