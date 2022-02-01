@@ -172,8 +172,8 @@ function nprstory_query_run_multi_callback() {
 }
 
 function nprstory_query_use_layout_callback() {
-	$use_layout = get_option('dp_npr_query_use_layout');
-	$check_box_string = "<input id='dp_npr_query_use_layout' name='dp_npr_query_use_layout' type='checkbox' value='true'";
+	$use_layout = get_option( 'dp_npr_query_use_layout' );
+	$check_box_string = '<input id="dp_npr_query_use_layout" name="dp_npr_query_use_layout" type="checkbox" value="true"';
 
 	if ( $use_layout ) {
 		$check_box_string .= ' checked="checked" ';
@@ -195,7 +195,7 @@ function nprstory_api_query_publish_callback( $i ) {
 
 	echo "<div>Publish or Draft the returns from Query " . $i . "? <select id=" . 'ds_npr_query_publish_' . $i . " name=" . 'ds_npr_query_publish_' . $i . ">";
 
-	//echo '<option value=""> &mdash; Select &mdash; </option>';
+	// echo '<option value=""> &mdash; Select &mdash; </option>';
 	$keys = [ "Publish", "Draft" ];
 	foreach ( $keys as $key ) {
 		$option_string = "\n<option  ";
@@ -228,6 +228,25 @@ function nprstory_api_select_category_callback( $i ) {
 	echo $select;
 }
 
+function nprstory_api_select_category_callback($i) {
+   $selected =get_option( 'ds_npr_query_category_' . $i );
+   settype($selected, "integer");
+    $args = array(
+        'show_option_none' => __( 'Select category', '' ),
+		'name'             => 'ds_npr_query_category_'.$i,
+		'hierarchical'      => true,
+        'show_count'       => 0,
+        'orderby'          => 'name',
+        'echo'             => 0,
+		'selected'         => $selected,
+		'hide_empty'       => 0,
+		'multiple'         => true
+    );
+     $select  = wp_dropdown_categories( $args ); 
+
+	 echo $select; 	 
+}
+
 function nprstory_api_query_callback( $i ) {
 	$option = get_option( 'ds_npr_query_' . $i );
 	$name = 'ds_npr_query_' . $i;
@@ -235,7 +254,6 @@ function nprstory_api_query_callback( $i ) {
 	wp_nonce_field( 'nprstory_nonce_ds_npr_query_' . $i, 'nprstory_nonce_ds_npr_query_' . $i . '_name', true, true );
 
 }
-
 function ds_npr_api_query_tags_callback( $i ) {
 	$name = 'ds_npr_query_tags_' . $i;
 	$option = get_option( $name );

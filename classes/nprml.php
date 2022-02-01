@@ -413,7 +413,7 @@ function nprstory_post_to_nprml_story( $post ) {
 					$metadata = unserialize( trim( $pieces[3] ) );
 					$duration = ( !empty($metadata['duration'] ) ) ? nprstory_convert_duration_to_seconds( $metadata['duration'] ) : 0;
 				endif;
-
+				
 				$story[] = [
 					'tag' => 'audio',
 					'children' => [
@@ -557,4 +557,3 @@ function nprstory_nai_get_excerpt( $post, $word_count = 30 ) {
 	}
 	return $text;
 }
-
